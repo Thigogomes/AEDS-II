@@ -1,4 +1,5 @@
 package ti2_exercicios.ti2_exercicios;
+//Codigos da aula do exercicio 2
 
 import java.sql.*;
 import java.util.ArrayList;
