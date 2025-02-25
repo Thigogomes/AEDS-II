@@ -1,5 +1,3 @@
-import java.util.*;
-
 public class Ciframento{
 	public static String criptografar(String str, int inicio, int tam, String novaPalavra, char letra) {
 		if(tam == inicio){
@@ -19,15 +17,14 @@ public class Ciframento{
 	}
 	
 	public static void main(String[] args) {
-	    Scanner input = new Scanner(System.in);
 	    String str = "";
 		int x = 1;
 		while(x == 1) {
-		    str = input.nextLine();
+		    str =  MyIO.readLine();
 		    if (str.equals("FIM")) {
                 x = -1;
 	        } else {
-	            System.out.println(criptografar(str));
+	            MyIO.println(criptografar(str));
 	        }
 		}
 	}
