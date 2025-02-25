@@ -1,0 +1,34 @@
+import java.util.*;
+
+public class Ciframento{
+	public static String criptografar(String str, int inicio, int tam, String novaPalavra, char letra) {
+		if(tam == inicio){
+		   return novaPalavra; 
+		}else{
+		    letra = (char)(str.charAt(inicio) + 3);
+		    novaPalavra = novaPalavra + letra;
+		    return criptografar(str, inicio+1, tam, novaPalavra, letra);
+		}
+	}
+	
+	public static String criptografar(String str){
+	    int tam = str.length();
+	    String novaPalavra = "";
+	    char letra = 'c';
+	    return criptografar(str, 0, tam, novaPalavra, letra);
+	}
+	
+	public static void main(String[] args) {
+	    Scanner input = new Scanner(System.in);
+	    String str = "";
+		int x = 1;
+		while(x == 1) {
+		    str = input.nextLine();
+		    if (str.equals("FIM")) {
+                x = -1;
+	        } else {
+	            System.out.println(criptografar(str));
+	        }
+		}
+	}
+}
