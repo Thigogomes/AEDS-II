@@ -26,7 +26,7 @@ public class Anagrama{
             int rept = 0, cont = 0;
             for(int j = 0; j < p1.length(); j++){
                 if(p1.charAt(j) == p2.charAt(i)){
-                    rept++; //n de repetição da letra, p2.letra
+                    rept++;
                 }
             }
             for(int k = 0; k < p1.length(); k++){
