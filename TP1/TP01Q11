@@ -1,0 +1,44 @@
+import java.util.*;
+
+public class SubString{
+    public static int subString(String str, int tam, String novaStr){
+        //int j = 0;
+        for(int i = 0; i < tam; i++){
+            int rept = 0;
+            if(i == 0){
+                novaStr = novaStr + str.charAt(i);
+            }
+            for(int j = 0; j < novaStr.length(); j++){
+                if(novaStr.charAt(j) == str.charAt(i)){
+                    rept++;
+                }
+            }
+            if(rept == 0){
+                novaStr = novaStr + str.charAt(i);
+            }
+        }
+        return novaStr.length();
+    }
+    
+    public static int subString(String str){
+        int tam = str.length();
+        String novaStr = "";
+        String str1 = str.toLowerCase();
+        return subString(str1, tam, novaStr);
+    }
+    
+	public static void main(String[] args) {
+		Scanner input = new Scanner(System.in);
+		String str = "";
+		int x = 1;
+		while(x == 1){
+		    str = input.nextLine();
+		    if(str.equals("FIM")){
+		        x = -1;
+		    }else{
+		        System.out.println(subString(str));
+		    }
+		}
+		input.close();
+	}
+}
