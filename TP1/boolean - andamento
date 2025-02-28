@@ -1,0 +1,41 @@
+import java.util.*;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+
+public class Main{
+    public static boolean valores(String exp, int[] num){
+        exp = exp.replace("A", String.valueOf(num[0]));
+        exp = exp.replace("B", String.valueOf(num[1]));
+        exp = exp.replace("C", String.valueOf(num[2]));
+        return expressao(exp);
+    }
+    public static boolean expressao(String exp){
+        ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
+        boolean resultado = true;
+        exp = exp.replace("not", "!").replace("and", "&&").replace("or", "||").replace(" ", "");
+        try {
+            resultado = (boolean) engine.eval(exp);
+            System.out.println("Resultado: " + resultado);
+        } catch (ScriptException e) {
+            System.out.println("Erro ao avaliar expressão: " + e.getMessage());
+        }
+        //Boolean resultado = (boolean)engine.eval(exp);
+        return resultado;
+    }
+	public static void main(String[] args) {
+	    Scanner input = new Scanner(System.in);
+	    String exp = "";
+	    boolean result, result2;
+		int n;
+		n = input.nextInt();
+		int[] num = new int[n];
+		for(int i = 0; i < n; i++){
+		    num[i] = input.nextInt();
+		}
+		exp = input.nextLine();
+		result = valores(exp, num);
+		//result2 = valores(exp, num);
+		System.out.println(result);
+	}
+}
