@@ -29,7 +29,7 @@ public class Html{
     }
     
     public static int contadorConsoante(String path){
-        String linha, vogais = "aeiouAEIOUáéíóúÁÉÍÓÚâêîôûÂÊÎÔÛãõÃÕ";
+        String linha, vogais = "aeiouáéíóúâêîôûãõäåëöïüùòèìàç";
         int cont = 0;
         char carac = 'a';
         try{
