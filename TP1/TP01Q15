@@ -1,0 +1,39 @@
+#include<stdio.h>
+#include<string.h>
+
+void escreverArquivo(char c[], int n){
+    FILE *arq = fopen(c, "a");
+    double* vet = (double*)malloc(n * sizeof(double));
+    if(arq){
+       for(int i = 0; i < n; i++){
+            scanf("%lf", &vet[i]);
+            fprintf(arq, "%lf\n", vet[i]);
+       }
+       free(vet);
+       fclose(arq);
+    }
+}
+
+void imprimirArquivo(char c[], int n){
+    FILE *arq = fopen(c, "r");
+    int x = 0;
+    double* vet = (double*)malloc(n * sizeof(double));
+    char linha[100];
+    while(fscanf(arq, "%lf", &vet[x]) == 1){
+        x++;
+    }
+    for (int i = x - 1; i >= 0; i--) {
+        printf("%g\n", (vet[i]));
+    }
+    free(vet);
+    fclose(arq);
+}
+
+int main(){
+    int n;
+    scanf("%d", &n);
+    char* arq = ("arquivo.txt");
+    escreverArquivo(arq, n);
+    imprimirArquivo(arq, n);
+    return 0;
+}
