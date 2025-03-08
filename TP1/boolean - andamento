@@ -1,36 +1,55 @@
 import java.util.*;
-import javax.script.*;
 
 public class Main{
-    /*public static boolean valores(String exp, int[] num){
-        exp = exp.replace("A", String.valueOf(num[0]));
-        exp = exp.replace("B", String.valueOf(num[1]));
-        exp = exp.replace("C", String.valueOf(num[2]));
-        return expressao(exp);
-    }*/
-    
-    public static String expressao(String exp){
-        ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
-        boolean resultado = true;
-        exp = exp.replace("not", "!").replace("and", "&&").replace("or", "||").replace(" ", "");
-        return exp;
-    }
 	public static void main(String[] args) {
-	    Scanner input = new Scanner(System.in);
-	    String exp = "", result = "", result2;
-		int n;
-		n = input.nextInt();
-		int[] num = new int[n];
-		for(int i = 0; i < n; i++){
-		    num[i] = input.nextInt();
-		}
-		exp = input.nextLine();
-		result = expressao(exp);
-		//result2 = valores(exp, num);
-		System.out.println(result);
+	    String exp = "or(false , and(not(false) , false))";
+		Stack<String> operadores = new Stack<String>();
+        Stack<Boolean> valores = new Stack<Boolean>();
+        exp = exp.replace(",", "");
+        
+        String[] expressao = exp.split("(?<=\\b(or|and|not)\\b)|(?=\\b(or|and|not)\\b)|(?=[(),])|(?<=[(),])|\\s+");
+        
+        for(int i = 0; i < expressao.length; i++){
+            System.out.println(expressao[i]);
+        }
+        for(int i = 0; i < expressao.length; i++){
+            String item = expressao[i];
+            if (item.equals("not") || item.equals("and") || item.equals("or")) {
+                operadores.push(item);
+            }else if (item.equals("false") || item.equals("true")) {
+                boolean itemBool = Boolean.parseBoolean(item);
+                valores.push(itemBool);
+            }else if(item.equals(")")){
+                while(!operadores.empty()){
+                    String op = operadores.pop();
+                    if(op.equals("not")){
+                        boolean v1 = valores.pop();
+                        valores.push(!v1);
+                    }else if(op.equals("and")){
+                        if(valores.size() <= 1){
+                            operadores.push(op);
+                        }else{
+                            int cont = 0;
+                            for(int j = i; expressao[j].equals("("); j--){
+                                cont++;
+                            }
+                            
+                            if(cont == 2){
+                                boolean b = valores.pop();
+                                boolean a = valores.pop();
+                                valores.push(a && b);
+                            }else{
+                                boolean c = valores.pop();
+                                boolean b = valores.pop();
+                                boolean a = valores.pop();
+                                valores.push(a && b && c);
+                            }
+                        }
+                    }else if(op.equals("or")){
+                        
+                    }
+                }
+            }
+        }   
 	}
 }
-
-/*else if (expressao.contains("&&")) {
-            String[] partes = expressao.split("&&");
-            return avaliarExpressao(partes[0]) && avaliarExpressao(partes[1]);*/
