@@ -7,10 +7,16 @@ public class Main{
         Stack<Boolean> valores = new Stack<Boolean>();
         exp = exp.replace(",", "");
         
-        String[] expressao = exp.split("(?<=\\b(or|and|not)\\b)|(?=\\b(or|and|not)\\b)|(?=[(),])|(?<=[(),])|\\s+");
-        
+        String[] expressao = exp.split("(?<=\\b(or|and|not)\\b)|(?=[(),])|(?<=[(),])|\\s+");
         for(int i = 0; i < expressao.length; i++){
-            System.out.println(expressao[i]);
+            if(expressao[i].equals(" ")){
+                for(int j = i; j <  expressao.length-1; j++){
+                    expressao[j] = expressao[j+1];
+                }
+            }
+        }
+        for(int i = 0; i < expressao.length; i++){
+            System.out.print(expressao[i]);
         }
         for(int i = 0; i < expressao.length; i++){
             String item = expressao[i];
@@ -20,36 +26,61 @@ public class Main{
                 boolean itemBool = Boolean.parseBoolean(item);
                 valores.push(itemBool);
             }else if(item.equals(")")){
+                
                 while(!operadores.empty()){
                     String op = operadores.pop();
                     if(op.equals("not")){
                         boolean v1 = valores.pop();
                         valores.push(!v1);
                     }else if(op.equals("and")){
-                        if(valores.size() <= 1){
+                        if(valores.size() > 2){
                             operadores.push(op);
                         }else{
-                            int cont = 0;
-                            for(int j = i; expressao[j].equals("("); j--){
-                                cont++;
+                            int cont = 0, j = i;
+                            while(!expressao[j].equals("(")){
+                                if(expressao[j].equals("true") || expressao[j].equals("false")){
+                                    cont++;
+                                }
+                                j--;
                             }
-                            
                             if(cont == 2){
                                 boolean b = valores.pop();
                                 boolean a = valores.pop();
-                                valores.push(a && b);
-                            }else{
+                                valores.push(a && b);    
+                            }else if(cont == 3){
                                 boolean c = valores.pop();
                                 boolean b = valores.pop();
                                 boolean a = valores.pop();
-                                valores.push(a && b && c);
+                                valores.push(a && b && c);    
                             }
                         }
                     }else if(op.equals("or")){
-                        
+                        if(valores.size() > 2){
+                            operadores.push(op);
+                        }else{
+                            int cont = 0, j = i;
+                            while(!expressao[j].equals("(")){
+                                if(expressao[j].equals("true") || expressao[j].equals("false")){
+                                    cont++;
+                                }
+                                j--;
+                            }
+                            System.out.println(cont);
+                            if(cont == 2){
+                                boolean b = valores.pop();
+                                boolean a = valores.pop();
+                                valores.push(a || b);    
+                            }else if(cont == 3){
+                                boolean c = valores.pop();
+                                boolean b = valores.pop();
+                                boolean a = valores.pop();
+                                valores.push(a || b || c);    
+                            }
+                        }
                     }
                 }
             }
-        }   
+        } 
+        System.out.println("fim");
 	}
 }
