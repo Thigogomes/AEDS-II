@@ -1,86 +1,118 @@
 import java.util.*;
 
-public class Main{
+public class Main {
+    public static boolean operacao(String exp){
+        Stack<String> operadores = new Stack<String>();
+		Stack<Boolean> valores = new Stack<Boolean>();
+		Stack<String> tempOperadores = new Stack<String>();
+		Stack<Boolean> tempValores = new Stack<Boolean>();
+		exp = exp.replace(",", "");
+
+		String[] expressao = exp.split("(?<=\\b(or|and|not)\\b)|(?=[(),])|(?<=[(),])|\\s+");
+		for(int i = 0; i < expressao.length; i++) {
+			if(expressao[i].equals(" ")) {
+				for(int j = i; j <  expressao.length-1; j++) {
+					expressao[j] = expressao[j+1];
+				}
+			}
+		}
+		for(int i = 0; i < expressao.length; i++) {
+			String item = expressao[i];
+			if(item.equals("not") || item.equals("and") || item.equals("or")) {
+				operadores.push(item);
+			} else if(item.equals("(")) {
+				tempValores.push(null);
+				tempOperadores.push("(");
+			} else if(item.equals(")")) {
+				while(!operadores.isEmpty() && !tempOperadores.isEmpty() && !tempOperadores.peek().equals("(")) {
+					String operador = operadores.pop();
+					if (operador.equals("not")) {
+						boolean a = valores.pop();
+						valores.push(!a);
+					} else if (operador.equals("and")) {
+						boolean b = valores.pop();
+						boolean a = valores.pop();
+						valores.push(a && b);
+					} else if (operador.equals("or")) {
+						boolean b = valores.pop();
+						boolean a = valores.pop();
+						valores.push(a || b);
+					}
+					if (!tempOperadores.isEmpty() && tempOperadores.peek().equals("(")) {
+						tempOperadores.pop();
+					}
+					if (!tempValores.isEmpty() && tempValores.peek() == null) {
+						tempValores.pop();
+					}
+				}
+			} else if(item.equals("false") || item.equals("true")) {
+				valores.push(Boolean.parseBoolean(item));
+			}
+		}
+        while (!operadores.isEmpty()) {
+            String operador = operadores.pop();
+            if (operador.equals("not")) {
+                boolean a = valores.pop();
+                valores.push(!a);
+            } else if (operador.equals("and")) {
+                boolean b = valores.pop();
+                boolean a = valores.pop();
+                valores.push(a && b);
+            } else if (operador.equals("or")) {
+                boolean b = valores.pop();
+                boolean a = valores.pop();
+                valores.push(a || b);
+            }
+        }
+        return valores.pop();
+    }
+    
+    public static boolean trocaDeValores(int[] vet, String exp){
+        String novaExp = "";
+        for(int i = 0; i < exp.length(); i++){
+            char letra = exp.charAt(i);
+            if(letra == 'A'){
+                if(vet[0] == 1){
+                    novaExp = novaExp + "true";
+                }else{
+                    novaExp = novaExp + "false";
+                }
+            }else if(letra == 'B'){
+                if(vet[1] == 1){
+                    novaExp = novaExp + "true";
+                }else{
+                    novaExp = novaExp + "false";
+                }
+            }else if(letra == 'C'){
+                if(vet[2] == 1){
+                    novaExp = novaExp + "true";
+                }else{
+                    novaExp = novaExp + "false";
+                }
+            }else{
+               novaExp = novaExp + letra; 
+            }
+            
+        }
+        return operacao(novaExp);
+    }
+    
 	public static void main(String[] args) {
-	    String exp = "or(false , and(not(false) , false))";
-		Stack<String> operadores = new Stack<String>();
-        Stack<Boolean> valores = new Stack<Boolean>();
-        exp = exp.replace(",", "");
-        
-        String[] expressao = exp.split("(?<=\\b(or|and|not)\\b)|(?=[(),])|(?<=[(),])|\\s+");
-        for(int i = 0; i < expressao.length; i++){
-            if(expressao[i].equals(" ")){
-                for(int j = i; j <  expressao.length-1; j++){
-                    expressao[j] = expressao[j+1];
-                }
-            }
-        }
-        for(int i = 0; i < expressao.length; i++){
-            System.out.print(expressao[i]);
-        }
-        for(int i = 0; i < expressao.length; i++){
-            String item = expressao[i];
-            if (item.equals("not") || item.equals("and") || item.equals("or")) {
-                operadores.push(item);
-            }else if (item.equals("false") || item.equals("true")) {
-                boolean itemBool = Boolean.parseBoolean(item);
-                valores.push(itemBool);
-            }else if(item.equals(")")){
-                
-                while(!operadores.empty()){
-                    String op = operadores.pop();
-                    if(op.equals("not")){
-                        boolean v1 = valores.pop();
-                        valores.push(!v1);
-                    }else if(op.equals("and")){
-                        if(valores.size() > 2){
-                            operadores.push(op);
-                        }else{
-                            int cont = 0, j = i;
-                            while(!expressao[j].equals("(")){
-                                if(expressao[j].equals("true") || expressao[j].equals("false")){
-                                    cont++;
-                                }
-                                j--;
-                            }
-                            if(cont == 2){
-                                boolean b = valores.pop();
-                                boolean a = valores.pop();
-                                valores.push(a && b);    
-                            }else if(cont == 3){
-                                boolean c = valores.pop();
-                                boolean b = valores.pop();
-                                boolean a = valores.pop();
-                                valores.push(a && b && c);    
-                            }
-                        }
-                    }else if(op.equals("or")){
-                        if(valores.size() > 2){
-                            operadores.push(op);
-                        }else{
-                            int cont = 0, j = i;
-                            while(!expressao[j].equals("(")){
-                                if(expressao[j].equals("true") || expressao[j].equals("false")){
-                                    cont++;
-                                }
-                                j--;
-                            }
-                            System.out.println(cont);
-                            if(cont == 2){
-                                boolean b = valores.pop();
-                                boolean a = valores.pop();
-                                valores.push(a || b);    
-                            }else if(cont == 3){
-                                boolean c = valores.pop();
-                                boolean b = valores.pop();
-                                boolean a = valores.pop();
-                                valores.push(a || b || c);    
-                            }
-                        }
-                    }
-                }
-            }
-        } 
-        System.out.println("fim");
+		Scanner input = new Scanner(System.in);
+		int n = input.nextInt();
+		while(n != 0){
+		    int[] vet = new int[n];
+    		String exp = "";
+    		for(int i = 0; i < n; i++){
+    		    vet[i] = input.nextInt();
+    		}
+    		exp = input.nextLine();
+    		boolean result = trocaDeValores(vet, exp);
+    		if(result == true){
+    		    System.out.println(1);
+    		}else{
+    		    System.out.println(0);
+    		}
+    		n = input.nextInt();
+		}
 	}
-}
