@@ -7,11 +7,14 @@ public class AlgebraBooleana{
         exp = exp.replace(",", "");
         String[] expressao = exp.split("(?<=\\b(or|and|not)\\b)|(?=[(),])|(?<=[(),])|\\s+");
         for (int i = 0; i < expressao.length; i++) {
+            expressao[i] = expressao[i].trim();
+        }
+        for (int i = 0; i < expressao.length; i++) {
             String item = expressao[i];
             if (item.equals("not") || item.equals("(") || item.equals("and") || item.equals("or") || item.equals("false") || item.equals("true")) {
                 stack.push(item);
             }else if(item.equals(")")) {
-                while(!stack.peek().equals("(") && !stack.isEmpty()) {
+                while(!stack.isEmpty() && !stack.peek().equals("(")) {
                     valores.push(stack.pop());
                 }
                 if (!stack.isEmpty() && stack.peek().equals("(")) {
@@ -23,15 +26,30 @@ public class AlgebraBooleana{
                         boolean a = Boolean.parseBoolean(valores.pop());
                         valores.push(Boolean.toString(!a));
                     } else if (operador.equals("and")) {
-                        boolean b = Boolean.parseBoolean(valores.pop());
-                        boolean a = Boolean.parseBoolean(valores.pop());
-                        valores.push(Boolean.toString(a && b));
+                        if(valores.size() == 2){
+                            boolean b = Boolean.parseBoolean(valores.pop());
+                            boolean a = Boolean.parseBoolean(valores.pop());
+                            valores.push(Boolean.toString(a && b));
+                        }else if(valores.size() == 3){
+                            boolean c = Boolean.parseBoolean(valores.pop());
+                            boolean b = Boolean.parseBoolean(valores.pop());
+                            boolean a = Boolean.parseBoolean(valores.pop());
+                            valores.push(Boolean.toString(a && b && c));
+                        }
                     } else if (operador.equals("or")) {
-                        boolean b = Boolean.parseBoolean(valores.pop());
-                        boolean a = Boolean.parseBoolean(valores.pop());
-                        valores.push(Boolean.toString(a || b));
+                        if(valores.size() == 2){
+                            boolean b = Boolean.parseBoolean(valores.pop());
+                            boolean a = Boolean.parseBoolean(valores.pop());
+                            valores.push(Boolean.toString(a || b));
+                        }else if(valores.size() == 3){
+                            boolean c = Boolean.parseBoolean(valores.pop());
+                            boolean b = Boolean.parseBoolean(valores.pop());
+                            boolean a = Boolean.parseBoolean(valores.pop());
+                            valores.push(Boolean.toString(a || b || c));
+                        }
                     }
-                } while (valores.size() != 1 && !stack.peek().equals("("));
+                
+                } while (!stack.isEmpty() && valores.size() != 1 && !stack.peek().equals("("));
                 stack.push(valores.pop());
             }
         }
