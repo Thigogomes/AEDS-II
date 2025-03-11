@@ -1,0 +1,75 @@
+import java.util.*;
+
+public class AlgebraBooleana{
+    public static boolean operacao(String[] exp, int p, String item){
+        /*if(exp.length == p){
+            return ; 
+        }*/
+        
+        if(item.equals(")")){
+            int i = p;
+            while(!exp[i].equals(not) || !exp[i].equals("and") || !exp[i].equals("or")){
+                
+                i--;
+            }
+            return operacao(exp, p, item);
+        }
+        
+    }
+    
+    public static boolean trocaDeValores(int[] vet, String exp){
+        String novaExp = "";
+        for(int i = 0; i < exp.length(); i++){
+            char letra = exp.charAt(i);
+            if(letra == 'A'){
+                if(vet[0] == 1){
+                    novaExp = novaExp + "true";
+                }else{
+                    novaExp = novaExp + "false";
+                }
+            }else if(letra == 'B'){
+                if(vet[1] == 1){
+                    novaExp = novaExp + "true";
+                }else{
+                    novaExp = novaExp + "false";
+                }
+            }else if(letra == 'C'){
+                if(vet[2] == 1){
+                    novaExp = novaExp + "true";
+                }else{
+                    novaExp = novaExp + "false";
+                }
+            }else{
+               novaExp = novaExp + letra; 
+            }
+            
+            novaExp = novaExp.replace(",", "");
+            String[] expressao = novaExp.split("(?<=\\b(or|and|not)\\b)|(?=[(),])|(?<=[(),])|\\s+");
+            for (int i = 0; i < expressao.length; i++) {
+                expressao[i] = expressao[i].trim();
+            }
+            
+        }
+        return operacao(expressao, 0, expressao[0]);
+    }
+    
+	public static void main(String[] args) {
+		Scanner input = new Scanner(System.in);
+		int n = input.nextInt();
+		while(n != 0){
+		    int[] vet = new int[n];
+    		String exp = "";
+    		for(int i = 0; i < n; i++){
+    		    vet[i] = input.nextInt();
+    		}
+    		exp = input.nextLine();
+    		boolean result = trocaDeValores(vet, exp);
+    		if(result == true){
+    		    System.out.println(1);
+    		}else{
+    		    System.out.println(0);
+    		}
+    		n = input.nextInt();
+		}
+	}
+}
