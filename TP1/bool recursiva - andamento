@@ -1,20 +1,20 @@
 import java.util.*;
 
 public class AlgebraBooleana{
-    public static boolean operacao(String[] exp, int p, String item){
+    public static boolean operacao(String[] exp, int[] p){
         /*if(exp.length == p){
             return ; 
         }*/
         
         if(item.equals(")")){
-            int i = p;
-            while(!exp[i].equals(not) || !exp[i].equals("and") || !exp[i].equals("or")){
-                
-                i--;
+            if(exp[p].equals("false") || exp[p].equals("true")){
+                return operacao(exp, p-1, item);
             }
-            return operacao(exp, p, item);
+            if(exp[p].equals("or") || exp[p].equals("not") || exp[p].equals("and")){
+                return operacao(exp, p);
+            }
         }
-        
+        return operacao(exp, p+1);
     }
     
     public static boolean trocaDeValores(int[] vet, String exp){
@@ -42,15 +42,17 @@ public class AlgebraBooleana{
             }else{
                novaExp = novaExp + letra; 
             }
-            
-            novaExp = novaExp.replace(",", "");
-            String[] expressao = novaExp.split("(?<=\\b(or|and|not)\\b)|(?=[(),])|(?<=[(),])|\\s+");
-            for (int i = 0; i < expressao.length; i++) {
-                expressao[i] = expressao[i].trim();
-            }
-            
         }
-        return operacao(expressao, 0, expressao[0]);
+        novaExp = novaExp.replace(",", "");
+        String[] expressao = novaExp.split("(?<=\\b(or|and|not)\\b)|(?=[(),])|(?<=[(),])|\\s+");
+        for (int i = 0; i < expressao.length; i++) {
+            expressao[i] = expressao[i].trim();
+        }
+        int[] p = new int[expressao.length];
+        for (int i = 0; i < expressao.length; i++) {
+            p[i] = i;
+        }
+        return operacao(expressao, p);
     }
     
 	public static void main(String[] args) {
