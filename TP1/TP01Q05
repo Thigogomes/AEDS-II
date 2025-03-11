@@ -35,6 +35,12 @@ public class AlgebraBooleana{
                             boolean b = Boolean.parseBoolean(valores.pop());
                             boolean a = Boolean.parseBoolean(valores.pop());
                             valores.push(Boolean.toString(a && b && c));
+                        }else if(valores.size() == 4){
+                            boolean d = Boolean.parseBoolean(valores.pop());
+                            boolean c = Boolean.parseBoolean(valores.pop());
+                            boolean b = Boolean.parseBoolean(valores.pop());
+                            boolean a = Boolean.parseBoolean(valores.pop());
+                            valores.push(Boolean.toString(a && b && c && d));
                         }
                     } else if (operador.equals("or")) {
                         if(valores.size() == 2){
@@ -46,6 +52,12 @@ public class AlgebraBooleana{
                             boolean b = Boolean.parseBoolean(valores.pop());
                             boolean a = Boolean.parseBoolean(valores.pop());
                             valores.push(Boolean.toString(a || b || c));
+                        }else if(valores.size() == 4){
+                            boolean d = Boolean.parseBoolean(valores.pop());
+                            boolean c = Boolean.parseBoolean(valores.pop());
+                            boolean b = Boolean.parseBoolean(valores.pop());
+                            boolean a = Boolean.parseBoolean(valores.pop());
+                            valores.push(Boolean.toString(a || b || c || d));
                         }
                     }
                 
