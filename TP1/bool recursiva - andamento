@@ -3,9 +3,10 @@ import java.util.*;
 public class AlgebraBooleana{
     public static boolean operacao(List<String>lista, int p){
         String item = lista.get(p);
-        System.out.println(item);
         if (lista.size() == 1) {
-            if(lista.get(0).equals("true")){
+            String r = lista.remove(0).trim();
+            if(r.equals("true")){
+                System.out.println(lista);
                 return true;
             }else{
                 return false;
