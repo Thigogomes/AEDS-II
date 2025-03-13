@@ -3,7 +3,6 @@ import java.util.*;
 public class AlgebraBooleana{
     public static boolean operacao(List<String>lista, int p){
         String item = lista.get(p);
-        System.out.println(item);
         if(item.equals("(")){
             lista.remove(p);
             boolean result = operacao(lista, p-1);
@@ -22,8 +21,13 @@ public class AlgebraBooleana{
             lista.set(p, Boolean.toString(a && b));
             return operacao(lista, p);
         }
-        if(lista.size() == 2){
-            return Boolean.parseBoolean(lista.remove(p));
+        if(lista.size() == 1){
+            System.out.println(lista.size());
+            if(lista.remove(0).equals("true")){
+                return true;
+            }else{
+                return false; 
+            }
         }
         return operacao(lista, p-1);
     }
@@ -67,10 +71,11 @@ public class AlgebraBooleana{
         return operacao(lista, lista.size()-1);
     }
     
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 		Scanner input = new Scanner(System.in);
 		int n = input.nextInt();
 		while(n != 0){
+		    System.out.println(n);
 		    int[] vet = new int[n];
     		String exp = "";
     		for(int i = 0; i < n; i++){
