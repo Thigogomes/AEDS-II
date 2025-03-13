@@ -1,20 +1,31 @@
 import java.util.*;
 
 public class AlgebraBooleana{
-    public static boolean operacao(String[] exp, int[] p){
-        /*if(exp.length == p){
-            return ; 
-        }*/
-        
-        if(item.equals(")")){
-            if(exp[p].equals("false") || exp[p].equals("true")){
-                return operacao(exp, p-1, item);
-            }
-            if(exp[p].equals("or") || exp[p].equals("not") || exp[p].equals("and")){
-                return operacao(exp, p);
-            }
+    public static boolean operacao(List<String>lista, int p){
+        String item = lista.get(p);
+        System.out.println(item);
+        if(item.equals("(")){
+            lista.remove(p);
+            boolean result = operacao(lista, p-1);
+            lista.remove(p);
         }
-        return operacao(exp, p+1);
+        if(item.equals("not")){
+            lista.remove(p);
+            boolean a = Boolean.parseBoolean(lista.remove(p));
+            lista.set(p, Boolean.toString(!a));
+            return operacao(lista, p);
+        }
+        if(item.equals("and")){
+            lista.remove(p);
+            boolean b = Boolean.parseBoolean(lista.remove(p));
+            boolean a = Boolean.parseBoolean(lista.remove(p));
+            lista.set(p, Boolean.toString(a && b));
+            return operacao(lista, p);
+        }
+        if(lista.size() == 2){
+            return Boolean.parseBoolean(lista.remove(p));
+        }
+        return operacao(lista, p-1);
     }
     
     public static boolean trocaDeValores(int[] vet, String exp){
@@ -45,14 +56,15 @@ public class AlgebraBooleana{
         }
         novaExp = novaExp.replace(",", "");
         String[] expressao = novaExp.split("(?<=\\b(or|and|not)\\b)|(?=[(),])|(?<=[(),])|\\s+");
-        for (int i = 0; i < expressao.length; i++) {
-            expressao[i] = expressao[i].trim();
+        List<String> lista = new ArrayList<>();
+        for(int i = 0; i < expressao.length; i++) {
+            String item = expressao[i];
+            item = item.trim();
+            if (!item.isEmpty()) {
+                lista.add(item);
+            }
         }
-        int[] p = new int[expressao.length];
-        for (int i = 0; i < expressao.length; i++) {
-            p[i] = i;
-        }
-        return operacao(expressao, p);
+        return operacao(lista, lista.size()-1);
     }
     
 	public static void main(String[] args) {
