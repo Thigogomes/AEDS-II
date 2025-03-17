@@ -18,7 +18,7 @@ class  FilaCircular {
         ultimo = (ultimo+1) % array.length;
     }
     
-    public void mostrar(){
+    /*public void mostrar(){
         System.out.print("[");
         for(int i = primeiro; i < ultimo; i++){
             System.out.print(array[i]);
@@ -26,6 +26,23 @@ class  FilaCircular {
                 System.out.print(", ");
             }
         }
+        System.out.println("]");
+    }*/
+    
+    public void mostrar(int i){
+        System.out.print(array[i]);
+        if(i < ultimo-1){
+            System.out.print(", ");
+        }
+        if(i == ultimo-1){
+            return;
+        }
+        mostrar(i+1);
+    }
+    
+    public void mostrar(){
+        System.out.print("[");
+        mostrar(primeiro);
         System.out.println("]");
     }
     
