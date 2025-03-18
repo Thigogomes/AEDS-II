@@ -55,6 +55,10 @@ void inserirFim(ListaLinear* lista, int elem){
 }
 
 int removerInicio(ListaLinear* lista){
+    if(lista->n == 0){
+        printf("Erro!");
+        return -1;
+    }
     int x = lista->array[0];
     for(int i = 0; i < lista->n; i++){
         lista->array[i] = lista->array[i+1];
@@ -63,11 +67,49 @@ int removerInicio(ListaLinear* lista){
     return x;
 }
 
- int removerFim(ListaLinear* lista){
-     lista->n--;
-     int x = lista->array[lista->n];
-     return x;
- }
+int removerFim(ListaLinear* lista){
+    if(lista->n == 0){
+        printf("Erro!");
+        return -1;
+    }
+    lista->n--;
+    int x = lista->array[lista->n];
+    return x;
+}
+
+void inserir(ListaLinear* lista, int elem, int pos){
+    if(lista->n >= lista->max || pos < 0 || pos > lista->n){
+        printf("Erro!");
+        return;
+    }
+    for(int i = lista->n; i > pos; i--){
+        lista->array[i] = lista->array[i-1];
+    }
+    lista->array[pos] = elem;
+    lista->n++;
+}
+
+int remover(ListaLinear* lista, int pos){
+    if(lista->n >= lista->max || pos < 0 || pos > lista->n){
+        printf("Erro!");
+        return -1;
+    }
+    for(int i = pos; i < lista->n; i++){
+        lista->array[i] = lista->array[i+1];
+    }
+    int x = lista->array[pos];
+    lista->n--;
+    return x;
+}
+
+ int pesquisar(ListaLinear* lista, int elem){
+    for(int i = 0; i < lista->n; i++){
+        if(lista->array[i] == elem){
+            return 1;
+        }
+    }
+    return 0;
+}
 
 int main(){
     ListaLinear *lista = newListaLinear(6);
@@ -78,6 +120,12 @@ int main(){
     removerInicio(lista);
     removerFim(lista);
     mostrar(lista);
+    inserir(lista, 8, 0);
+    mostrar(lista);
+    remover(lista, 0);
+    mostrar(lista);
+    int result = pesquisar(lista, 2);
+    printf("Tem o item 2: %d", result);
     delListaLinear(lista);
     return 0;
 }
