@@ -1,4 +1,4 @@
-/"
+/*
 As placas usadas nos carros em circulação no Brasil possuem dois padrões com formatos diferentes: algumas placas estão no antigo padrão Brasileiro, enquanto outras estão no novo padrão Mercosul.
 
 O antigo padrão Brasileiro é sempre formado por 8 caracteres:
@@ -27,7 +27,6 @@ dígitos e hífens, determine se a placa está no antigo padrão Brasileiro, est
 
 Entrada
 A entrada é composta de uma única linha, contendo uma sequência de caracteres representando a placa a ser analisada.
-
 
 Saída
 Seu programa deverá imprimir uma linha contendo um único número inteiro:
