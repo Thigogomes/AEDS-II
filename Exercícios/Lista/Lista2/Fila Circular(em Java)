@@ -1,12 +1,15 @@
-class  FilaCircular {
+class FilaCircular {
 	public int[] array;
 	public int ultimo;
 	public int primeiro;
 	public int n;
+	public int max;
 
 	public  FilaCircular(int max) {
 		primeiro = 0;
 		ultimo = 0;
+		this.max = max;
+		n = 0;
 		array = new int[max];
 	}
 
@@ -16,33 +19,18 @@ class  FilaCircular {
         }
         array[ultimo] = elem;
         ultimo = (ultimo+1) % array.length;
-    }
-    
-    /*public void mostrar(){
-        System.out.print("[");
-        for(int i = primeiro; i < ultimo; i++){
-            System.out.print(array[i]);
-            if(i < ultimo-1){
-                System.out.print(", ");
-            }
-        }
-        System.out.println("]");
-    }*/
-    
-    public void mostrar(int i){
-        System.out.print(array[i]);
-        if(i < ultimo-1){
-            System.out.print(", ");
-        }
-        if(i == ultimo-1){
-            return;
-        }
-        mostrar(i+1);
+        n++;
     }
     
     public void mostrar(){
         System.out.print("[");
-        mostrar(primeiro);
+        for(int i = 0; i < n; i++){
+            int j = (primeiro+i) % array.length;
+            System.out.print(array[j]);
+            if(j < ultimo-1){
+                System.out.print(", ");
+            }
+        }
         System.out.println("]");
     }
     
@@ -52,6 +40,7 @@ class  FilaCircular {
         }
         int x = array[primeiro];
         primeiro = (primeiro+1) % array.length;
+        n--;
         return x;
     }
     
