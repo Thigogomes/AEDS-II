@@ -26,6 +26,20 @@ void delFilaCircular(FilaCircular* fila){
     }
 }
 
+int isVazia(FilaCircular *fila){
+    if(fila->primeiro == fila->ultimo){
+        return 1;
+    }
+    return 0;
+}
+
+int isCheia(FilaCircular *fila){
+    if((fila->ultimo+1) % fila->max == fila->primeiro){
+        return 1;
+    }
+    return 0;
+}
+
 void enfileirar(FilaCircular* fila, int elem){
     if(fila->ultimo >= fila->max){
         printf("Erro!");
@@ -49,19 +63,39 @@ int desenfileirar(FilaCircular* fila){
 
 void mostrar(FilaCircular *fila){
     printf("[");
-    for(int i = 0; i < fila->n;i++){
+    for(int i = 0; i < fila->n; i++){
         int j = (fila->primeiro+i) % fila->max;
         printf("%d", fila->array[j]);
-        if(){
-            printf(", ")
+        if(j < fila->ultimo-1){
+            printf(", ");
         }
     }
-    printf("]");
+    printf("]\n");
+}
+
+int pesquisar(FilaCircular* fila, int elem){
+    for(int i = 0; i < fila->n; i++){
+        int j = (fila->primeiro+i) % fila->max;
+        if(fila->array[j] == elem){
+            return 1;
+        }
+    }
+    return 0;
 }
 
 int main(){
     FilaCircular *fila = newFilaCircular(6);
-    
+    enfileirar(fila, 1);
+    enfileirar(fila, 2);
+    enfileirar(fila, 3);
+    enfileirar(fila, 4);
+    enfileirar(fila, 5);
+    mostrar(fila);
+    desenfileirar(fila);
+    desenfileirar(fila);
+    mostrar(fila);
+    int result = pesquisar(fila, 3);
+    printf("Existe o número 3 na fila circular: %d\n", result);
     delFilaCircular(fila);
     return 0;
 }
