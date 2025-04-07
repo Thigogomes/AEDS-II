@@ -1,0 +1,25 @@
+#include<stdio.h>
+
+typedef struct date{
+	int day;
+	int month;
+	int year;
+}date;
+
+typedef struct Show{
+	char SHOW_ID[];
+	char TYPE[];
+	char TITLE[];
+	char DIRECTOR[];
+	//char 
+	char COUNTRY;
+	date RELEASE_YEAR;
+	int RATING;
+	char DURATION[];
+	char LISTED_IN[];	
+}Show;
+
+int main(){
+
+	return 0;
+}
