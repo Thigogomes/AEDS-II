@@ -1,0 +1,80 @@
+import java.util.*;
+
+public class Show{
+	private String SHOW_ID;
+	private String TYPE;
+	private String TITLE;
+	private String DIRECTOR;
+	private String[] CAST;
+	private String COUNTRY;
+	private Date DATE_ADDED;
+	private int RELEASE_YEAR;
+	private String RATING;
+	private String DURATION;
+	private String[] LISTED_IN;
+
+	public void setSHOW_ID(String SHOW_ID){
+		this.SHOW_ID = SHOW_ID;
+	}
+	public String getSHOW_ID(){
+		return SHOW_ID;
+	}
+	public void setTYPE(String TYPE){
+		this.TYPE = TYPE;
+	}
+	public String getTYPE(){
+		return TYPE;
+	}
+	public void setDIRECTOR(String DIRECTOR){
+		this.DIRECTOR = DIRECTOR;
+	}
+	public String getDIRECTOR(){
+		return DIRECTOR;
+	}
+	public void setCAST(String[] CAST){
+		this.CAST = CAST;
+	}
+	public String[] getCAST(){
+		return CAST;
+	}
+	public void setCOUNTRY(String COUNTRY){
+		this.COUNTRY = COUNTRY;
+	}
+	public String getCOUNTRY(){
+		return COUNTRY;
+	}
+	public void setDATE_ADDED(Date DATE_ADDED){
+		this.DATE_ADDED = DATE_ADDED;
+	}
+	public Date getDATE_ADDED(){
+		return DATE_ADDED;
+	}
+	public void setRELEASE_YEAR(int RELEASE){
+		this.RELEASE_YEAR = RELEASE_YEAR;
+	}
+	public int getRELEASE_YEAR(){
+		return RELEASE_YEAR;		
+	}
+	public void RATING(String RATING){
+		this.RATING = RATING;
+	}
+	public String RATING(){
+		return RATING;
+	}
+	public void setDURATION(String DURATION){
+		this.DURATION = DURATION;
+	}
+	public String getDURATION(){
+		return DURATION;
+	}
+	public void setLISTED_IN(String[] LISTED_IN){
+		this.LISTED_IN = LISTED_IN;
+	}
+	public String[] getLISTED_IN(){
+		return LISTED_IN;
+	}
+
+	public static void main(String[] args){
+		
+	}
+}
