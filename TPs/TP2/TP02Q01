@@ -1,80 +1,169 @@
 import java.util.*;
+import java.io.*;
+import java.text.*;
 
-public class Show{
-	private String SHOW_ID;
-	private String TYPE;
-	private String TITLE;
-	private String DIRECTOR;
-	private String[] CAST;
-	private String COUNTRY;
-	private Date DATE_ADDED;
-	private int RELEASE_YEAR;
-	private String RATING;
-	private String DURATION;
-	private String[] LISTED_IN;
+public class Show {
+    private String showId;
+    private String type;
+    private String title;
+    private String director;
+    private String[] cast;
+    private String country;
+    private Date dateAdded;
+    private int releaseYear;
+    private String rating;
+    private String duration;
+    private String[] listedIn;
 
-	public void setSHOW_ID(String SHOW_ID){
-		this.SHOW_ID = SHOW_ID;
-	}
-	public String getSHOW_ID(){
-		return SHOW_ID;
-	}
-	public void setTYPE(String TYPE){
-		this.TYPE = TYPE;
-	}
-	public String getTYPE(){
-		return TYPE;
-	}
-	public void setDIRECTOR(String DIRECTOR){
-		this.DIRECTOR = DIRECTOR;
-	}
-	public String getDIRECTOR(){
-		return DIRECTOR;
-	}
-	public void setCAST(String[] CAST){
-		this.CAST = CAST;
-	}
-	public String[] getCAST(){
-		return CAST;
-	}
-	public void setCOUNTRY(String COUNTRY){
-		this.COUNTRY = COUNTRY;
-	}
-	public String getCOUNTRY(){
-		return COUNTRY;
-	}
-	public void setDATE_ADDED(Date DATE_ADDED){
-		this.DATE_ADDED = DATE_ADDED;
-	}
-	public Date getDATE_ADDED(){
-		return DATE_ADDED;
-	}
-	public void setRELEASE_YEAR(int RELEASE){
-		this.RELEASE_YEAR = RELEASE_YEAR;
-	}
-	public int getRELEASE_YEAR(){
-		return RELEASE_YEAR;		
-	}
-	public void RATING(String RATING){
-		this.RATING = RATING;
-	}
-	public String RATING(){
-		return RATING;
-	}
-	public void setDURATION(String DURATION){
-		this.DURATION = DURATION;
-	}
-	public String getDURATION(){
-		return DURATION;
-	}
-	public void setLISTED_IN(String[] LISTED_IN){
-		this.LISTED_IN = LISTED_IN;
-	}
-	public String[] getLISTED_IN(){
-		return LISTED_IN;
-	}
+    public String getShowId() {
+        return showId;
+    }
 
-	public static void main(String[] args){
-		
+    public void setShowId(String showId) {
+        this.showId = showId;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDirector() {
+        return director;
+    }
+
+    public void setDirector(String director) {
+        this.director = director;
+    }
+
+    public String[] getCast() {
+        return cast;
+    }
+
+    public void setCast(String[] cast) {
+        this.cast = cast;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public Date getDateAdded() {
+        return dateAdded;
+    }
+
+    public void setDateAdded(Date dateAdded) {
+        this.dateAdded = dateAdded;
+    }
+
+    public int getReleaseYear() {
+        return releaseYear;
+    }
+
+    public void setReleaseYear(int releaseYear) {
+        this.releaseYear = releaseYear;
+    }
+
+    public String getRating() {
+        return rating;
+    }
+
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
+
+    public String getDuration() {
+        return duration;
+    }
+
+    public void setDuration(String duration) {
+        this.duration = duration;
+    }
+
+    public String[] getListedIn() {
+        return listedIn;
+    }
+
+    public Show(){
+    	this.showId = "NaN";
+	this.type = "NaN";
+	this.title = "NaN";
+	this.director = "NaN";
+	this.cast = new String[]{"NaN"};
+	this.country = "NaN";
+	this.dateAdded = null;
+	this.releaseYear = -1;
+	this.rating = "NaN";
+	this.duration = "NaN";
+	this.listedIn = new String[]{"NaN"};
+    }
+
+    public Show(String showId, String type, String title, String director, String[] cast, String country, String dateAdded, int releaseYear, String rating, String duration, String[] listedIn){
+    	this.showId = (showId != null && !showId.isEmpty()) ? showId : "NaN";
+	this.type = (type != null && !type.isEmpty()) ? type : "NaN";
+	this.title = (title != null && !title.isEmpty()) ? title : "NaN";
+	this.director = (director != null && !director.isEmpty()) ? director : "NaN";
+	this.cast = (cast != null && cast.length >= 0) ? cast : new String[]{"NaN"};
+	this.country =  (country != null && country.isEmpty()) ? country : "NaN";
+
+	SimpleDateFormat data = new SimpleDateFormat("MMMM dd, yyyy");
+	if(dateAdded != null && !dateAdded.isEmpty()){
+		try{
+			this.dateAdded = data.parse(dateAdded);
+		}catch(ParseException e){
+			System.out.println("Erro ao adcionar a data");
+			this.dateAdded = null;
+		}
+	}else{
+		this.dateAdded = null;
 	}
+	this.releaseYear = (releaseYear > 0) ? releaseYear : -1;
+	this.duration = (duration != null && !duration.isEmpty()) ? duration : "NaN";
+	this.listedIn = (listedIn != null && listedIn.length >= 0) ? listedIn : new String[]{"NaN"};
+    }
+
+    public void imprimir(){
+	SimpleDateFormat data = new SimpleDateFormat("MMMM dd, yyyy");
+    	System.out.print("=> " + getShowId());
+	System.out.print(" ## " + getType());
+	System.out.print(" ## " + getTitle());
+	System.out.print(" ## " + getDirector());
+	System.out.print(" ## [" + Arrays.toString(getCast()) + "]");
+	System.out.print(" ## " + getCountry());
+	System.out.print(" ## " + (getDateAdded() != null ? data.format(getDateAdded()) : "NaN"));
+	System.out.print(" ## " + getReleaseYear());
+	System.out.print(" ## " + getRating());
+	System.out.print(" ## " + getDuration());
+	System.out.println(" ## [" + Arrays.toString(getListedIn()) + "]");
+    }
+
+    public void ler(){
+    	try(BufferedReader r = new BufferedReader(new FileReader("disneyplus.csv"))){
+		String linha = "";
+		while((linha = r.readLine()) != null){
+			//System.out.println(linha);
+		}
+	}catch(IOException e){
+		e.printStackTrace();
+	}
+    }
+    public static void main(String[] args){
+    	Show show = new Show();
+	show.ler();
+    }
 }
