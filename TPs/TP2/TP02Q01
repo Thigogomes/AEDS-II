@@ -18,7 +18,7 @@ public class Show {
     public String getShowId() {
         return showId;
     }
-
+    
     public void setShowId(String showId) {
         this.showId = showId;
     }
@@ -101,69 +101,88 @@ public class Show {
 
     public Show(){
     	this.showId = "NaN";
-	this.type = "NaN";
-	this.title = "NaN";
-	this.director = "NaN";
-	this.cast = new String[]{"NaN"};
-	this.country = "NaN";
-	this.dateAdded = null;
-	this.releaseYear = -1;
-	this.rating = "NaN";
-	this.duration = "NaN";
-	this.listedIn = new String[]{"NaN"};
+	    this.type = "NaN";
+	    this.title = "NaN";
+	    this.director = "NaN";
+	    this.cast = new String[]{"NaN"};
+	    this.country = "NaN";
+	    this.dateAdded = null;
+	    this.releaseYear = -1;
+	    this.rating = "NaN";
+	    this.duration = "NaN";
+	    this.listedIn = new String[]{"NaN"};
     }
 
     public Show(String showId, String type, String title, String director, String[] cast, String country, String dateAdded, int releaseYear, String rating, String duration, String[] listedIn){
     	this.showId = (showId != null && !showId.isEmpty()) ? showId : "NaN";
-	this.type = (type != null && !type.isEmpty()) ? type : "NaN";
-	this.title = (title != null && !title.isEmpty()) ? title : "NaN";
-	this.director = (director != null && !director.isEmpty()) ? director : "NaN";
-	this.cast = (cast != null && cast.length >= 0) ? cast : new String[]{"NaN"};
-	this.country =  (country != null && country.isEmpty()) ? country : "NaN";
-
-	SimpleDateFormat data = new SimpleDateFormat("MMMM dd, yyyy");
-	if(dateAdded != null && !dateAdded.isEmpty()){
-		try{
-			this.dateAdded = data.parse(dateAdded);
-		}catch(ParseException e){
-			System.out.println("Erro ao adcionar a data");
-			this.dateAdded = null;
-		}
-	}else{
-		this.dateAdded = null;
-	}
-	this.releaseYear = (releaseYear > 0) ? releaseYear : -1;
-	this.duration = (duration != null && !duration.isEmpty()) ? duration : "NaN";
-	this.listedIn = (listedIn != null && listedIn.length >= 0) ? listedIn : new String[]{"NaN"};
+    	this.type = (type != null && !type.isEmpty()) ? type : "NaN";
+    	this.title = (title != null && !title.isEmpty()) ? title : "NaN";
+    	this.director = (director != null && !director.isEmpty()) ? director : "NaN";
+    	this.cast = (cast != null && cast.length >= 0) ? cast : new String[]{"NaN"};
+    	this.country =  (country != null && country.isEmpty()) ? country : "NaN";
+    	SimpleDateFormat data = new SimpleDateFormat("MMMM dd, yyyy");
+    	if(dateAdded != null && !dateAdded.isEmpty()){
+    		try{
+    			this.dateAdded = data.parse(dateAdded);
+    		}catch(ParseException e){
+    			System.out.println("Erro ao adcionar a data");
+    			this.dateAdded = null;
+    		}
+    	}else{
+    		this.dateAdded = null;
+    	}
+    	this.releaseYear = (releaseYear > 0) ? releaseYear : -1;
+    	this.duration = (duration != null && !duration.isEmpty()) ? duration : "NaN";
+    	this.listedIn = (listedIn != null && listedIn.length >= 0) ? listedIn : new String[]{"NaN"};
     }
 
     public void imprimir(){
-	SimpleDateFormat data = new SimpleDateFormat("MMMM dd, yyyy");
+	    SimpleDateFormat data = new SimpleDateFormat("MMMM dd, yyyy");
     	System.out.print("=> " + getShowId());
-	System.out.print(" ## " + getType());
-	System.out.print(" ## " + getTitle());
-	System.out.print(" ## " + getDirector());
-	System.out.print(" ## [" + Arrays.toString(getCast()) + "]");
-	System.out.print(" ## " + getCountry());
-	System.out.print(" ## " + (getDateAdded() != null ? data.format(getDateAdded()) : "NaN"));
-	System.out.print(" ## " + getReleaseYear());
-	System.out.print(" ## " + getRating());
-	System.out.print(" ## " + getDuration());
-	System.out.println(" ## [" + Arrays.toString(getListedIn()) + "]");
+	    System.out.print(" ## " + getType());
+	    System.out.print(" ## " + getTitle());
+    	System.out.print(" ## " + getDirector());
+    	System.out.print(" ## [" + Arrays.toString(getCast()) + "]");
+    	System.out.print(" ## " + getCountry());
+    	System.out.print(" ## " + (getDateAdded() != null ? data.format(getDateAdded()) : "NaN"));
+        System.out.print(" ## " + getReleaseYear());
+	    System.out.print(" ## " + getRating());
+    	System.out.print(" ## " + getDuration());
+	    System.out.println(" ## [" + Arrays.toString(getListedIn()) + "]##");
     }
 
     public void ler(){
     	try(BufferedReader r = new BufferedReader(new FileReader("disneyplus.csv"))){
-		String linha = "";
-		while((linha = r.readLine()) != null){
-			//System.out.println(linha);
-		}
-	}catch(IOException e){
-		e.printStackTrace();
-	}
+    		String linha = "";
+    		r.readLine();
+    		while((linha = r.readLine()) != null){
+    			
+    		}
+	    }catch(IOException e){
+		    e.printStackTrace();
+	    }
     }
+    
+    public void atribuir(String linha){
+        
+    }
+    
+    public static String[] separarLinha(String linha){
+        String[] str = new String[11];
+        int aux = 0;
+        for(int i = 0; i < linha.length(); i++){
+            char letra = linha.charAt(i);
+            if(letra != ','){
+                str[aux] += letra;
+            }else{
+                aux++;
+            }
+        }
+        return str;
+    }
+    
     public static void main(String[] args){
     	Show show = new Show();
-	show.ler();
+	    show.ler();
     }
 }
