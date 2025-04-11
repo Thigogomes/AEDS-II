@@ -172,7 +172,9 @@ public class Show {
         setType(str[1]);
         setTitle(str[2]);
         setDirector(str[3]);
-        //setCast(str[4]);
+        if(str[4] != null){
+            setCast(ordenaArray(str[4]));
+        }
         setDirector(str[5]);
         try {
             if(str[6] != null && !str[6].isEmpty()){
@@ -187,10 +189,42 @@ public class Show {
         setReleaseYear(Integer.parseInt(str[7]));
         setRating(str[8]);
         setDuration(str[9]);
-        //setListedIn(str[10]);
-        for(int j = 0; j < 11; j++){
-            System.out.println(str[6]);
+        if(str[10] != null){
+            setCast(ordenaArray(str[10]));
         }
+    }
+    
+    public static String[] ordenaArray(String str){
+        int temp = 0, tam = 0;
+        for (int i = 0; i < str.length(); i++) {
+            if (str.charAt(i) == ',') {
+                tam++;
+            }
+        }
+        
+        String[] array = new String[tam+1];
+        Arrays.fill(array, "");
+        
+        for(int i = 0; i < str.length(); i++){
+            if(str.charAt(i) != ','){
+                array[temp] += str.charAt(i);
+            }else if(str.charAt(i) == ','){
+                i++; // para retirar o espaço extra
+                temp ++;
+            }
+            
+        }
+        
+        for(int i = array.length -1; i > 0; i--){
+            for(int j = 0; j < i; j++){
+                if(array[j].compareTo(array[j + 1]) > 0){
+                    String aux = array[j];
+                    array[j] = array[j+1];
+                    array[j+1] = aux;
+                }
+            }
+        }
+        return array;
     }
     
     public static String[] separarLinha(String linha){
@@ -214,17 +248,16 @@ public class Show {
                     str[aux] += letra;
                 }else{
                     i++;
+                    letra = linha.charAt(i);
                     while(i < linha.length() && linha.charAt(i) != '"'){
-                        str[aux] += linha.charAt(i);
+                        str[aux] += letra;
                         i++;
+                        letra = linha.charAt(i);
                     }
                 }
             }
             i++;
         }
-        /*for(int j = 0; j < 11; j++){
-            System.out.println(str[j]);
-        }*/
         return str;
     }
     
