@@ -98,6 +98,10 @@ public class Show {
     public String[] getListedIn() {
         return listedIn;
     }
+    
+    public void setLintedIn(String[] listedIn){
+        this.listedIn = listedIn;
+    }
 
     public Show(){
     	this.showId = "NaN";
@@ -145,7 +149,7 @@ public class Show {
     	System.out.print(" ## " + Arrays.toString(getCast()));
     	System.out.print(" ## " + getCountry());
     	System.out.print(" ## " + (getDateAdded() != null ? data.format(getDateAdded()) : "NaN"));
-        System.out.print(" ## " + getReleaseYear());
+        System.out.print(" ## " + (getReleaseYear() != -1 ? getReleaseYear() : "NaN"));
 	    System.out.print(" ## " + getRating());
     	System.out.print(" ## " + getDuration());
 	    System.out.println(" ## " + Arrays.toString(getListedIn()) + "##");
@@ -171,30 +175,37 @@ public class Show {
         String[] str = new String[11];
         Arrays.fill(str, "");
         str = separarLinha(linha);
+        SimpleDateFormat formato = new SimpleDateFormat("MMMM dd, yyyy", Locale.ENGLISH);
         
-        setShowId(str[0]);
-        setType(str[1]);
-        setTitle(str[2]);
-        setDirector(str[3]);
+        setShowId((str[0] != null) ? str[0] : "NaN");
+        setType((str[1] != null) ? str[1] : "NaN");
+        setTitle((str[2] != null) ? str[2] : "NaN");
+        setDirector((str[3] != null) ? str[3] : "NaN");
         if(str[4] != null){
             setCast(ordenaArray(str[4]));
+        }else{
+            setCast(new String[]{"NaN"});
         }
-        setDirector(str[5]);
+        setDirector((str[5] != null) ? str[5] : "NaN");
         try {
             if(str[6] != null && !str[6].isEmpty()){
-                SimpleDateFormat formato = new SimpleDateFormat("MMMM dd, yyyy", Locale.ENGLISH);
                 Date data = formato.parse(str[6]);
+                setDateAdded(data);
+            }else if(str[6] == null){
+                Date data = formato.parse("March 1, 1900");
                 setDateAdded(data);
             }
         } catch (Exception e) {
             System.out.println("Erro ao adicionar a data: " + str[6]);
     		this.dateAdded = null;
         }
-        setReleaseYear(Integer.parseInt(str[7]));
-        setRating(str[8]);
-        setDuration(str[9]);
+        setReleaseYear((str[7] != null) ? Integer.parseInt(str[7]) : -1);
+        setRating((str[8] != null) ? str[8] : "NaN");
+        setDuration((str[9] != null) ? str[9] : "NaN");
         if(str[10] != null){
-            setCast(ordenaArray(str[10]));
+            setLintedIn(ordenaArray(str[10]));
+        }else{
+            setLintedIn(new String[]{"NaN"});
         }
     }
     
