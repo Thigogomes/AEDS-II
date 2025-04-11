@@ -156,7 +156,7 @@ public class Show {
     		String linha = "";
     		r.readLine();
     		while((linha = r.readLine()) != null){
-    			
+    			atribuir(linha);
     		}
 	    }catch(IOException e){
 		    e.printStackTrace();
@@ -164,20 +164,67 @@ public class Show {
     }
     
     public void atribuir(String linha){
+        String[] str = new String[11];
+        Arrays.fill(str, "");
+        str = separarLinha(linha);
         
+        setShowId(str[0]);
+        setType(str[1]);
+        setTitle(str[2]);
+        setDirector(str[3]);
+        //setCast(str[4]);
+        setDirector(str[5]);
+        try {
+            if(str[6] != null && !str[6].isEmpty()){
+                SimpleDateFormat formato = new SimpleDateFormat("MMMM dd, yyyy");
+                Date data = formato.parse(str[6]);
+                setDateAdded(data);
+            }
+        } catch (Exception e) {
+            System.out.println("Erro ao adcionar a data: " + str[6]);
+    		this.dateAdded = null;
+        }
+        setReleaseYear(Integer.parseInt(str[7]));
+        setRating(str[8]);
+        setDuration(str[9]);
+        //setListedIn(str[10]);
+        for(int j = 0; j < 11; j++){
+            System.out.println(str[6]);
+        }
     }
     
     public static String[] separarLinha(String linha){
         String[] str = new String[11];
-        int aux = 0;
-        for(int i = 0; i < linha.length(); i++){
+        Arrays.fill(str, "");
+        int aux = 0, i = 0;
+        while(i < linha.length() && aux != 11){
             char letra = linha.charAt(i);
-            if(letra != ','){
-                str[aux] += letra;
-            }else{
-                aux++;
+            char letra2 = 'c';
+            if(i+1 < linha.length()){
+                letra2 = linha.charAt(i+1);
             }
+            if(letra == ',' && letra2 != ' '){
+                if(str[aux] == ""){
+                    str[aux] = null;
+                }
+                aux++;
+                //System.out.println(str[aux-1]);
+            }else{
+                if(letra != '"'){
+                    str[aux] += letra;
+                }else{
+                    i++;
+                    while(i < linha.length() && linha.charAt(i) != '"'){
+                        str[aux] += linha.charAt(i);
+                        i++;
+                    }
+                }
+            }
+            i++;
         }
+        /*for(int j = 0; j < 11; j++){
+            System.out.println(str[j]);
+        }*/
         return str;
     }
     
