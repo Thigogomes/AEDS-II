@@ -125,7 +125,7 @@ public class Show {
     		try{
     			this.dateAdded = data.parse(dateAdded);
     		}catch(ParseException e){
-    			System.out.println("Erro ao adcionar a data");
+    			System.out.println("Erro ao adicionar a data");
     			this.dateAdded = null;
     		}
     	}else{
@@ -142,25 +142,29 @@ public class Show {
 	    System.out.print(" ## " + getType());
 	    System.out.print(" ## " + getTitle());
     	System.out.print(" ## " + getDirector());
-    	System.out.print(" ## [" + Arrays.toString(getCast()) + "]");
+    	System.out.print(" ## " + Arrays.toString(getCast()));
     	System.out.print(" ## " + getCountry());
     	System.out.print(" ## " + (getDateAdded() != null ? data.format(getDateAdded()) : "NaN"));
         System.out.print(" ## " + getReleaseYear());
 	    System.out.print(" ## " + getRating());
     	System.out.print(" ## " + getDuration());
-	    System.out.println(" ## [" + Arrays.toString(getListedIn()) + "]##");
+	    System.out.println(" ## " + Arrays.toString(getListedIn()) + "##");
     }
 
-    public void ler(){
+    public static ArrayList<Show> ler(){
+        ArrayList<Show> listaShow = new ArrayList<>();
     	try(BufferedReader r = new BufferedReader(new FileReader("disneyplus.csv"))){
     		String linha = "";
     		r.readLine();
     		while((linha = r.readLine()) != null){
-    			atribuir(linha);
+    		    Show show = new Show();
+    			show.atribuir(linha);
+    			listaShow.add(show);
     		}
 	    }catch(IOException e){
 		    e.printStackTrace();
 	    }
+	    return listaShow;
     }
     
     public void atribuir(String linha){
@@ -183,7 +187,7 @@ public class Show {
                 setDateAdded(data);
             }
         } catch (Exception e) {
-            System.out.println("Erro ao adcionar a data: " + str[6]);
+            System.out.println("Erro ao adicionar a data: " + str[6]);
     		this.dateAdded = null;
         }
         setReleaseYear(Integer.parseInt(str[7]));
@@ -262,7 +266,17 @@ public class Show {
     }
     
     public static void main(String[] args){
-    	Show show = new Show();
-	    show.ler();
+    	Scanner input = new Scanner(System.in);
+    	ArrayList<Show> listaShow = ler();
+    	String id = "";
+    	id = input.nextLine();
+    	while(!id.equals("FIM")){
+    	    for(int i = 0; i < listaShow.size(); i++){
+    	        if(listaShow.get(i).getShowId().equals(id)){
+    	            listaShow.get(i).imprimir();
+    	        }
+    	    }
+    	}
+    	input.close();
     }
 }
