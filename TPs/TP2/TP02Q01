@@ -182,7 +182,7 @@ public class Show {
         setDirector(str[5]);
         try {
             if(str[6] != null && !str[6].isEmpty()){
-                SimpleDateFormat formato = new SimpleDateFormat("MMMM dd, yyyy");
+                SimpleDateFormat formato = new SimpleDateFormat("MMMM dd, yyyy", Locale.ENGLISH);
                 Date data = formato.parse(str[6]);
                 setDateAdded(data);
             }
@@ -246,7 +246,6 @@ public class Show {
                     str[aux] = null;
                 }
                 aux++;
-                //System.out.println(str[aux-1]);
             }else{
                 if(letra != '"'){
                     str[aux] += letra;
@@ -276,6 +275,7 @@ public class Show {
     	            listaShow.get(i).imprimir();
     	        }
     	    }
+    	    id = input.nextLine();
     	}
     	input.close();
     }
