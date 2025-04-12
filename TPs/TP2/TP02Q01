@@ -141,7 +141,7 @@ public class Show {
     }
 
     public void imprimir(){
-	    SimpleDateFormat data = new SimpleDateFormat("MMMM dd, yyyy");
+	    SimpleDateFormat data = new SimpleDateFormat("MMMM d, yyyy");
 	    System.out.print("=> " + getShowId());
         System.out.print(" ## " + getTitle());
         System.out.print(" ## " + getType());
@@ -157,7 +157,7 @@ public class Show {
 
     public static ArrayList<Show> ler(){
         ArrayList<Show> listaShow = new ArrayList<>();
-    	try(BufferedReader r = new BufferedReader(new FileReader("disneyplus.csv"))){
+    	try(BufferedReader r = new BufferedReader(new FileReader("/tmp/disneyplus.csv"))){
     		String linha = "";
     		r.readLine();
     		while((linha = r.readLine()) != null){
