@@ -141,8 +141,8 @@ public class Show {
     }
 
     public void imprimir(){
-	    SimpleDateFormat data = new SimpleDateFormat("MMMM d, yyyy");
-	    System.out.print("=> " + getShowId());
+	SimpleDateFormat data = new SimpleDateFormat("MMMM d, yyyy");
+	System.out.print("=> " + getShowId());
         System.out.print(" ## " + getTitle());
         System.out.print(" ## " + getType());
         System.out.print(" ## " + getDirector());
