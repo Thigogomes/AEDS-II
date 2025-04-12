@@ -142,17 +142,17 @@ public class Show {
 
     public void imprimir(){
 	    SimpleDateFormat data = new SimpleDateFormat("MMMM dd, yyyy");
-    	System.out.print("=> " + getShowId());
-	    System.out.print(" ## " + getType());
-	    System.out.print(" ## " + getTitle());
-    	System.out.print(" ## " + getDirector());
-    	System.out.print(" ## " + Arrays.toString(getCast()));
-    	System.out.print(" ## " + getCountry());
-    	System.out.print(" ## " + (getDateAdded() != null ? data.format(getDateAdded()) : "NaN"));
+	    System.out.print("=> " + getShowId());
+        System.out.print(" ## " + getTitle());
+        System.out.print(" ## " + getType());
+        System.out.print(" ## " + getDirector());
+        System.out.print(" ## " + Arrays.toString(getCast()));
+        System.out.print(" ## " + getCountry());
+        System.out.print(" ## " + (getDateAdded() != null ? data.format(getDateAdded()) : "NaN"));
         System.out.print(" ## " + (getReleaseYear() != -1 ? getReleaseYear() : "NaN"));
-	    System.out.print(" ## " + getRating());
-    	System.out.print(" ## " + getDuration());
-	    System.out.println(" ## " + Arrays.toString(getListedIn()) + "##");
+        System.out.print(" ## " + getRating());
+        System.out.print(" ## " + getDuration());
+        System.out.println(" ## " + Arrays.toString(getListedIn()) + " ##");
     }
 
     public static ArrayList<Show> ler(){
@@ -186,7 +186,7 @@ public class Show {
         }else{
             setCast(new String[]{"NaN"});
         }
-        setDirector((str[5] != null) ? str[5] : "NaN");
+        setCountry((str[5] != null) ? str[5] : "NaN");
         try {
             if(str[6] != null && !str[6].isEmpty()){
                 Date data = formato.parse(str[6]);
@@ -273,6 +273,22 @@ public class Show {
             i++;
         }
         return str;
+    }
+    
+    public Show clone() {
+        Show copia = new Show();
+        copia.setShowId(this.showId);
+        copia.setType(this.type);
+        copia.setTitle(this.title);
+        copia.setDirector(this.director);
+        copia.setCast(Arrays.copyOf(this.cast, this.cast.length));
+        copia.setCountry(this.country);
+        copia.setDateAdded(this.dateAdded != null ? new Date(this.dateAdded.getTime()) : null);
+        copia.setReleaseYear(this.releaseYear);
+        copia.setRating(this.rating);
+        copia.setDuration(this.duration);
+        copia.setLintedIn(Arrays.copyOf(this.listedIn, this.listedIn.length));
+        return copia;
     }
     
     public static void main(String[] args){
