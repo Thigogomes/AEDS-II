@@ -1,25 +1,68 @@
-#include<stdio.h>
+##include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
 
-typedef struct date{
+#define MAX 200
+#define MAX_LIST 10
+
+typedef struct Date{
 	int day;
-	int month;
+	char month[MAX];
 	int year;
-}date;
+}Date;
 
 typedef struct Show{
-	char SHOW_ID[];
-	char TYPE[];
-	char TITLE[];
-	char DIRECTOR[];
-	//char 
-	char COUNTRY;
-	date RELEASE_YEAR;
-	int RATING;
-	char DURATION[];
-	char LISTED_IN[];	
+	char showId[MAX];
+	char type[MAX];
+	char title[MAX];
+	char director[MAX];
+    char cast[MAX_LIST][MAX];
+	char country[MAX];
+	Date releaseYear;
+    int rating;
+	char duration[MAX];
+	char listedIn[MAX_LIST][MAX];	
 }Show;
 
-int main(){
+Show newShow(){
+    Show show;
+    strcpy(show.showId, "NaN");
+    strcpy(show.type, "NaN");
+    strcpy(show.title, "NaN");
+    strcpy(show.director, "NaN");
+    strcpy(show.cast[0], "NaN");
+    for (int i = 1; i < MAX_LIST; i++) {
+        show.cast[i][0] = '\0';
+    }
+    strcpy(show.country, "NaN");
+    show.rating = -1;
+    strcpy(show.duration, "NaN");
+    strcpy(show.cast[0], "NaN");
+    for(int i = 1; i < MAX_LIST; i++){
+        show.cast[i][0] = '\0';
+    }
+    return show;
+}
 
+Show *ler(){
+    Show *show = (Show*)malloc(sizeof(show));
+    FILE *arq = fopen("disneyplus.csv", "r");
+    char linha[1000];
+    if(arq){
+        while(fgets(linha, sizeof(linha) , arq)){
+            sscanf(linha, "%s %s %s %s", show->showId, show->title, show->type, show->director);
+            // Preenchendo apenas os 4 primeiros campos como exemplo
+            
+            printf("Show lido: %s, %s, %s, %s\n", show->showId, show->title, show->type, show->director);
+        }
+    }else{
+        printf("Erro ao abrir o arquivo!");
+    }
+    fclose(arq);
+    return show;
+}
+
+int main(){
+    Show *show = ler();
 	return 0;
 }
