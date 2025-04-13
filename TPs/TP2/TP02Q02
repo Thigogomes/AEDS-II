@@ -5,12 +5,6 @@
 #define MAX 200
 #define MAX_LIST 11
 
-typedef struct Date{
-	int day;
-	char month[MAX];
-	int year;
-}Date;
-
 typedef struct Show{
 	char showId[MAX];
 	char type[MAX];
@@ -18,8 +12,9 @@ typedef struct Show{
 	char director[MAX];
     char cast[MAX_LIST][MAX];
 	char country[MAX];
-	Date releaseYear;
-    int rating;
+	char dateAdded[MAX];
+	int releaseYear;
+    char rating[MAX];
 	char duration[MAX];
 	char listedIn[MAX_LIST][MAX];	
 }Show;
@@ -41,11 +36,13 @@ Show newShow(){
         show.cast[i][0] = '\0';
     }
     strcpy(show.country, "NaN");
-    show.rating = -1;
+    strcpy(show.dateAdded, "NaN");
+    show.releaseYear = -1;
+    strcpy(show.rating, "NaN");
     strcpy(show.duration, "NaN");
-    strcpy(show.cast[0], "NaN");
+    strcpy(show.listedIn[0], "NaN");
     for(int i = 1; i < MAX_LIST; i++){
-        show.cast[i][0] = '\0';
+        show.listedIn[i][0] = '\0';
     }
     return show;
 }
@@ -68,11 +65,30 @@ Show *ler(){
 }
 
 void atribuir(char *linha){
+    Show show = newShow();
     char **str = separarLinha(linha);
+    
     /*for (int i = 0; i < 11; i++) {
         printf("%s\n", str[i]);
     }*/
     
+    strcpy(show.showId, str[0]);
+    strcpy(show.type, str[1]);
+    strcpy(show.title, str[2]);
+    strcpy(show.director, str[3]);
+    /*for(int i = 0; i < strlen();i++){
+        strcpy();
+    }*/
+    
+    strcpy(show.country, str[5]);
+    strcpy(show.dateAdded, str[6]);
+    show.releaseYear = (int)str[7];
+    strcpy(show.rating, str[8]);
+    strcpy(show.duration, str[9]);
+    /*for(int i = 0; i < strlen(str[10]); i++){
+        printf("%s\n", str[10]);
+    }*/
+    strcpy(show.listedIn, str[10]);
     for (int i = 0; i < 11; i++) {
         free(str[i]);
     }
