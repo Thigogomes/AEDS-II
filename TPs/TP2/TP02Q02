@@ -23,6 +23,8 @@ Show newShow();
 Show *ler();
 void atribuir(char *linha);
 char **separarLinha(char *linha);
+char **separarLista(char *lista);
+void ordenarLista(char **lista);
 
 
 Show newShow(){
@@ -55,7 +57,6 @@ Show *ler(){
         fgets(linha, sizeof(linha) , arq);
         while(fgets(linha, sizeof(linha) , arq)){
             atribuir(linha);
-            //separarLinha(linha);
         }
     }else{
         printf("Erro ao abrir o arquivo!");
@@ -82,17 +83,63 @@ void atribuir(char *linha){
     
     strcpy(show.country, str[5]);
     strcpy(show.dateAdded, str[6]);
-    show.releaseYear = (int)str[7];
+    //show.releaseYear = (int)str[7];
     strcpy(show.rating, str[8]);
     strcpy(show.duration, str[9]);
     /*for(int i = 0; i < strlen(str[10]); i++){
         printf("%s\n", str[10]);
     }*/
-    strcpy(show.listedIn, str[10]);
-    for (int i = 0; i < 11; i++) {
+    //strcpy(show.listedIn, str[10]);
+    /*for (int i = 0; i < 11; i++) {
         free(str[i]);
-    }
+    }*/
     free(str);
+}
+
+char **separarLista(char *lista){
+    char **str = (char**)malloc(MAX_LIST * sizeof(char*));
+    for (int k = 0; k < MAX_LIST; k++) {
+        str[k] = (char*)malloc((MAX + 1) * sizeof(char));
+        str[k][0] = '\0';
+    }
+    
+    int i = 0, j = 0, pos = 0;
+    while(lista[i] != '\0'){
+        if(lista[i] != ','){
+            str[pos][j] = lista[i];
+            j++;
+        }else{
+            str[pos][j] = '\0';
+            pos++;
+            j = 0;
+            if(lista[i+1] == ' '){ // para pular o espaço
+                i++;
+            }
+        }
+        i++;
+    }
+    str[pos][j] = '\0';
+    ordenarLista(str);
+    return str;
+}
+
+
+void ordenarLista(char **lista){
+    char temp[MAX];
+    int tam = 0;
+    while(lista[tam][0] != '\0'){
+        tam++;
+    }
+    tam--;
+    for(int i = tam; i > 0; i--){
+        for(int j = 0; j < i; j++){
+            if(strcmp(lista[j], lista[j+1]) > 0){
+                strcpy(temp, lista[j]);
+                strcpy(lista[j], lista[j+1]);
+                strcpy(lista[j+1], temp);
+            }
+        }
+    }
 }
 
 char **separarLinha(char *linha){
