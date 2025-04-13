@@ -1,9 +1,9 @@
-##include<stdio.h>
+#include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
 
 #define MAX 200
-#define MAX_LIST 10
+#define MAX_LIST 11
 
 typedef struct Date{
 	int day;
@@ -23,6 +23,12 @@ typedef struct Show{
 	char duration[MAX];
 	char listedIn[MAX_LIST][MAX];	
 }Show;
+
+Show newShow();
+Show *ler();
+void atribuir(char *linha);
+char **separarLinha(char *linha);
+
 
 Show newShow(){
     Show show;
@@ -46,20 +52,76 @@ Show newShow(){
 
 Show *ler(){
     Show *show = (Show*)malloc(sizeof(show));
-    FILE *arq = fopen("disneyplus.csv", "r");
-    char linha[1000];
+    FILE *arq = fopen("disneyplus.txt", "r");
+    char linha[1500];
     if(arq){
+        fgets(linha, sizeof(linha) , arq);
         while(fgets(linha, sizeof(linha) , arq)){
-            sscanf(linha, "%s %s %s %s", show->showId, show->title, show->type, show->director);
-            // Preenchendo apenas os 4 primeiros campos como exemplo
-            
-            printf("Show lido: %s, %s, %s, %s\n", show->showId, show->title, show->type, show->director);
+            atribuir(linha);
+            //separarLinha(linha);
         }
     }else{
         printf("Erro ao abrir o arquivo!");
     }
     fclose(arq);
     return show;
+}
+
+void atribuir(char *linha){
+    char **str = separarLinha(linha);
+    /*for (int i = 0; i < 11; i++) {
+        printf("%s\n", str[i]);
+    }*/
+    
+    for (int i = 0; i < 11; i++) {
+        free(str[i]);
+    }
+    free(str);
+}
+
+char **separarLinha(char *linha){
+    char **str = (char**)malloc(MAX_LIST * sizeof(char*));
+    for (int k = 0; k < MAX_LIST; k++) {
+        str[k] = (char*)malloc((MAX + 1) * sizeof(char));
+        str[k][0] = '\0';
+    }
+    
+    int aux = 0, i = 0, j = 0;
+    while(i < strlen(linha) && aux < 11){
+        char letra = linha[i];
+        char letra2;
+        if(i+1 < strlen(linha)){
+            letra2 = linha[i+1];
+        }
+        if(letra == ',' && letra2 != ' '){
+            str[aux][j] = '\0';
+            aux++;
+            j = 0;
+        }else{
+            if(letra != '"'){
+                str[aux][j] = letra;
+                j++;
+            }else{
+                i++;
+                letra = linha[i];
+                while(i < strlen(linha) && linha[i] != '"'){
+                    str[aux][j] = letra;
+                    j++;
+                    i++;
+                    letra = linha[i];
+                }
+            }
+        }
+        i++;
+    }
+    if (j > 0 && aux < MAX_LIST) {
+        str[aux][j] = '\0';
+    }
+    
+    /*for(int g = 0; g < 11; g++){
+        printf("%s\n", str[g]);
+    }*/
+    return str;
 }
 
 int main(){
