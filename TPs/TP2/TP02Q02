@@ -21,7 +21,7 @@ typedef struct Show{
 
 Show newShow();
 Show *ler();
-void atribuir(char *linha);
+void atribuir(Show *show, char *linha);
 char **separarLinha(char *linha);
 char **separarLista(char *lista);
 void ordenarLista(char **lista);
@@ -50,13 +50,13 @@ Show newShow(){
 }
 
 Show *ler(){
-    Show *show = (Show*)malloc(sizeof(show));
+    Show *show = (Show*)malloc(2000 *sizeof(Show));
     FILE *arq = fopen("disneyplus.txt", "r");
     char linha[1500];
     if(arq){
         fgets(linha, sizeof(linha) , arq);
         while(fgets(linha, sizeof(linha) , arq)){
-            atribuir(linha);
+            atribuir(show, linha);
         }
     }else{
         printf("Erro ao abrir o arquivo!");
@@ -65,27 +65,22 @@ Show *ler(){
     return show;
 }
 
-void atribuir(char *linha){
-    Show show = newShow();
+void atribuir(Show *show, char *linha){
     char **str = separarLinha(linha);
-    
-    /*for (int i = 0; i < 11; i++) {
-        printf("%s\n", str[i]);
-    }*/
-    
-    strcpy(show.showId, str[0]);
-    strcpy(show.type, str[1]);
-    strcpy(show.title, str[2]);
-    strcpy(show.director, str[3]);
+    strcpy(show->showId, str[0]);
+    strcpy(show->type, str[1]);
+    strcpy(show->title, str[2]);
+    strcpy(show->director, str[3]);
     /*for(int i = 0; i < strlen();i++){
         strcpy();
     }*/
     
-    strcpy(show.country, str[5]);
-    strcpy(show.dateAdded, str[6]);
-    //show.releaseYear = (int)str[7];
-    strcpy(show.rating, str[8]);
-    strcpy(show.duration, str[9]);
+    strcpy(show->country, str[5]);
+    strcpy(show->dateAdded, str[6]);
+    show->releaseYear = atoi(str[7]);
+    printf("%s\n", str[7]);
+    strcpy(show->rating, str[8]);
+    strcpy(show->duration, str[9]);
     /*for(int i = 0; i < strlen(str[10]); i++){
         printf("%s\n", str[10]);
     }*/
@@ -123,6 +118,10 @@ char **separarLista(char *lista){
     return str;
 }
 
+
+void imprimir(){
+    
+}
 
 void ordenarLista(char **lista){
     char temp[MAX];
@@ -180,10 +179,6 @@ char **separarLinha(char *linha){
     if (j > 0 && aux < MAX_LIST) {
         str[aux][j] = '\0';
     }
-    
-    /*for(int g = 0; g < 11; g++){
-        printf("%s\n", str[g]);
-    }*/
     return str;
 }
 
