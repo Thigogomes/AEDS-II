@@ -84,6 +84,22 @@ void atribuir(Show *show, char *linha){
     }else{
         strcpy(show->director, "NaN");
     }
+    if(strlen(str[4]) > 0){
+        char **lista = separarLista(str[4]);
+        for (int i = 0; i < MAX_LIST && lista[i][0] != '\0'; i++) {
+            strcpy(show->cast[i], lista[i]);
+        }
+        
+        for(int i = 0; i < MAX_LIST; i++){
+            free(lista[i]);
+        }
+        free(lista);
+    }else{
+        strcpy(show->cast[0], "NaN");
+        for (int i = 1; i < MAX_LIST; i++) {
+            show->cast[i][0] = '\0';
+        }
+    }
     if(strlen(str[5]) > 0){
         strcpy(show->country, str[5]);
     }else{
@@ -105,8 +121,23 @@ void atribuir(Show *show, char *linha){
     }else{
         strcpy(show->duration, "NaN");
     }
-    
-    for (int i = 0; i < 11; i++) {
+    if(strlen(str[10]) > 0){
+        char **lista = separarLista(str[10]);
+        for (int i = 0; i < MAX_LIST && lista[i][0] != '\0'; i++) {
+            strcpy(show->listedIn[i], lista[i]);
+        }
+        
+        for(int i = 0; i < MAX_LIST; i++){
+            free(lista[i]);
+        }
+        free(lista);
+    }else{
+        strcpy(show->listedIn[0], "NaN");
+        for (int i = 1; i < MAX_LIST; i++) {
+            show->listedIn[i][0] = '\0';
+        }
+    }
+    for (int i = 0; i < MAX_LIST; i++) {
         free(str[i]);
     }
     free(str);
@@ -139,13 +170,20 @@ char **separarLista(char *lista){
     return str;
 }
 
-
 void imprimir(Show *show){
+    int i = 0;
     printf("=> %s ## ", show->showId);
     printf("%s ## ", show->title);
     printf("%s ## ", show->type);
     printf("%s ## ", show->director);
     printf("[");
+    while(show->cast[i][0] != '\0'){
+        printf("%s", show->cast[i]);
+        if(show->cast[i+1][0] != '\0'){
+            printf(", ");
+        }
+        i++;
+    }
     printf("] ## ");
     printf("%s ## ", show->country);
     printf("%s ## ", show->dateAdded);
@@ -153,6 +191,14 @@ void imprimir(Show *show){
     printf("%s ## ", show->rating);
     printf("%s ## ", show->duration);
     printf("[");
+    i = 0;
+    while(show->listedIn[i][0] != '\0'){
+        printf("%s", show->listedIn[i]);
+        if(show->listedIn[i+1][0] != '\0'){
+            printf(", ");
+        }
+        i++;
+    }
     printf("] ##");
     printf("\n");
 }
@@ -219,4 +265,4 @@ char **separarLinha(char *linha){
 int main(){
     Show *show = ler();
 	return 0;
-}
+}    
