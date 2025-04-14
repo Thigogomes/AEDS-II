@@ -21,11 +21,12 @@ typedef struct Show{
 
 Show newShow();
 Show *ler();
-void atribuir(Show *show, char *linha);
+void atribuir(Show *show, char *linha, int index);
 char **separarLinha(char *linha);
 char **separarLista(char *lista);
 void ordenarLista(char **lista);
-void imprimir(Show *show);
+void imprimir(Show show);
+int quantidade();
 
 Show newShow(){
     Show show;
@@ -49,15 +50,33 @@ Show newShow(){
     return show;
 }
 
-Show *ler(){
+int quantidade(){
+    int cont = 0;
     Show *show = (Show*)malloc(2000 *sizeof(Show));
-    FILE *arq = fopen("disneyplus.txt", "r");
+    FILE *arq = fopen("/tmp/disneyplus.csv", "r");
     char linha[1500];
     if(arq){
         fgets(linha, sizeof(linha) , arq);
         while(fgets(linha, sizeof(linha) , arq)){
-            atribuir(show, linha);
-            imprimir(show);
+            cont++;
+        }
+    }else{
+        printf("Erro ao abrir o arquivo!");
+    }
+    fclose(arq);
+    return cont;
+}
+
+Show *ler(){
+    int i = 0;
+    Show *show = (Show*)malloc(2000 *sizeof(Show));
+    FILE *arq = fopen("disneyplus.csv", "r");
+    char linha[1500];
+    if(arq){
+        fgets(linha, sizeof(linha) , arq);
+        while(fgets(linha, sizeof(linha) , arq)){
+            atribuir(show, linha, i);
+            i++;
         }
     }else{
         printf("Erro ao abrir o arquivo!");
@@ -66,28 +85,29 @@ Show *ler(){
     return show;
 }
 
-void atribuir(Show *show, char *linha){
+void atribuir(Show *show, char *linha, int index){
+    show[index] = newShow();
     char **str = separarLinha(linha);
-    strcpy(show->showId, str[0]);
+    strcpy(show[index].showId, str[0]);
     if(strlen(str[1]) > 0){
-        strcpy(show->type, str[1]);
+        strcpy(show[index].type, str[1]);
     }else{
-        strcpy(show->type, "NaN");
+        strcpy(show[index].type, "NaN");
     }
     if(strlen(str[2]) > 0){
-        strcpy(show->title, str[2]);
+        strcpy(show[index].title, str[2]);
     }else{
-        strcpy(show->title, "NaN");
+        strcpy(show[index].title, "NaN");
     }
     if(strlen(str[3]) > 0){
-        strcpy(show->director, str[3]);
+        strcpy(show[index].director, str[3]);
     }else{
-        strcpy(show->director, "NaN");
+        strcpy(show[index].director, "NaN");
     }
     if(strlen(str[4]) > 0){
         char **lista = separarLista(str[4]);
         for (int i = 0; i < MAX_LIST && lista[i][0] != '\0'; i++) {
-            strcpy(show->cast[i], lista[i]);
+            strcpy(show[index].cast[i], lista[i]);
         }
         
         for(int i = 0; i < MAX_LIST; i++){
@@ -95,36 +115,36 @@ void atribuir(Show *show, char *linha){
         }
         free(lista);
     }else{
-        strcpy(show->cast[0], "NaN");
+        strcpy(show[index].cast[0], "NaN");
         for (int i = 1; i < MAX_LIST; i++) {
-            show->cast[i][0] = '\0';
+            show[index].cast[i][0] = '\0';
         }
     }
     if(strlen(str[5]) > 0){
-        strcpy(show->country, str[5]);
+        strcpy(show[index].country, str[5]);
     }else{
-        strcpy(show->country, "NaN");
+        strcpy(show[index].country, "NaN");
     }
     if(strlen(str[6]) > 0){
-        strcpy(show->dateAdded, str[6]);
+        strcpy(show[index].dateAdded, str[6]);
     }else{
-        strcpy(show->dateAdded, "NaN");
+        strcpy(show[index].dateAdded, "NaN");
     }
     show->releaseYear = atoi(str[7]);
     if(strlen(str[8]) > 0){
-        strcpy(show->rating, str[8]);
+        strcpy(show[index].rating, str[8]);
     }else{
-        strcpy(show->rating, "NaN");
+        strcpy(show[index].rating, "NaN");
     }
     if(strlen(str[9]) > 0){
-        strcpy(show->duration, str[9]);
+        strcpy(show[index].duration, str[9]);
     }else{
-        strcpy(show->duration, "NaN");
+        strcpy(show[index].duration, "NaN");
     }
     if(strlen(str[10]) > 0){
         char **lista = separarLista(str[10]);
         for (int i = 0; i < MAX_LIST && lista[i][0] != '\0'; i++) {
-            strcpy(show->listedIn[i], lista[i]);
+            strcpy(show[index].listedIn[i], lista[i]);
         }
         
         for(int i = 0; i < MAX_LIST; i++){
@@ -132,9 +152,9 @@ void atribuir(Show *show, char *linha){
         }
         free(lista);
     }else{
-        strcpy(show->listedIn[0], "NaN");
+        strcpy(show[index].listedIn[0], "NaN");
         for (int i = 1; i < MAX_LIST; i++) {
-            show->listedIn[i][0] = '\0';
+            show[index].listedIn[i][0] = '\0';
         }
     }
     for (int i = 0; i < MAX_LIST; i++) {
@@ -170,31 +190,31 @@ char **separarLista(char *lista){
     return str;
 }
 
-void imprimir(Show *show){
+void imprimir(Show show){
     int i = 0;
-    printf("=> %s ## ", show->showId);
-    printf("%s ## ", show->title);
-    printf("%s ## ", show->type);
-    printf("%s ## ", show->director);
+    printf("=> %s ## ", show.showId);
+    printf("%s ## ", show.title);
+    printf("%s ## ", show.type);
+    printf("%s ## ", show.director);
     printf("[");
-    while(show->cast[i][0] != '\0'){
-        printf("%s", show->cast[i]);
-        if(show->cast[i+1][0] != '\0'){
+    while(show.cast[i][0] != '\0'){
+        printf("%s", show.cast[i]);
+        if(show.cast[i+1][0] != '\0'){
             printf(", ");
         }
         i++;
     }
     printf("] ## ");
-    printf("%s ## ", show->country);
-    printf("%s ## ", show->dateAdded);
-    printf("%d ## ", show->releaseYear);
-    printf("%s ## ", show->rating);
-    printf("%s ## ", show->duration);
+    printf("%s ## ", show.country);
+    printf("%s ## ", show.dateAdded);
+    printf("%d ## ", show.releaseYear);
+    printf("%s ## ", show.rating);
+    printf("%s ## ", show.duration);
     printf("[");
     i = 0;
-    while(show->listedIn[i][0] != '\0'){
-        printf("%s", show->listedIn[i]);
-        if(show->listedIn[i+1][0] != '\0'){
+    while(show.listedIn[i][0] != '\0'){
+        printf("%s", show.listedIn[i]);
+        if(show.listedIn[i+1][0] != '\0'){
             printf(", ");
         }
         i++;
@@ -264,5 +284,18 @@ char **separarLinha(char *linha){
 
 int main(){
     Show *show = ler();
+    int quant = quantidade();
+    char id[MAX_LIST];
+    scanf("%[^\n]", id);
+    getchar();
+    while(strcmp(id, "FIM") != 0){
+        for(int i = 0; i < quant; i++){
+            if(strcmp(id, show[i].showId) == 0){
+                imprimir(show[i]);
+            }
+        } 
+        scanf("%[^\n]", id);
+        getchar(); 
+    }
 	return 0;
-}    
+}
