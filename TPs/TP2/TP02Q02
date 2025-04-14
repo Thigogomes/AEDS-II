@@ -25,7 +25,7 @@ void atribuir(Show *show, char *linha);
 char **separarLinha(char *linha);
 char **separarLista(char *lista);
 void ordenarLista(char **lista);
-
+void imprimir(Show *show);
 
 Show newShow(){
     Show show;
@@ -57,6 +57,7 @@ Show *ler(){
         fgets(linha, sizeof(linha) , arq);
         while(fgets(linha, sizeof(linha) , arq)){
             atribuir(show, linha);
+            imprimir(show);
         }
     }else{
         printf("Erro ao abrir o arquivo!");
@@ -68,26 +69,46 @@ Show *ler(){
 void atribuir(Show *show, char *linha){
     char **str = separarLinha(linha);
     strcpy(show->showId, str[0]);
-    strcpy(show->type, str[1]);
-    strcpy(show->title, str[2]);
-    strcpy(show->director, str[3]);
-    /*for(int i = 0; i < strlen();i++){
-        strcpy();
-    }*/
-    
-    strcpy(show->country, str[5]);
-    strcpy(show->dateAdded, str[6]);
+    if(strlen(str[1]) > 0){
+        strcpy(show->type, str[1]);
+    }else{
+        strcpy(show->type, "NaN");
+    }
+    if(strlen(str[2]) > 0){
+        strcpy(show->title, str[2]);
+    }else{
+        strcpy(show->title, "NaN");
+    }
+    if(strlen(str[3]) > 0){
+        strcpy(show->director, str[3]);
+    }else{
+        strcpy(show->director, "NaN");
+    }
+    if(strlen(str[5]) > 0){
+        strcpy(show->country, str[5]);
+    }else{
+        strcpy(show->country, "NaN");
+    }
+    if(strlen(str[6]) > 0){
+        strcpy(show->dateAdded, str[6]);
+    }else{
+        strcpy(show->dateAdded, "NaN");
+    }
     show->releaseYear = atoi(str[7]);
-    printf("%s\n", str[7]);
-    strcpy(show->rating, str[8]);
-    strcpy(show->duration, str[9]);
-    /*for(int i = 0; i < strlen(str[10]); i++){
-        printf("%s\n", str[10]);
-    }*/
-    //strcpy(show.listedIn, str[10]);
-    /*for (int i = 0; i < 11; i++) {
+    if(strlen(str[8]) > 0){
+        strcpy(show->rating, str[8]);
+    }else{
+        strcpy(show->rating, "NaN");
+    }
+    if(strlen(str[9]) > 0){
+        strcpy(show->duration, str[9]);
+    }else{
+        strcpy(show->duration, "NaN");
+    }
+    
+    for (int i = 0; i < 11; i++) {
         free(str[i]);
-    }*/
+    }
     free(str);
 }
 
@@ -119,8 +140,21 @@ char **separarLista(char *lista){
 }
 
 
-void imprimir(){
-    
+void imprimir(Show *show){
+    printf("=> %s ## ", show->showId);
+    printf("%s ## ", show->title);
+    printf("%s ## ", show->type);
+    printf("%s ## ", show->director);
+    printf("[");
+    printf("] ## ");
+    printf("%s ## ", show->country);
+    printf("%s ## ", show->dateAdded);
+    printf("%d ## ", show->releaseYear);
+    printf("%s ## ", show->rating);
+    printf("%s ## ", show->duration);
+    printf("[");
+    printf("] ##");
+    printf("\n");
 }
 
 void ordenarLista(char **lista){
