@@ -52,11 +52,10 @@ Show newShow(){
 
 int quantidade(){
     int cont = 0;
-    Show *show = (Show*)malloc(2000 *sizeof(Show));
     FILE *arq = fopen("/tmp/disneyplus.csv", "r");
     char linha[1500];
     if(arq){
-        fgets(linha, sizeof(linha) , arq);
+        fgets(linha, sizeof(linha), arq);
         while(fgets(linha, sizeof(linha) , arq)){
             cont++;
         }
@@ -70,7 +69,7 @@ int quantidade(){
 Show *ler(){
     int i = 0;
     Show *show = (Show*)malloc(2000 *sizeof(Show));
-    FILE *arq = fopen("disneyplus.csv", "r");
+    FILE *arq = fopen("/tmp/disneyplus.csv", "r");
     char linha[1500];
     if(arq){
         fgets(linha, sizeof(linha) , arq);
@@ -128,9 +127,9 @@ void atribuir(Show *show, char *linha, int index){
     if(strlen(str[6]) > 0){
         strcpy(show[index].dateAdded, str[6]);
     }else{
-        strcpy(show[index].dateAdded, "NaN");
+        strcpy(show[index].dateAdded, "March 1, 1900");
     }
-    show->releaseYear = atoi(str[7]);
+    show[index].releaseYear = atoi(str[7]);
     if(strlen(str[8]) > 0){
         strcpy(show[index].rating, str[8]);
     }else{
@@ -297,5 +296,6 @@ int main(){
         scanf("%[^\n]", id);
         getchar(); 
     }
+    free(show);
 	return 0;
-}
+}    
