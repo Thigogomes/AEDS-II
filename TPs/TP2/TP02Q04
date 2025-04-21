@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
+#include<time.h>
 
 #define MAX 200
 #define MAX_LIST 11
@@ -285,8 +286,6 @@ char **separarLinha(char *linha) {
     return str;
 }
 
-//
-
 void ordenaVetorDeShow(Show vetor[], int tam){
     Show temp;
     for (int i = tam-1; i > 0; i--) {
@@ -317,7 +316,17 @@ int PesquisaBinaria(Show vet[], int tam, char titulo[]){
     return resp;
 }
 
+void arquivoLog(char matricula[], double duracao, int comparacoes){
+    FILE *arq = fopen("1543790_binaria.txt", "w");
+    if(arq){
+        fprintf(arq, "%s\t%.3f\t%d", matricula, duracao, comparacoes);
+    }
+    fclose(arq);
+    
+}
+
 int main() {
+    clock_t inicioTempo = clock();
     int contIds = 0;
     Show *show = ler();
     int quant = quantidade();
@@ -326,6 +335,7 @@ int main() {
     Show listaIds[MAX*MAX_LIST];
     scanf("%[^\n]", id);
     getchar();
+    printf("ID digitado: %s\n", id);
     while (strcmp(id, "FIM") != 0) {
         for (int i = 0; i < quant; i++) {
             if (strcmp(id, show[i].showId) == 0) {
@@ -344,4 +354,9 @@ int main() {
         scanf("%[^\n]", titulo);
         getchar();
     }
+    free(show);
+    clock_t fimTempo = clock();
+    double duracao = ((double)(fimTempo-inicioTempo))/CLOCKS_PER_SEC;
+    
+    return 0;
 }
