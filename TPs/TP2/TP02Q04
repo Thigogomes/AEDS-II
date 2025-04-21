@@ -5,8 +5,7 @@
 
 #define MAX 200
 #define MAX_LIST 11
-//#define PATH "/tmp/disneyplus.csv"
-#define PATH "disneyplus.txt"
+#define PATH "/tmp/disneyplus.csv"
 
 typedef struct Show {
 	char showId[MAX];
