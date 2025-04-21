@@ -302,7 +302,7 @@ public class Show {
     }
  
     public static void main(String[] args) {
-        long startTime = System.nanoTime();
+        long inicioTempo = System.nanoTime();
         int[] comparacoes = new int[1];
         Scanner input = new Scanner(System.in);
         ArrayList<Show> listaShow = ler();
@@ -324,13 +324,14 @@ public class Show {
             titulo = input.nextLine();
         }
         
-        long endTime = System.nanoTime();
-        double tempoMs = (endTime - startTime) / 1_000_000.0;
+        long fimTempo = System.nanoTime();
+        double duracao = (fimTempo - inicioTempo) / 1_000_000.0; // em milisegundo
+        
         //Escrever no arquivo de log
         String matricula = "1543790";
         try {
             PrintWriter w = new PrintWriter(matricula + "_sequencial.txt");
-            w.printf("%s\t%.3f\t%d%n", matricula, tempoMs, comparacoes[0]);
+            w.printf("%s\t%.3f\t%d%n", matricula, duracao, comparacoes[0]);
             w.close();
         } catch (IOException e) {
             System.err.println("Erro para escrever no arquivo de log: " + e.getMessage());
