@@ -99,7 +99,7 @@ public class Show {
         return listedIn;
     }
 
-    public void setLintedIn(String[] listedIn) {
+    public void setListedIn(String[] listedIn) {
         this.listedIn = listedIn;
     }
 
