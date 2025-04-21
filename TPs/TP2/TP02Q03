@@ -157,7 +157,7 @@ public class Show {
 
     public static ArrayList<Show> ler() {
         ArrayList<Show> listaShow = new ArrayList<>();
-        try (BufferedReader r = new BufferedReader(new FileReader("disneyplus.txt"))) {
+        try (BufferedReader r = new BufferedReader(new FileReader("/tmp/disneyplus.csv"))) {
             String linha = "";
             r.readLine();
             while ((linha = r.readLine()) != null) {
@@ -325,7 +325,7 @@ public class Show {
         }
         
         long fimTempo = System.nanoTime();
-        double duracao = (fimTempo - inicioTempo) / 1_000_000.0; // em milisegundo
+        double duracao = (fimTempo - inicioTempo) / 1_000_000.0; // em milisegundos
         
         //Escrever no arquivo de log
         String matricula = "1543790";
