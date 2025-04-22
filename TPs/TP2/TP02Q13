@@ -157,7 +157,7 @@ public class Show {
 
     public static ArrayList<Show> ler() {
         ArrayList<Show> listaShow = new ArrayList<>();
-        try (BufferedReader r = new BufferedReader(new FileReader("disneyplus.txt"))) {
+        try (BufferedReader r = new BufferedReader(new FileReader("/tmp/disneyplus.csv"))) {
             String linha = "";
             r.readLine();
             while ((linha = r.readLine()) != null) {
@@ -316,7 +316,7 @@ public class Show {
         
         int i = esq, iDir = 0, iEsq = 0;
         
-        while(i < nEsq && i < nDir){
+        while(iEsq < nEsq && iDir < nDir){
             comparacoes[0]++;
             int comp = arrayEsq[iEsq].getDuration().compareToIgnoreCase(arrayDir[iDir].getDuration());
             if((comp < 0) || (comp == 0 && arrayEsq[iEsq].getTitle().compareToIgnoreCase(arrayDir[iDir].getTitle()) <= 0)){
@@ -368,7 +368,7 @@ public class Show {
             }
             id = input.nextLine();
         }
-        mergeSort(lista,comparacoes, movimentacoes, 0, j);
+        mergeSort(lista,comparacoes, movimentacoes, 0, j-1);
         for(int i = 0; i < j; i++){
             lista[i].imprimir();
         }
