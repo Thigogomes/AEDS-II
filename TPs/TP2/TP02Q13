@@ -314,17 +314,32 @@ public class Show {
             arrayDir[i] = array[meio + 1 + i]; 
         }
         
-        int iEsq, iDir, i;
+        int i = esq, iDir = 0, iEsq = 0;
         
-        while(){
-            
+        while(i < nEsq && i < nDir){
+            comparacoes[0]++;
+            int comp = arrayEsq[iEsq].getDuration().compareToIgnoreCase(arrayDir[iDir].getDuration());
+            if((comp < 0) || (comp == 0 && arrayEsq[iEsq].getTitle().compareToIgnoreCase(arrayDir[iDir].getTitle()) <= 0)){
+                array[i++] = arrayEsq[iEsq++];
+            }else{
+                array[i++] = arrayDir[iDir++];
+            }
+            movimentacoes[0]++;
+        }
+        while(iEsq < nEsq){
+            array[i++] = arrayEsq[iEsq++];
+            movimentacoes[0]++;
+        }
+        while(iDir < nDir){
+            array[i++] = arrayDir[iDir++];
+            movimentacoes[0]++;
         }
     }
     
     public static void arquivoLog(double duracao, int[] comparacoes, int[] movimentacoes){
         String matricula = "1543790";
         try {
-            PrintWriter w = new PrintWriter(matricula + "_insercao.txt");
+            PrintWriter w = new PrintWriter(matricula + "_mergesort.txt");
             w.printf("%s\t%d\t%d\t%fms", matricula, comparacoes[0], movimentacoes[0], duracao);
             w.close();
         } catch (IOException e) {
