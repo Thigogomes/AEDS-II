@@ -295,7 +295,7 @@ public class Show {
         for(int i = 0; i < tam; i++){
             int menor = i;
             for(int j = i+1; j < tam; j++){
-                if(lista[menor].getTitle().compareTo(lista[j].getTitle()) > 0){
+                if(lista[menor].getTitle().compareToIgnoreCase(lista[j].getTitle()) > 0){
                     menor = j;
                 }
                 comparacoes[0]++;
