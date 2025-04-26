@@ -10,7 +10,8 @@
 
 typedef struct Date{
     int day;
-    int month;
+    //int month;
+    char month[MAX];
     int year;
 }Date;
 
@@ -140,10 +141,11 @@ void atribuir(Show *show, char *linha, int index) {
 	}
 	if (strlen(str[6]) > 0) {
 		strcpy(show[index].dateAdded, str[6]);
+		show[index].date = dateToInt(str[6]);
 	} else {
 		strcpy(show[index].dateAdded, "March 1, 1900");
+		show[index].date = dateToInt("March 1, 1900");
 	}
-	show[index].date = dateToInt(str[6]);
 	show[index].releaseYear = atoi(str[7]);
 	if (strlen(str[8]) > 0) {
 		strcpy(show[index].rating, str[8]);
@@ -324,39 +326,30 @@ int mesParaNumero(char mes[]){
     }
 }
 
-Date dateToInt(char str[]){
+Date dateToInt(char data[]){
     Date d;
-    char data[100];
-    char mes[100];
-    char dia[3];
-    char ano[5];
-    strcpy(data, str);
+    char mes[15], dia[3], ano[5];
     int j = 0, k = 0;
     while(data[j] != ' '){
-        mes[k] = data[j];
-        j++;
-        k++;
+        mes[k++] = data[j++];
     }
     mes[k] = '\0';
     j++;
     k = 0;
     while(data[j] != ','){
-        dia[k] = data[j];
-        j++;
-        k++;
+        dia[k++] = data[j++];
     }
     dia[k] = '\0';
     j += 2;
     k = 0;
     while(data[j] != '\0'){
-        ano[k] = data[j];
-        j++;
-        k++;
+        ano[k++] = data[j++];
     }
     ano[k] = '\0';
         
     d.day = atoi(dia);
-    d.month = mesParaNumero(mes);
+    //d.month = mesParaNumero(mes);
+    strcpy(d.month, mes);
     d.year = atoi(ano);
     return d;
 }
@@ -365,10 +358,24 @@ void ordenaBolha(Show vetor[], int tam, int comparacoes[], int movimentacoes[]){
     Show temp;
 	for (int i = tam-1; i > 0; i--) {
 		for (int j = 0; j < i; j++) {
-		    int comp = strcmp(vetor[j].dateAdded, vetor[j + 1].dateAdded);
 		    comparacoes[0]++;
-			if ((comp > 0) || (comp == 0 && strcmp(vetor[j].title, vetor[j + 1].title) > 0)) {
+			if (vetor[j].date.year > vetor[j + 1].date.year){
 				temp = vetor[j];
+				vetor[j] = vetor[j + 1];
+				vetor[j + 1] = temp;
+				movimentacoes[0] += 3;
+			}else if(vetor[j].date.year == vetor[j + 1].date.year && vetor[j].date.month > vetor[j + 1].date.month){
+			    temp = vetor[j];
+				vetor[j] = vetor[j + 1];
+				vetor[j + 1] = temp;
+				movimentacoes[0] += 3;
+			}else if(vetor[j].date.month == vetor[j + 1].date.month && vetor[j].date.day > vetor[j + 1].date.day){
+			    temp = vetor[j];
+				vetor[j] = vetor[j + 1];
+				vetor[j + 1] = temp;
+				movimentacoes[0] += 3;
+			}else if((vetor[j].date.day == vetor[j + 1].date.day) && (strcasecmp(vetor[j].title, vetor[j + 1].title) > 0)){
+			    temp = vetor[j];
 				vetor[j] = vetor[j + 1];
 				vetor[j + 1] = temp;
 				movimentacoes[0] += 3;
