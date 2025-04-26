@@ -10,8 +10,7 @@
 
 typedef struct Date{
     int day;
-    //int month;
-    char month[MAX];
+    int month;
     int year;
 }Date;
 
@@ -348,8 +347,7 @@ Date dateToInt(char data[]){
     ano[k] = '\0';
         
     d.day = atoi(dia);
-    //d.month = mesParaNumero(mes);
-    strcpy(d.month, mes);
+    d.month = mesParaNumero(mes);
     d.year = atoi(ano);
     return d;
 }
