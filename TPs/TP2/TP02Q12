@@ -5,7 +5,14 @@
 
 #define MAX 200
 #define MAX_LIST 11
-#define PATH "/tmp/disneyplus.csv"
+//#define PATH "/tmp/disneyplus.csv"
+#define PATH "disneyplus.txt"
+
+typedef struct Date{
+    int day;
+    int month;
+    int year;
+}Date;
 
 typedef struct Show {
 	char showId[MAX];
@@ -15,6 +22,7 @@ typedef struct Show {
 	char cast[MAX_LIST][MAX];
 	char country[MAX];
 	char dateAdded[MAX];
+	Date date;
 	int releaseYear;
 	char rating[MAX];
 	char duration[MAX];
@@ -31,6 +39,7 @@ void imprimir(Show show);
 int quantidade();
 int PesquisaBinaria(Show vet[], int tam, char titulo[], int comparacoes[]);
 void ordenaVetorDeShow(Show vetor[], int tam);
+Date dateToInt(char str[]);
 
 Show newShow() {
 	Show show;
@@ -134,6 +143,7 @@ void atribuir(Show *show, char *linha, int index) {
 	} else {
 		strcpy(show[index].dateAdded, "March 1, 1900");
 	}
+	show[index].date = dateToInt(str[6]);
 	show[index].releaseYear = atoi(str[7]);
 	if (strlen(str[8]) > 0) {
 		strcpy(show[index].rating, str[8]);
@@ -284,6 +294,71 @@ char **separarLinha(char *linha) {
 		str[aux][j] = '\0';
 	}
 	return str;
+}
+
+int mesParaNumero(char mes[]){
+    if(strcmp(mes, "January") == 0){
+        return 1;
+    }else if(strcmp(mes, "February") == 0){
+        return 2;
+    }else if(strcmp(mes, "March")){
+        return 3;
+    }else if(strcmp(mes, "April")){
+        return 4;
+    }else if(strcmp(mes, "May")){
+        return 5;
+    }else if(strcmp(mes, "June")){
+        return 6;
+    }else if(strcmp(mes, "July")){
+        return 7;
+    }else if(strcmp(mes, "August")){
+        return 8;
+    }else if(strcmp(mes, "September")){
+        return 9;
+    }else if(strcmp(mes, "October")){
+        return 10;
+    }else if(strcmp(mes, "November")){
+        return 11;
+    }else{
+        return 12;
+    }
+}
+
+Date dateToInt(char str[]){
+    Date d;
+    char data[100];
+    char mes[100];
+    char dia[3];
+    char ano[5];
+    strcpy(data, str);
+    int j = 0, k = 0;
+    while(data[j] != ' '){
+        mes[k] = data[j];
+        j++;
+        k++;
+    }
+    mes[k] = '\0';
+    j++;
+    k = 0;
+    while(data[j] != ','){
+        dia[k] = data[j];
+        j++;
+        k++;
+    }
+    dia[k] = '\0';
+    j += 2;
+    k = 0;
+    while(data[j] != '\0'){
+        ano[k] = data[j];
+        j++;
+        k++;
+    }
+    ano[k] = '\0';
+        
+    d.day = atoi(dia);
+    d.month = mesParaNumero(mes);
+    d.year = atoi(ano);
+    return d;
 }
 
 void ordenaBolha(Show vetor[], int tam, int comparacoes[], int movimentacoes[]){
