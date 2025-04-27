@@ -318,7 +318,7 @@ public class Show {
         
         while(iEsq < nEsq && iDir < nDir){
             comparacoes[0]++;
-            int comp = arrayEsq[iEsq].getDuration().compareToIgnoreCase(arrayDir[iDir].getDuration());
+            int comp = arrayEsq[iEsq].getDuration().compareTo(arrayDir[iDir].getDuration());
             if((comp < 0) || (comp == 0 && arrayEsq[iEsq].getTitle().compareToIgnoreCase(arrayDir[iDir].getTitle()) <= 0)){
                 array[i++] = arrayEsq[iEsq++];
             }else{
