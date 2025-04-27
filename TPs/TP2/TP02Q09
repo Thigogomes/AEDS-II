@@ -157,7 +157,7 @@ public class Show {
 
     public static ArrayList<Show> ler() {
         ArrayList<Show> listaShow = new ArrayList<>();
-        try (BufferedReader r = new BufferedReader(new FileReader("disneyplus.txt"))) {
+        try (BufferedReader r = new BufferedReader(new FileReader("/tmp/disneyplus.csv"))) {
             String linha = "";
             r.readLine();
             while ((linha = r.readLine()) != null) {
@@ -291,48 +291,46 @@ public class Show {
         return copia;
     }
     
-    public static void swap(Show[] lista, int a, int b){
-        Show temp = lista[b];
-        lista[b] = lista[a];
-        lista[a] = temp;
+    public static void swap(Show[] array, int a, int b){
+        Show temp = array[b];
+        array[b] = array[a];
+        array[a] = temp;
     }
     
-    public static boolean hasFilho(){
+    public static void heapfy(Show[] array, int tam, int i, int[] comparacoes, int[] movimentacoes){
+        int maior = i;
+        int esq = (2*i)+1;
+        int dir = (2*i)+2;
         
-    }
-    
-    public static void getMaiorFilho(){
-        
-    }
-    
-    public static void construir(Show[] array, int tam){
-        for(int i = tam; i > 1 && array[i] > array[i/2]; i/= 2){
-            swap(array, i, i/2);
-        }
-    }
-    
-    public static void reconstruir(Show[] array, int tam){
-        int i = 1;
-        while(hasFilho(i, tam) == true){
-            int filho = getMaiorFilho(i, tam);
-            if(array[i] < array[filho]){
-                swap(array, i, filho);
-                i = filho;
-            }else{
-                i = tam;
+        if (esq < tam) {
+            comparacoes[0]++;
+            int comp = array[esq].getDirector().compareToIgnoreCase(array[maior].getDirector());
+            if (comp > 0 || (comp == 0 && array[esq].getTitle().compareToIgnoreCase(array[maior].getTitle()) > 0)) {
+                maior = esq;
             }
         }
-    }
-    
-    public static  void heapsort(Show[] array, int n, int[] comparacoes, int[] movimentacoes){
-        for(int tam = 2; tam <=n; tam++){
-            construir(array, tam);
+        if(dir < tam){
+            comparacoes[0]++;
+            int comp = array[dir].getDirector().compareToIgnoreCase(array[maior].getDirector());
+            if (comp > 0 || (comp == 0 && array[dir].getTitle().compareToIgnoreCase(array[maior].getTitle()) > 0)) {
+                maior = dir;
+            }
         }
-        
-        int tam = n;
-        while(tam  > 1){
-            swap(array, 1, tam--);
-            reconstruir(array, tam);
+        if(maior != i){
+            swap(array, maior, i);
+            movimentacoes[0] += 3;
+            heapfy(array, tam, maior, comparacoes, movimentacoes);
+        }
+    }
+
+    public static  void heapsort(Show[] array, int tam, int[] comparacoes, int[] movimentacoes){
+        for(int i = (tam/2)-1; i >= 0; i--){
+            heapfy(array, tam, i, comparacoes, movimentacoes);
+        }
+        for(int i = tam-1; i > 0; i--){
+            swap(array, 0, i);
+            movimentacoes[0] += 3;
+            heapfy(array, i, 0, comparacoes, movimentacoes);
         }
     }
     
@@ -368,7 +366,7 @@ public class Show {
             }
             id = input.nextLine();
         }
-        countingSort(lista, j, comparacoes, movimentacoes);
+        heapsort(lista, j, comparacoes, movimentacoes);
         for(int i = 0; i < j; i++){
             lista[i].imprimir();
         }
