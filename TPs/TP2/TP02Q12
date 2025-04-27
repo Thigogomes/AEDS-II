@@ -5,8 +5,7 @@
 
 #define MAX 200
 #define MAX_LIST 11
-//#define PATH "/tmp/disneyplus.csv"
-#define PATH "disneyplus.txt"
+#define PATH "/tmp/disneyplus.csv"
 
 typedef struct Date{
     int day;
@@ -194,7 +193,7 @@ char **separarLista(char *lista) {
 			str[pos][j] = '\0';
 			pos++;
 			j = 0;
-			if (lista[i + 1] == ' ') { // para pular o espaC'o
+			if (lista[i + 1] == ' ') { // para pular o espaco
 				i++;
 			}
 		}
@@ -302,25 +301,25 @@ int mesParaNumero(char mes[]){
         return 1;
     }else if(strcmp(mes, "February") == 0){
         return 2;
-    }else if(strcmp(mes, "March")){
+    }else if(strcmp(mes, "March") == 0){
         return 3;
-    }else if(strcmp(mes, "April")){
+    }else if(strcmp(mes, "April") == 0){
         return 4;
-    }else if(strcmp(mes, "May")){
+    }else if(strcmp(mes, "May") == 0){
         return 5;
-    }else if(strcmp(mes, "June")){
+    }else if(strcmp(mes, "June") == 0){
         return 6;
-    }else if(strcmp(mes, "July")){
+    }else if(strcmp(mes, "July") == 0){
         return 7;
-    }else if(strcmp(mes, "August")){
+    }else if(strcmp(mes, "August") == 0){
         return 8;
-    }else if(strcmp(mes, "September")){
+    }else if(strcmp(mes, "September") == 0){
         return 9;
-    }else if(strcmp(mes, "October")){
+    }else if(strcmp(mes, "October") == 0){
         return 10;
-    }else if(strcmp(mes, "November")){
+    }else if(strcmp(mes, "November") == 0){
         return 11;
-    }else{
+    }else if(strcmp(mes, "December") == 0){
         return 12;
     }
 }
@@ -352,28 +351,28 @@ Date dateToInt(char data[]){
     return d;
 }
 
+int comparar(Show atual, Show proximo){
+    if (atual.date.year > proximo.date.year) {
+        return 1;
+    } else if (atual.date.year == proximo.date.year && atual.date.month > proximo.date.month) {
+        return 1;
+    } else if (atual.date.year == proximo.date.year && atual.date.month == proximo.date.month && atual.date.day > proximo.date.day) {
+        return 1;
+    } else if (atual.date.year == proximo.date.year && atual.date.month == proximo.date.month && atual.date.day == proximo.date.day &&
+               strcasecmp(atual.title, proximo.title) > 0) {
+        return 1;
+    }
+    return 0;
+}
+
 void ordenaBolha(Show vetor[], int tam, int comparacoes[], int movimentacoes[]){
     Show temp;
 	for (int i = tam-1; i > 0; i--) {
 		for (int j = 0; j < i; j++) {
 		    comparacoes[0]++;
-			if (vetor[j].date.year > vetor[j + 1].date.year){
+		    int resp = comparar(vetor[j], vetor[j+1]);
+			if (resp != 0){
 				temp = vetor[j];
-				vetor[j] = vetor[j + 1];
-				vetor[j + 1] = temp;
-				movimentacoes[0] += 3;
-			}else if(vetor[j].date.year == vetor[j + 1].date.year && vetor[j].date.month > vetor[j + 1].date.month){
-			    temp = vetor[j];
-				vetor[j] = vetor[j + 1];
-				vetor[j + 1] = temp;
-				movimentacoes[0] += 3;
-			}else if(vetor[j].date.month == vetor[j + 1].date.month && vetor[j].date.day > vetor[j + 1].date.day){
-			    temp = vetor[j];
-				vetor[j] = vetor[j + 1];
-				vetor[j + 1] = temp;
-				movimentacoes[0] += 3;
-			}else if((vetor[j].date.day == vetor[j + 1].date.day) && (strcasecmp(vetor[j].title, vetor[j + 1].title) > 0)){
-			    temp = vetor[j];
 				vetor[j] = vetor[j + 1];
 				vetor[j + 1] = temp;
 				movimentacoes[0] += 3;
