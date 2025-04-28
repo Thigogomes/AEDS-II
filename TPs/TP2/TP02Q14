@@ -5,8 +5,7 @@
 
 #define MAX 200
 #define MAX_LIST 11
-//#define PATH "/tmp/disneyplus.csv"
-#define PATH "disneyplus.txt"
+#define PATH "/tmp/disneyplus.csv"
 
 typedef struct Show {
 	char showId[MAX];
@@ -343,14 +342,14 @@ void countingsortString(Show array[], int n, int esp, int comparacoes[], int mov
     int count[256] = {0};
     
     for (int i = 0; i < n; i++) {
-        int digit = (strlen(array[i].title) > esp) ? (unsigned char)array[i].title[esp] : 0;
+        int digit = (strlen(array[i].title) > esp) ? (unsigned char)tolower(array[i].title[esp]) : 0;
         count[digit]++;
     }
     for (int i = 1; i < 256; i++) {
         count[i] += count[i-1];
     }
     for (int i = n - 1; i >= 0; i--) {
-        int digit = (strlen(array[i].title) > esp) ? (unsigned char)array[i].title[esp] : 0;
+        int digit = (strlen(array[i].title) > esp) ? (unsigned char)tolower(array[i].title[esp]) : 0;
         ordenado[count[digit] - 1] = array[i];
         count[digit]--;
         movimentacoes[0]++;
@@ -370,14 +369,11 @@ void radixsort(Show array[], int tam, int comparacoes[], int movimentacoes[]) {
         countingsort(array, tam, esp, comparacoes, movimentacoes);
     }
     
-    printf(2);
-    
     while(x != tam){
         ano = array[x].releaseYear;
         while(x < tam && array[x].releaseYear == ano){
             x++;
         }
-        
         int listaTam = x - p;
         Show* lista = (Show*) malloc(listaTam * sizeof(Show));
         for (int i = 0; i < listaTam; i++) {
@@ -430,9 +426,9 @@ int main() {
 		getchar();
 	}
 	radixsort(listaIds, contIds, comparacoes, movimentacoes);
-	/*for(int i = 0; i < contIds; i++){
+	for(int i = 0; i < contIds; i++){
 	    imprimir(listaIds[i]);
-	}*/
+	}
 	free(show);
 	clock_t fimTempo = clock();
 	double duracao = ((double)(fimTempo-inicioTempo))/CLOCKS_PER_SEC;
