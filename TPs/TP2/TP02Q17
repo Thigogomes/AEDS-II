@@ -5,8 +5,7 @@
 
 #define MAX 200
 #define MAX_LIST 11
-//#define PATH "/tmp/disneyplus.csv"
-#define PATH "disneyplus.txt"
+#define PATH "/tmp/disneyplus.csv"
 
 typedef struct Show {
 	char showId[MAX];
@@ -307,8 +306,8 @@ void heapfy(Show array[], int tam, int i, int comparacoes[], int movimentacoes[]
     }
     if(dir < tam){
         comparacoes[0]++;
-        int comp = strcasecmp(array[esq].director, array[maior].director);
-        if (comp > 0 || (comp == 0 && strcasecmp(array[esq].title, array[maior].title) > 0)) {
+        int comp = strcasecmp(array[dir].director, array[maior].director);
+        if (comp > 0 || (comp == 0 && strcasecmp(array[dir].title, array[maior].title) > 0)) {
             maior = dir;
         }
     }
