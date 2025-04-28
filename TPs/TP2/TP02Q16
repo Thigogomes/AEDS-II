@@ -5,8 +5,7 @@
 
 #define MAX 200
 #define MAX_LIST 11
-//#define PATH "/tmp/disneyplus.csv"
-#define PATH "disneyplus.txt"
+#define PATH "/tmp/disneyplus.csv"
 
 typedef struct Show {
 	char showId[MAX];
@@ -184,7 +183,7 @@ char **separarLista(char *lista) {
 			str[pos][j] = '\0';
 			pos++;
 			j = 0;
-			if (lista[i + 1] == ' ') { // para pular o espaC'o
+			if (lista[i + 1] == ' ') { // para pular o espaco
 				i++;
 			}
 		}
@@ -289,14 +288,19 @@ char **separarLinha(char *linha) {
 
 void ordenacaoPorInsercaoParcial(Show lista[], int tam, int k, int comparacoes[], int movimentacoes[]){
     Show temp;
-    for(int i = 0; i < tam; i++){
+    for(int i = 1; i < tam; i++){
         temp = lista[i];
-        int j = i-1;
-        while((j>=0) && (strcasecmp(lista[j].title, temp.title) > 0)){
-            lista[j+1] = lista[j];
-            j--;
-            movimentacoes[0]++;
-            comparacoes[0]++;
+        int j = (i < k) ? i-1 : k-1;
+        while(j>=0){
+            int comp = strcasecmp(lista[j].type, temp.type);
+            if(comp > 0 || (comp == 0 && (strcasecmp(lista[j].title, temp.title) > 0))){
+                lista[j+1] = lista[j];
+                j--;
+                movimentacoes[0]++;
+                comparacoes[0]++;
+            }else{
+                break;
+            }
         }
         comparacoes[0]++;
         lista[j+1] = temp;
