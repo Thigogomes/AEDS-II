@@ -1,355 +1,419 @@
-import java.util.*;
-import java.io.*;
-import java.text.*;
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+#include<time.h>
 
-public class Show {
-    private String showId;
-    private String type;
-    private String title;
-    private String director;
-    private String[] cast;
-    private String country;
-    private Date dateAdded;
-    private int releaseYear;
-    private String rating;
-    private String duration;
-    private String[] listedIn;
+#define MAX 200
+#define MAX_LIST 11
+//#define PATH "/tmp/disneyplus.csv"
+#define PATH "disneyplus.txt"
 
-    public String getShowId() {
-        return showId;
-    }
+typedef struct Show {
+	char showId[MAX];
+	char type[MAX];
+	char title[MAX];
+	char director[MAX];
+	char cast[MAX_LIST][MAX];
+	char country[MAX];
+	char dateAdded[MAX];
+	int releaseYear;
+	char rating[MAX];
+	char duration[MAX];
+	char listedIn[MAX_LIST][MAX];
+} Show;
 
-    public void setShowId(String showId) {
-        this.showId = showId;
-    }
+Show newShow();
+Show *ler();
+void atribuir(Show *show, char *linha, int index);
+char **separarLinha(char *linha);
+char **separarLista(char *lista);
+void ordenarLista(char **lista);
+void imprimir(Show show);
+int quantidade();
+int PesquisaBinaria(Show vet[], int tam, char titulo[], int comparacoes[]);
+void ordenaVetorDeShow(Show vetor[], int tam);
 
-    public String getType() {
-        return type;
-    }
+Show newShow() {
+	Show show;
+	strcpy(show.showId, "NaN");
+	strcpy(show.type, "NaN");
+	strcpy(show.title, "NaN");
+	strcpy(show.director, "NaN");
+	strcpy(show.cast[0], "NaN");
+	for (int i = 1; i < MAX_LIST; i++) {
+		show.cast[i][0] = '\0';
+	}
+	strcpy(show.country, "NaN");
+	strcpy(show.dateAdded, "NaN");
+	show.releaseYear = -1;
+	strcpy(show.rating, "NaN");
+	strcpy(show.duration, "NaN");
+	strcpy(show.listedIn[0], "NaN");
+	for (int i = 1; i < MAX_LIST; i++) {
+		show.listedIn[i][0] = '\0';
+	}
+	return show;
+}
 
-    public void setType(String type) {
-        this.type = type;
-    }
+int quantidade() {
+	int cont = 0;
+	FILE *arq = fopen(PATH, "r");
+	char linha[1500];
+	if (arq) {
+		fgets(linha, sizeof(linha), arq);
+		while (fgets(linha, sizeof(linha), arq)) {
+			cont++;
+		}
+	} else {
+		printf("Erro ao abrir o arquivo!");
+	}
+	fclose(arq);
+	return cont;
+}
 
-    public String getTitle() {
-        return title;
-    }
+Show *ler() {
+	int i = 0;
+	int quant = quantidade();
+	Show *show = (Show*)malloc(quant * sizeof(Show));
+	FILE *arq = fopen(PATH, "r");
+	char linha[1500];
+	if (arq) {
+		fgets(linha, sizeof(linha), arq);
+		while (fgets(linha, sizeof(linha), arq)) {
+			atribuir(show, linha, i);
+			i++;
+		}
+	} else {
+		printf("Erro ao abrir o arquivo!");
+	}
+	fclose(arq);
+	return show;
+}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+void atribuir(Show *show, char *linha, int index) {
+	show[index] = newShow();
+	char **str = separarLinha(linha);
+	strcpy(show[index].showId, str[0]);
+	if (strlen(str[1]) > 0) {
+		strcpy(show[index].type, str[1]);
+	} else {
+		strcpy(show[index].type, "NaN");
+	}
+	if (strlen(str[2]) > 0) {
+		strcpy(show[index].title, str[2]);
+	} else {
+		strcpy(show[index].title, "NaN");
+	}
+	if (strlen(str[3]) > 0) {
+		strcpy(show[index].director, str[3]);
+	} else {
+		strcpy(show[index].director, "NaN");
+	}
+	if (strlen(str[4]) > 0) {
+		char **lista = separarLista(str[4]);
+		for (int i = 0; i < MAX_LIST && lista[i][0] != '\0'; i++) {
+			strcpy(show[index].cast[i], lista[i]);
+		}
 
-    public String getDirector() {
-        return director;
-    }
+		for (int i = 0; i < MAX_LIST; i++) {
+			free(lista[i]);
+		}
+		free(lista);
+	} else {
+		strcpy(show[index].cast[0], "NaN");
+		for (int i = 1; i < MAX_LIST; i++) {
+			show[index].cast[i][0] = '\0';
+		}
+	}
+	if (strlen(str[5]) > 0) {
+		strcpy(show[index].country, str[5]);
+	} else {
+		strcpy(show[index].country, "NaN");
+	}
+	if (strlen(str[6]) > 0) {
+		strcpy(show[index].dateAdded, str[6]);
+	} else {
+		strcpy(show[index].dateAdded, "March 1, 1900");
+	}
+	show[index].releaseYear = atoi(str[7]);
+	if (strlen(str[8]) > 0) {
+		strcpy(show[index].rating, str[8]);
+	} else {
+		strcpy(show[index].rating, "NaN");
+	}
+	if (strlen(str[9]) > 0) {
+		strcpy(show[index].duration, str[9]);
+	} else {
+		strcpy(show[index].duration, "NaN");
+	}
+	if (strlen(str[10]) > 0) {
+		char **lista = separarLista(str[10]);
+		for (int i = 0; i < MAX_LIST && lista[i][0] != '\0'; i++) {
+			strcpy(show[index].listedIn[i], lista[i]);
+		}
 
-    public void setDirector(String director) {
-        this.director = director;
-    }
+		for (int i = 0; i < MAX_LIST; i++) {
+			free(lista[i]);
+		}
+		free(lista);
+	} else {
+		strcpy(show[index].listedIn[0], "NaN");
+		for (int i = 1; i < MAX_LIST; i++) {
+			show[index].listedIn[i][0] = '\0';
+		}
+	}
+	for (int i = 0; i < MAX_LIST; i++) {
+		free(str[i]);
+	}
+	free(str);
+}
 
-    public String[] getCast() {
-        return cast;
-    }
+char **separarLista(char *lista) {
+	char **str = (char**)malloc(MAX_LIST * sizeof(char*));
+	for (int k = 0; k < MAX_LIST; k++) {
+		str[k] = (char*)malloc((MAX + 1) * sizeof(char));
+		str[k][0] = '\0';
+	}
 
-    public void setCast(String[] cast) {
-        this.cast = cast;
-    }
+	int i = 0, j = 0, pos = 0;
+	while (lista[i] != '\0') {
+		if (lista[i] != ',') {
+			str[pos][j] = lista[i];
+			j++;
+		} else {
+			str[pos][j] = '\0';
+			pos++;
+			j = 0;
+			if (lista[i + 1] == ' ') { // para pular o espaco
+				i++;
+			}
+		}
+		i++;
+	}
+	str[pos][j] = '\0';
+	ordenarLista(str);
+	return str;
+}
 
-    public String getCountry() {
-        return country;
-    }
+void imprimir(Show show) {
+	int i = 0;
+	printf("=> %s ## ", show.showId);
+	printf("%s ## ", show.title);
+	printf("%s ## ", show.type);
+	printf("%s ## ", show.director);
+	printf("[");
+	while (show.cast[i][0] != '\0') {
+		printf("%s", show.cast[i]);
+		if (show.cast[i + 1][0] != '\0') {
+			printf(", ");
+		}
+		i++;
+	}
+	printf("] ## ");
+	printf("%s ## ", show.country);
+	printf("%s ## ", show.dateAdded);
+	printf("%d ## ", show.releaseYear);
+	printf("%s ## ", show.rating);
+	printf("%s ## ", show.duration);
+	printf("[");
+	i = 0;
+	while (show.listedIn[i][0] != '\0') {
+		printf("%s", show.listedIn[i]);
+		if (show.listedIn[i + 1][0] != '\0') {
+			printf(", ");
+		}
+		i++;
+	}
+	printf("] ##");
+	printf("\n");
+}
 
-    public void setCountry(String country) {
-        this.country = country;
-    }
+void ordenarLista(char **lista) {
+	char temp[MAX];
+	int tam = 0;
+	while (lista[tam][0] != '\0') {
+		tam++;
+	}
+	tam--;
+	for (int i = tam; i > 0; i--) {
+		for (int j = 0; j < i; j++) {
+			if (strcmp(lista[j], lista[j + 1]) > 0) {
+				strcpy(temp, lista[j]);
+				strcpy(lista[j], lista[j + 1]);
+				strcpy(lista[j + 1], temp);
+			}
+		}
+	}
+}
 
-    public Date getDateAdded() {
-        return dateAdded;
-    }
+char **separarLinha(char *linha) {
+	char **str = (char**)malloc(MAX_LIST * sizeof(char*));
+	for (int k = 0; k < MAX_LIST; k++) {
+		str[k] = (char*)malloc((MAX + 1) * sizeof(char));
+		str[k][0] = '\0';
+	}
 
-    public void setDateAdded(Date dateAdded) {
-        this.dateAdded = dateAdded;
-    }
+	int aux = 0, i = 0, j = 0;
+	while (i < strlen(linha) && aux < 11) {
+		char letra = linha[i];
+		char letra2;
+		if (i + 1 < strlen(linha)) {
+			letra2 = linha[i + 1];
+		}
+		if (letra == ',' && letra2 != ' ') {
+			str[aux][j] = '\0';
+			aux++;
+			j = 0;
+		} else {
+			if (letra != '"') {
+				str[aux][j] = letra;
+				j++;
+			} else {
+				i++;
+				letra = linha[i];
+				while (i < strlen(linha) && linha[i] != '"') {
+					str[aux][j] = letra;
+					j++;
+					i++;
+					letra = linha[i];
+				}
+			}
+		}
+		i++;
+	}
+	if (j > 0 && aux < MAX_LIST) {
+		str[aux][j] = '\0';
+	}
+	return str;
+}
 
-    public int getReleaseYear() {
-        return releaseYear;
-    }
+void swap(Show array[], int a, int b){
+    Show temp = array[b];
+    array[b] = array[a];
+    array[a] = temp;
+}
 
-    public void setReleaseYear(int releaseYear) {
-        this.releaseYear = releaseYear;
-    }
-
-    public String getRating() {
-        return rating;
-    }
-
-    public void setRating(String rating) {
-        this.rating = rating;
-    }
-
-    public String getDuration() {
-        return duration;
-    }
-
-    public void setDuration(String duration) {
-        this.duration = duration;
-    }
-
-    public String[] getListedIn() {
-        return listedIn;
-    }
-
-    public void setListedIn(String[] listedIn) {
-        this.listedIn = listedIn;
-    }
-
-    public Show() {
-        this.showId = "NaN";
-        this.type = "NaN";
-        this.title = "NaN";
-        this.director = "NaN";
-        this.cast = new String[]{"NaN"};
-        this.country = "NaN";
-        this.dateAdded = null;
-        this.releaseYear = -1;
-        this.rating = "NaN";
-        this.duration = "NaN";
-        this.listedIn = new String[]{"NaN"};
-    }
-
-    public Show(String showId, String type, String title, String director, String[] cast, String country, String dateAdded, int releaseYear, String rating, String duration, String[] listedIn) {
-        this.showId = (showId != null && !showId.isEmpty()) ? showId : "NaN";
-        this.type = (type != null && !type.isEmpty()) ? type : "NaN";
-        this.title = (title != null && !title.isEmpty()) ? title : "NaN";
-        this.director = (director != null && !director.isEmpty()) ? director : "NaN";
-        this.cast = (cast != null && cast.length >= 0) ? cast : new String[]{"NaN"};
-        this.country = (country != null && country.isEmpty()) ? country : "NaN";
-        SimpleDateFormat data = new SimpleDateFormat("MMMM dd, yyyy");
-        if (dateAdded != null && !dateAdded.isEmpty()) {
-            try {
-                this.dateAdded = data.parse(dateAdded);
-            } catch (ParseException e) {
-                System.out.println("Erro ao adicionar a data");
-                this.dateAdded = null;
-            }
-        } else {
-            this.dateAdded = null;
+int getMax(Show array[], int tam) {
+    int max = array[0].releaseYear;
+    for (int i = 1; i < tam; i++) {
+        if (array[i].releaseYear > max) {
+            max = array[i].releaseYear;
         }
-        this.releaseYear = (releaseYear > 0) ? releaseYear : -1;
-        this.duration = (duration != null && !duration.isEmpty()) ? duration : "NaN";
-        this.listedIn = (listedIn != null && listedIn.length >= 0) ? listedIn : new String[]{"NaN"};
     }
+    return max;
+}
 
-    public void imprimir() {
-        SimpleDateFormat data = new SimpleDateFormat("MMMM d, yyyy");
-        System.out.print("=> " + getShowId());
-        System.out.print(" ## " + getTitle());
-        System.out.print(" ## " + getType());
-        System.out.print(" ## " + getDirector());
-        System.out.print(" ## " + Arrays.toString(getCast()));
-        System.out.print(" ## " + getCountry());
-        System.out.print(" ## " + (getDateAdded() != null ? data.format(getDateAdded()) : "NaN"));
-        System.out.print(" ## " + (getReleaseYear() != -1 ? getReleaseYear() : "NaN"));
-        System.out.print(" ## " + getRating());
-        System.out.print(" ## " + getDuration());
-        System.out.println(" ## " + Arrays.toString(getListedIn()) + " ##");
-    }
-
-    public static ArrayList<Show> ler() {
-        ArrayList<Show> listaShow = new ArrayList<>();
-        try (BufferedReader r = new BufferedReader(new FileReader("/tmp/disneyplus.csv"))) {
-            String linha = "";
-            r.readLine();
-            while ((linha = r.readLine()) != null) {
-                Show show = new Show();
-                show.atribuir(linha);
-                listaShow.add(show);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return listaShow;
-    }
-
-    public void atribuir(String linha) {
-        String[] str = new String[11];
-        Arrays.fill(str, "");
-        str = separarLinha(linha);
-        SimpleDateFormat formato = new SimpleDateFormat("MMMM dd, yyyy", Locale.ENGLISH);
-
-        setShowId((str[0] != null) ? str[0] : "NaN");
-        setType((str[1] != null) ? str[1] : "NaN");
-        setTitle((str[2] != null) ? str[2] : "NaN");
-        setDirector((str[3] != null) ? str[3] : "NaN");
-        if (str[4] != null) {
-            setCast(ordenaArray(str[4]));
-        } else {
-            setCast(new String[]{"NaN"});
-        }
-        setCountry((str[5] != null) ? str[5] : "NaN");
-        try {
-            if (str[6] != null && !str[6].isEmpty()) {
-                Date data = formato.parse(str[6]);
-                setDateAdded(data);
-            } else if (str[6] == null) {
-                Date data = formato.parse("March 1, 1900");
-                setDateAdded(data);
-            }
-        } catch (Exception e) {
-            System.out.println("Erro ao adicionar a data: " + str[6]);
-            this.dateAdded = null;
-        }
-        setReleaseYear((str[7] != null) ? Integer.parseInt(str[7]) : -1);
-        setRating((str[8] != null) ? str[8] : "NaN");
-        setDuration((str[9] != null) ? str[9] : "NaN");
-        if (str[10] != null) {
-            setListedIn(ordenaArray(str[10]));
-        } else {
-            setListedIn(new String[]{"NaN"});
+int getMaxString(Show array[], int tam){
+    int max = 0;
+    
+    for (int i = 0; i < tam; i++) {
+        int len = strlen(array[i].title);
+        if (len > max) {
+            max = len;
         }
     }
+    return max;
+}
 
-    public static String[] ordenaArray(String str) {
-        int temp = 0, tam = 0;
-        for (int i = 0; i < str.length(); i++) {
-            if (str.charAt(i) == ',') {
-                tam++;
-            }
-        }
+void countingsort(Show array[], int n, int esp, int comparacoes[], int movimentacoes[]) {
+    Show* ordenado = (Show*) malloc(n * sizeof(Show));
+    int count[10] = {0};
+    for (int i = 0; i < n; i++) {
+        int digit = (array[i].releaseYear / esp) % 10;
+        count[digit]++;
+    }
+    for (int i = 1; i < 10; i++) {
+        count[i] += count[i-1];
+    }
+    for (int i = n - 1; i >= 0; i--) {
+        int digit = (array[i].releaseYear / esp) % 10;
+        ordenado[count[digit] - 1] = array[i];
+        count[digit]--;
+        movimentacoes[0]++;
+    }
+    for (int i = 0; i < n; i++) {
+        array[i] = ordenado[i];
+        movimentacoes[0]++;
+    }
+    free(ordenado);
+}
 
-        String[] array = new String[tam + 1];
-        Arrays.fill(array, "");
+void countingsortString(Show array[], int n, int esp, int comparacoes[], int movimentacoes[]) {
+    Show* ordenado = (Show*) malloc(n * sizeof(Show));
+    int count[256] = {0};
+    
+    for (int i = 0; i < n; i++) {
+        int digit = (strlen(array[i].title) > esp) ? (unsigned char)array[i].title[esp] : 0;
+        count[digit]++;
+    }
+    for (int i = 1; i < 256; i++) {
+        count[i] += count[i-1];
+    }
+    for (int i = n - 1; i >= 0; i--) {
+        int digit = (strlen(array[i].title) > esp) ? (unsigned char)array[i].title[esp] : 0;
+        ordenado[count[digit] - 1] = array[i];
+        count[digit]--;
+        movimentacoes[0]++;
+    }
+    for (int i = 0; i < n; i++) {
+        array[i] = ordenado[i];
+        movimentacoes[0]++;
+    }
+    free(ordenado);
+}
 
-        for (int i = 0; i < str.length(); i++) {
-            if (str.charAt(i) != ',') {
-                array[temp] += str.charAt(i);
-            } else if (str.charAt(i) == ',') {
-                i++; // para retirar o espaço extra
-                temp++;
-            }
+void radixsort(Show array[], int tam, int comparacoes[], int movimentacoes[]) {
+    int max = getMax(array, tam);
 
-        }
-
-        for (int i = array.length - 1; i > 0; i--) {
-            for (int j = 0; j < i; j++) {
-                if (array[j].compareTo(array[j + 1]) > 0) {
-                    String aux = array[j];
-                    array[j] = array[j + 1];
-                    array[j + 1] = aux;
-                }
-            }
-        }
-        return array;
+    for (int esp = 1; max / esp > 0; esp *= 10) {
+        countingsort(array, tam, esp, comparacoes, movimentacoes);
     }
 
-    public static String[] separarLinha(String linha) {
-        String[] str = new String[11];
-        Arrays.fill(str, "");
-        int aux = 0, i = 0;
-        while (i < linha.length() && aux != 11) {
-            char letra = linha.charAt(i);
-            char letra2 = 'c';
-            if (i + 1 < linha.length()) {
-                letra2 = linha.charAt(i + 1);
-            }
-            if (letra == ',' && letra2 != ' ') {
-                if (str[aux] == "") {
-                    str[aux] = null;
-                }
-                aux++;
-            } else {
-                if (letra != '"') {
-                    str[aux] += letra;
-                } else {
-                    i++;
-                    letra = linha.charAt(i);
-                    while (i < linha.length() && linha.charAt(i) != '"') {
-                        str[aux] += letra;
-                        i++;
-                        letra = linha.charAt(i);
-                    }
-                }
-            }
-            i++;
-        }
-        return str;
-    }
-
-    public Show clone() {
-        Show copia = new Show();
-        copia.setShowId(this.showId);
-        copia.setType(this.type);
-        copia.setTitle(this.title);
-        copia.setDirector(this.director);
-        copia.setCast(Arrays.copyOf(this.cast, this.cast.length));
-        copia.setCountry(this.country);
-        copia.setDateAdded(this.dateAdded != null ? new Date(this.dateAdded.getTime()) : null);
-        copia.setReleaseYear(this.releaseYear);
-        copia.setRating(this.rating);
-        copia.setDuration(this.duration);
-        copia.setListedIn(Arrays.copyOf(this.listedIn, this.listedIn.length));
-        return copia;
+    max = getMaxString(array, tam);
+    for (int pos = max - 1; pos >= 0; pos--) {
+        countingsortString(array, tam, pos, comparacoes, movimentacoes);
     }
     
-    private static void countingsort(Show[] array, int esp){
-        int n = array.length;
-        int[] ordenado = new int[n];
-        int[] count = new int[10];
-        
-        for(int i = 0; i < n; i++){
-            int digit = (array[i]/)
-        }
-    }
-    
-    public static void radixsort(Show[] array,  int[] comparacoes, int[] movimentacoes){
-        int max = getMax();
-        
-        for(int esp = 1; max/esp > 0; esp *= 10){
-            counting(array, esp);
-        }
-    }
-    
-    public static void arquivoLog(double duracao, int[] comparacoes, int[] movimentacoes){
-        String matricula = "1543790";
-        try {
-            PrintWriter w = new PrintWriter(matricula + "_heapsort.txt");
-            w.printf("%s\t%d\t%d\t%fms", matricula, comparacoes[0], movimentacoes[0], duracao);
-            w.close();
-        } catch (IOException e) {
-            System.err.println("Erro para escrever no arquivo de log: " + e.getMessage());
-        }
-    }
- 
-    public static void main(String[] args) {
-        long inicioTempo = System.nanoTime();
-        int[] comparacoes = new int[1];
-        int[] movimentacoes = new int[1];
-        int j = 0;
-        Scanner input = new Scanner(System.in);
-        ArrayList<Show> listaShow = ler();
-        String id = "";
-        List<Show> listaIds = new ArrayList<>();
-        Show[] lista = new Show[2000];
-        
-        id = input.nextLine();
-        while (!id.equals("FIM")) {
-            for (int i = 0; i < listaShow.size(); i++) {
-                if (listaShow.get(i).getShowId().equals(id)) {
-                    lista[j] = listaShow.get(i);
-                    j++;
-                }
-            }
-            id = input.nextLine();
-        }
-        heapsort(lista, j, comparacoes, movimentacoes);
-        for(int i = 0; i < j; i++){
-            lista[i].imprimir();
-        }
-        
-        long fimTempo = System.nanoTime();
-        double duracao = (fimTempo - inicioTempo) / 1_000_000.0; // em milisegundos
-        //Escrever no arquivo de log
-        arquivoLog(duracao, comparacoes, movimentacoes);
-        input.close();
-    }
+}
+
+void arquivoLog(int matricula, double duracao, int comparacoes[], int movimentacoes[]) {
+	FILE *arq = fopen("1543790_radixsort.txt", "w");
+	if(arq) {
+		fprintf(arq, "%d\t%d\t%d\t%fs", matricula, comparacoes[0], movimentacoes[0], duracao);
+	}
+	fclose(arq);
+}
+
+int main() {
+	clock_t inicioTempo = clock();
+	int comparacoes[1];
+	int movimentacoes[1];
+	comparacoes[0] = 0;
+	movimentacoes[0] = 0;
+	int contIds = 0;
+	Show *show = ler();
+	int quant = quantidade();
+	char id[MAX_LIST];
+	char titulo[MAX];
+	Show listaIds[MAX*2];
+	scanf("%[^\n]", id);
+	getchar();
+	while (strcmp(id, "FIM") != 0) {
+		for (int i = 0; i < quant; i++) {
+			if (strcmp(id, show[i].showId) == 0) {
+				listaIds[contIds++] = show[i];
+			}
+		}
+		scanf("%[^\n]", id);
+		getchar();
+	}
+	radixsort(listaIds, contIds, comparacoes, movimentacoes);
+	for(int i = 0; i < contIds; i++){
+	    imprimir(listaIds[i]);
+	}
+	free(show);
+	clock_t fimTempo = clock();
+	double duracao = ((double)(fimTempo-inicioTempo))/CLOCKS_PER_SEC;
+    arquivoLog(1543790, duracao, comparacoes, movimentacoes);
+	return 0;
 }
