@@ -157,7 +157,7 @@ public class Show {
 
     public static ArrayList<Show> ler() {
         ArrayList<Show> listaShow = new ArrayList<>();
-        try (BufferedReader r = new BufferedReader(new FileReader("disneyplus.txt"))) {
+        try (BufferedReader r = new BufferedReader(new FileReader("/tmp/disneyplus.csv"))) {
             String linha = "";
             r.readLine();
             while ((linha = r.readLine()) != null) {
@@ -356,7 +356,6 @@ public class Show {
             for (int i = 0; i < listaTam; i++) {
                 array[p + i] = lista[i];
             }
-    
             p = x;
         }
     }
@@ -370,6 +369,7 @@ public class Show {
         }
         for(int i = 0; i < n; i++){
             int digit = (array[i].getTitle().length() > esp) ? Character.toLowerCase(array[i].getTitle().charAt(esp)) : 0;
+            digit = (digit >= 0 && digit < 256) ? digit : 0;
             comparacoes[0]++;
             count[digit]++;
         }
@@ -378,6 +378,7 @@ public class Show {
         }
         for(int i = n-1; i >= 0; i--){
             int digit = (array[i].getTitle().length() > esp) ? Character.toLowerCase(array[i].getTitle().charAt(esp)) : 0;
+            digit = (digit >= 0 && digit < 256) ? digit : 0;
             comparacoes[0]++;
             ordenado[count[digit]-1] = array[i];
             count[digit]--;
