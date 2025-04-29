@@ -292,8 +292,8 @@ public class Show {
     }
     
     public static int getMaior(Show[] array, int tam){
-        int maior = 0;
-        for(int i = 0; i < tam; i++){
+        int maior = array[0].getReleaseYear();
+        for(int i = 1; i < tam; i++){
             if(array[i].getReleaseYear() > maior){
                 maior = array[i].getReleaseYear();
             }
@@ -301,8 +301,21 @@ public class Show {
         return maior;
     }
     
+    public static int getMaxString(Show[] array, int tam){
+        int max = 0;
+    
+        for (int i = 0; i < tam; i++) {
+            int len = array[i].getTitle().length();
+            if (len > max) {
+                max = len;
+            }
+        }
+        return max;
+    }
+    
     public static void countingSort(Show[] array, int tam, int[] comparacoes, int[] movimentacoes){
         int maior = getMaior(array, tam);
+        int x = 0, p = 0, m = 0, ano;
         Show[] ordenado = new Show[tam];
         int[]  count = new int[maior+1];
         
@@ -321,6 +334,58 @@ public class Show {
         }
         for(int i = 0; i < tam; i++){
             array[i] = ordenado[i];
+        }
+        while (x != tam) {
+            ano = array[x].getReleaseYear();
+    
+            while (x < tam && array[x].getReleaseYear() == ano) {
+                x++;
+            }
+    
+            int listaTam = x - p;
+            Show[] lista = new Show[listaTam];
+            for (int i = 0; i < listaTam; i++) {
+                lista[i] = array[p + i];
+            }
+    
+            int max = getMaxString(lista, listaTam);
+            for (int pos = max - 1; pos >= 0; pos--) {
+                countingsortString(lista, listaTam, pos, comparacoes, movimentacoes);
+            }
+    
+            for (int i = 0; i < listaTam; i++) {
+                array[p + i] = lista[i];
+            }
+    
+            p = x;
+        }
+    }
+    
+    public static void countingsortString(Show[] array, int n, int esp, int comparacoes[], int movimentacoes[]){
+        Show[] ordenado = new Show[n];
+        int[]  count = new int[256];
+        
+        for (int i = 0; i < 256; i++) {
+            count[i] = 0;
+        }
+        for(int i = 0; i < n; i++){
+            int digit = (array[i].getTitle().length() > esp) ? Character.toLowerCase(array[i].getTitle().charAt(esp)) : 0;
+            comparacoes[0]++;
+            count[digit]++;
+        }
+        for(int i = 1; i < 256; i++){
+            count[i] += count[i-1];
+        }
+        for(int i = n-1; i >= 0; i--){
+            int digit = (array[i].getTitle().length() > esp) ? Character.toLowerCase(array[i].getTitle().charAt(esp)) : 0;
+            comparacoes[0]++;
+            ordenado[count[digit]-1] = array[i];
+            count[digit]--;
+            movimentacoes[0]++;
+        }
+        for(int i = 0; i < n; i++){
+            array[i] = ordenado[i];
+            movimentacoes[0]++;
         }
     }
     
