@@ -1,0 +1,33 @@
+import java.util.*;
+
+public class Insertionsort{
+    public static void selectsort(int[] array, int n, int[] comparacoes, int[] movimentacoes){
+        for(int i = 1; i < n; i++){
+            int temp = array[i];
+            int j = i-1;
+            comparacoes[0]++;
+            while((j >= 0) && (array[j] > temp)){
+                array[j+1] = array[j];
+                j--;
+                movimentacoes[0]++;
+            }
+            array[j+1] = temp;
+            movimentacoes[0]++;
+        }
+    }
+    
+	public static void main(String[] args) {
+		long inicioTempo = System.nanoTime();
+	    int[] comparacoes = new int[1];
+	    int[] movimentacoes = new int[1];
+		Random rand = new Random();
+		int n = 100;
+		int[] array = new int[n];
+		for(int i = 0; i < n; i++){
+		    array[i] = rand.nextInt(n);
+		}
+		Insertionsort(array, n, comparacoes, movimentacoes);
+		long fimTempo = System.nanoTime();
+        double duracao = (fimTempo - inicioTempo) / 1_000_000.0; // em milisegundos
+	}
+}
