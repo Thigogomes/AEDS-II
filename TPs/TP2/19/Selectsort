@@ -1,0 +1,38 @@
+import java.util.*;
+
+public class Selectsort{
+    public static void swap(int[] array, int a, int b){
+        int temp = array[a];
+        array[a] = array[b];
+        array[b] = temp;
+    }
+    
+    public static void selectsort(int[] array, int n, int[] comparacoes, int[] movimentacoes){
+        for(int i = 0; i < n-1; i++){
+            int menor = i;
+            for(int j = i+1; j < n; j++){
+                comparacoes[0]++;
+                if(array[menor] > array[j]){
+                    menor = j;
+                }
+            }
+            swap(array, menor, i);
+            movimentacoes[0] += 3;
+        }
+    }
+    
+	public static void main(String[] args) {
+		long inicioTempo = System.nanoTime();
+	    int[] comparacoes = new int[1];
+	    int[] movimentacoes = new int[1];
+		Random rand = new Random();
+		int n = 100;
+		int[] array = new int[n];
+		for(int i = 0; i < n; i++){
+		    array[i] = rand.nextInt(n);
+		}
+		selectsort(array, n, comparacoes, movimentacoes);
+		long fimTempo = System.nanoTime();
+        double duracao = (fimTempo - inicioTempo) / 1_000_000.0; // em milisegundos
+	}
+}
