@@ -107,6 +107,50 @@ public class ListaFlexivel{
         System.out.println("]");
     }
     
+    public boolean pesquisar(int x){
+        Celula i;
+        for(i = primeiro; i != ultimo.prox; i = i.prox){
+            if(i.elemento == x){
+                i = null;
+                return true;
+            }
+        }
+        i = null;
+        return false;
+    }
+    
+    public void mostrarInverso(){
+        int tam = tamanho();
+        System.out.print("[");
+        for(int j = tam; j > 0; j--){
+            Celula i;
+            int x = j;
+            for(i = primeiro; x > 0 ; x--, i = i.prox);
+            System.out.print(i.elemento);
+            if(j-1 != 0){
+                System.out.print(", ");
+            }
+        }
+        System.out.println("]");
+    }
+    
+    public void mostrarInversoRecurcivo(Celula i){
+        if(i.prox != null){
+            mostrarInversoRecurcivo(i.prox);
+        }
+        System.out.print(i.elemento);
+        if(i != primeiro.prox){
+            System.out.print(", ");
+        }
+    }
+    
+    public void mostrarInversoRecurcivo(){
+        Celula i = primeiro;
+        System.out.print("[");
+        mostrarInversoRecurcivo(i.prox);
+        System.out.println("]");
+    }
+    
 	public static void main(String[] args) {
 		ListaFlexivel lista = new ListaFlexivel();
 		lista.inserirFim(3);
@@ -128,5 +172,7 @@ public class ListaFlexivel{
 		lista.mostrar();
 		lista.remover(1);
 		lista.mostrar();
+		lista.mostrarInverso();
+		System.out.println("tem o numero 2 na lista: " + lista.pesquisar(2));
 	}
 }
