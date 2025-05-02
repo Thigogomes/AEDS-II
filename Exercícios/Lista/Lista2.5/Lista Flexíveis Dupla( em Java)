@@ -1,0 +1,75 @@
+import java.util.*;
+
+public class ListaDupla {
+	public Celula primeiro;
+	public Celula ultimo;
+
+	public ListaDupla() {
+		primeiro = new Celula();
+		ultimo = primeiro;
+	}
+
+	public void inserirFim(int x) {
+		ultimo.prox = new Celula(x);
+		ultimo.prox.ant = ultimo;
+		ultimo = ultimo.prox;
+	}
+
+	public void inserirInicio(int x) {
+		Celula temp = new Celula(x);
+		temp.prox = primeiro.prox;
+		temp.ant = primeiro;
+		primeiro.prox = temp;
+		if(ultimo == primeiro) {
+			ultimo = temp;
+		} else {
+			primeiro.prox.ant = temp;
+		}
+		temp = null;
+	}
+
+	public int removerFim() {
+		if(ultimo == primeiro)
+			throw new RuntimeException("Erro!");
+		int x = ultimo.elemento;
+		ultimo = ultimo.ant;
+		ultimo.prox.ant = null;
+		ultimo.prox = null;
+		return x;
+	}
+
+	public int removerInicio() {
+		if(ultimo == primeiro)
+            throw new RuntimeException("Erro!");
+        
+        return x;
+	}
+
+	public void mostrar() {
+		System.out.print("[");
+		for(Celula i = primeiro.prox; i != ultimo.prox; i = i.prox) {
+			System.out.print(i.elemento);
+			if(i.prox != ultimo.prox) {
+				System.out.print(", ");
+			}
+		}
+		System.out.println("]");
+	}
+
+	public static void main(String[] args) {
+		ListaDupla lista = new ListaDupla();
+		lista.inserirFim(1);
+		lista.inserirFim(6);
+		lista.inserirFim(3);
+		lista.inserirFim(4);
+		lista.inserirFim(2);
+		lista.mostrar();
+		lista.removerFim();
+		lista.removerFim();
+		lista.inserirInicio(0);
+		lista.inserirInicio(8);
+		lista.mostrar();
+		lista.removerInicio();
+		lista.mostrar();
+	}
+}
