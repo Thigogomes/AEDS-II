@@ -26,7 +26,7 @@ public class ListaFlexivel{
     
     public int tamanho(){
         int tam = 0;
-        for(Celula i = primeiro; i != ultimo; i = i.prox){
+        for(Celula i = primeiro.prox; i != null; i = i.prox){
             tam++;
         }
         return tam;
