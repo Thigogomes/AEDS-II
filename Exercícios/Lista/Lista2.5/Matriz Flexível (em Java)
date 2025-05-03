@@ -1,7 +1,7 @@
 import java.util.*;
 
 public class MatrizFlexivel {
-	public Celula inicio;
+	private Celula inicio;
 	
 	public MatrizFlexivel(){
 	    this(3,3);
@@ -38,6 +38,30 @@ public class MatrizFlexivel {
         }
     }
     
+    public void inserir(int lin, int col, int x){
+        if(lin < 0 || col < 0){
+            throw new RuntimeException("Erro!");
+        }
+        Celula atual = inicio;
+        for(int i = 0; i < lin; i++){
+            if(atual.inf == null){
+                throw new IndexOutOfBoundsException("Erro! Linha invalida!");
+            }
+            atual = atual.inf;
+        }
+        for(int j = 0; j < col; j++){
+            if(atual.dir == null){
+                throw new IndexOutOfBoundsException("Erro! Linha invalida!");
+            }
+            atual = atual.dir;
+        }
+        atual.elemento = x;
+    }
+    
+    public void somaMatriz(){
+        
+    }
+    
     public void mostrar(){
         for(Celula i = inicio; i != null; i = i.inf){
             System.out.print("|");
@@ -49,10 +73,21 @@ public class MatrizFlexivel {
             }
             System.out.println("|");
         }
+        System.out.println();
     }
 
 	public static void main(String[] args) {
 		MatrizFlexivel matriz = new MatrizFlexivel();
+		matriz.mostrar();
+		matriz.inserir(1,0,9);
+		matriz.inserir(1,1,5);
+		matriz.inserir(1,2,2);
+		matriz.inserir(0,2,1);
+		matriz.inserir(0,1,2);
+		matriz.inserir(0,0,8);
+		matriz.inserir(2,0,9);
+		matriz.inserir(2,1,3);
+		matriz.inserir(2,2,8);
 		matriz.mostrar();
 	}
 }
