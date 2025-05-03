@@ -1,0 +1,58 @@
+import java.util.*;
+
+public class MatrizFlexivel {
+	public Celula inicio;
+	
+	public MatrizFlexivel(){
+	    this(3,3);
+	}
+
+    public MatrizFlexivel(int linha, int coluna){
+        if(linha <= 0 || coluna <= 0){
+            throw new RuntimeException("Erro!");
+        }
+        
+        Celula lin1 = new Celula(0);
+        inicio = lin1;
+        Celula temp = lin1;
+        
+        for(int i = 1; i < coluna; i++){
+            temp.dir = new Celula(0);
+            temp.dir.esq = temp;
+            temp = temp.dir;
+        }
+        
+        for(int i = 1; i < linha; i++){
+            Celula lin2 = new Celula(0);
+            lin1.inf = lin2;
+            lin2.sup = lin1;
+            temp = lin2;
+            for(int j = 1; j < coluna; j++){
+                temp.dir = new Celula(0);
+                temp.dir.esq = temp;
+                temp.sup.dir.inf = temp.dir;
+                temp.dir.sup = temp.sup.dir;
+                temp = temp.dir;
+            }
+            lin1 = lin1.inf;
+        }
+    }
+    
+    public void mostrar(){
+        for(Celula i = inicio; i != null; i = i.inf){
+            System.out.print("|");
+            for(Celula j = i; j != null; j = j.dir){
+                System.out.print(j.elemento);
+                if(j.dir != null){
+                    System.out.print(" ");
+                }
+            }
+            System.out.println("|");
+        }
+    }
+
+	public static void main(String[] args) {
+		MatrizFlexivel matriz = new MatrizFlexivel();
+		matriz.mostrar();
+	}
+}
