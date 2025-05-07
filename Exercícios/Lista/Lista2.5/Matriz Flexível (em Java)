@@ -193,6 +193,56 @@ public class MatrizFlexivel {
 		}
 		System.out.println("}");
 	}
+	
+	public static void removerUltimaColuna(MatrizFlexivel matriz){
+	    for(Celula i = matriz.inicio; i != null; i = i.inf){
+	        for(Celula j = i; j != null; j = j.dir){
+	            if(j.dir == null){
+	                if(j.esq != null){
+	                    j.esq.dir = null;
+	                    j.esq = null;
+	                }
+	                if(j.inf != null){
+	                    j.inf.sup = null;
+	                    j.inf = null;
+	                }
+	                if(j.sup != null){
+	                    j.sup.inf = null;
+	                    j.sup = null;;
+	                }
+	            }
+	        }
+	    }
+	}
+	
+	public static MatrizFlexivel multiplicaMatriz(MatrizFlexivel m1, MatrizFlexivel m2){
+	    int lin1 = m1.tamanholinhas(), col1 = m1.tamanhoColunas();
+	    int lin2 = m2.tamanholinhas(), col2 = m2.tamanhoColunas();
+	    if(col1 != lin2) {
+			throw new RuntimeException("Erro!");
+		}
+	    MatrizFlexivel m3 = new MatrizFlexivel(lin1, col2);
+	    
+	    Celula atual1 = m1.inicio;
+	    for(int i = 0; i < lin1; i++){
+	        Celula atual2 = m2.inicio;
+	        Celula temp1 = atual1;
+	        for(int j = 0; j < col2; j++){
+	            int soma = 0;
+	            Celula aux2 = atual2;
+	            for(int k = 0; k < lin2; k++){
+	                soma += (atual1.elemento*atual2.elemento);
+	                atual1 = atual1.dir;
+	                atual2 = atual2.inf;
+	            }
+	            atual2 = aux2.dir;
+	            atual1 = temp1;
+	            m3.inserir(i, j, soma);
+	        }
+	        atual1 = temp1.inf;
+	    }
+	    return m3;
+	}
 
 	public void mostrar() {
 		for(Celula i = inicio; i != null; i = i.inf) {
@@ -237,6 +287,9 @@ public class MatrizFlexivel {
 		matriz3.mostrar();
 		//matriz.buracoMatriz(1,1);
 		//matriz.mostrar();
-		matriz.printDS();
+		//matriz.printDS();
+		//removerUltimaColuna(matriz2);
+		MatrizFlexivel matriz4 = multiplicaMatriz(matriz, matriz2);
+		matriz4.mostrar();
 	}
 }
