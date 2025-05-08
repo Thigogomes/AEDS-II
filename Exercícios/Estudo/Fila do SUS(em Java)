@@ -1,6 +1,6 @@
 import java.util.*;
 
-class Main {
+class SUS {
     public static int atendimento(int hora, int min, int h, int m){
         int temp = 0;
         temp = (hora - h)*60;
