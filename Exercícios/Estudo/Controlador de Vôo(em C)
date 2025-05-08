@@ -25,7 +25,6 @@ int main(){
         }
         scanf("%d", &p);
     }
-    printf("\n");
     int po = 0, pl = 0, ps = 0, pn = 0;
     while(s != 0 || n != 0 || o != 0 || l != 0){
         if(o != 0){
