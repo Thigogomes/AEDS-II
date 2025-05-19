@@ -217,12 +217,12 @@ public class MatrizFlexivel {
 					matriz2.inserir(i, j, num);
 				}
 			}
-			/*MatrizFlexivel matrizSoma = matriz1.somaMatriz(matriz2);
+			MatrizFlexivel matrizSoma = matriz1.somaMatriz(matriz2);
 			MatrizFlexivel matrizMult = matriz1.multiplicaMatriz(matriz2);
 			matriz1.printDP();
 			matriz1.printDS();
 			matrizSoma.mostrar();
-			matrizMult.mostrar();*/
+			matrizMult.mostrar();
 		}
 	}
 }
