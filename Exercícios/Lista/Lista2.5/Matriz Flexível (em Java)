@@ -109,7 +109,7 @@ public class MatrizFlexivel {
 
 	public MatrizFlexivel somaMatriz(MatrizFlexivel matriz2) {
 		int lin = tamanholinhas(), col = tamanhoColunas();
-		MatrizFlexivel m3 = new MatrizFlexivel();
+		MatrizFlexivel m3 = new MatrizFlexivel(lin, col);
 
 		Celula m2 = matriz2.inicio;
 		Celula m1 = inicio;
