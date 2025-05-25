@@ -292,13 +292,12 @@ public class Show {
     }
 
     public static Show procurar(ArrayList<Show> listaShow, String id){
-        Show item = listaShow.get(0);
         for (int i = 0; i < listaShow.size(); i++) {
             if (listaShow.get(i).getShowId().equals(id)) {
-                item = listaShow.get(i);
+                return listaShow.get(i);
             }
         }
-        return item;
+        return null;
     }
  
     public static void main(String[] args) {
@@ -318,40 +317,38 @@ public class Show {
             }
             id = input.nextLine();
         }
-        
         ListaFlexivel listaRemovidos = new ListaFlexivel();
         int n = input.nextInt();
+        input.nextLine();
         for(int i = 0; i < n; i++){
             String comando = input.next();
             
             if(comando.equals("II")){
                 id = input.next();
                 lista.inserirInicio(procurar(listaShow, id));
-            }
-            if(comando.equals("IF")){
+                //System.out.println(1);
+            }else if(comando.equals("IF")){
                 id = input.next();
                 lista.inserirFim(procurar(listaShow, id));
-            }
-            if(comando.equals("I*")){
+            }else if(comando.equals("I*")){
                 int pos = input.nextInt();
+                System.out.println(pos);
                 id = input.next();
+                System.out.println(id);
                 lista.inserir(procurar(listaShow, id), pos);
-            }
-            if(comando.equals("RI")){
+            }else if(comando.equals("RI")){
                 Show removido = lista.removerInicio();
                 listaRemovidos.inserirFim(removido);
-            }
-            if(comando.equals("RF")){
+            }else if(comando.equals("RF")){
                 Show removido = lista.removerFim();
                 listaRemovidos.inserirFim(removido);
-            }
-            if(comando.equals("R*")){
+            }else if(comando.equals("R*")){
                 int pos = input.nextInt();
                 Show removido = lista.remover(pos);
                 listaRemovidos.inserirFim(removido);
             }
+            input.nextLine();
         }
-        
         for(int i = 0; i < listaRemovidos.tamanho(); i++){
             System.out.println("(R) " + listaRemovidos.achar(i).getTitle());
         }
