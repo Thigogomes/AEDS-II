@@ -5,8 +5,7 @@
 
 #define MAX 200
 #define MAX_LIST 11
-//#define PATH "/tmp/disneyplus.csv"
-#define PATH "disneyplus.txt"
+#define PATH "/tmp/disneyplus.csv"
 
 typedef struct Show {
 	char showId[MAX];
@@ -396,7 +395,7 @@ Show removerFim(Celula* lista) {
 
 Show procurar(Show* show, int tam, char id[]){
     for (int i = 0; i < tam; i++) {
-        if (strcmp(show[i].showId, id)) {
+        if (strcmp(show[i].showId, id) == 0) {
                 
             return show[i];
         }
@@ -404,8 +403,10 @@ Show procurar(Show* show, int tam, char id[]){
     return newShow();
 }
 
-Show pegar(Show* show, ){
-    
+Show pegar(Celula* lista, int pos){
+    Celula* i = lista->prox;
+    for(int j = 0; j < pos; j++, i = i->prox);
+    return i->elemento;
 }
 
 int main() {
@@ -432,30 +433,40 @@ int main() {
 	int n;
 	scanf("%d", &n);
 	for(int i = 0; i < n; i++) {
-		char comando[3];
+		char comando[5];
+		int pos;
 		scanf("%s", comando);
-        //printf("%s\n", comando);
         
-		if(strcmp(comando, "II")) {
-            scanf("%[^\n]", id);
-            
-		} else if(strcmp(comando, "IF")) {
-            scanf("%[^\n]", id);
-		} else if(strcmp(comando, "I*")) {
-            scanf("%[^\n]", id);
-            int pos;
+		if(strcmp(comando, "II")== 0) {
+            scanf(" %s", id);
+            inserirInicio(lista, procurar(show, quant, id));
+		} else if(strcmp(comando, "IF") == 0) {
+            scanf(" %s", id);
+            inserirFim(lista, procurar(show, quant, id));
+		} else if(strcmp(comando, "I*") == 0) {
+            scanf("%d %s", &pos, id);
+            inserir(lista, procurar(show, quant, id), pos);
+		} else if(strcmp(comando, "RI") == 0) {
+            Show removido = removerInicio(lista);
+            inserirFim(listaRemovidos, removido);
+		} else if(strcmp(comando, "RF") == 0) {
+		    Show removido = removerFim(lista);
+            inserirFim(listaRemovidos, removido);
+		} else if(strcmp(comando, "R*") == 0) {
             scanf("%d", &pos);
-		} else if(strcmp(comando, "RI")) {
-            
-		} else if(strcmp(comando, "RF")) {
-
-		} else if(strcmp(comando, "R*")) {
-            int pos;
-            scanf("%d", &pos);
+            Show removido = remover(lista, pos);
+            inserirFim(listaRemovidos, removido);
 		}
 	}
-
-
+	
+    for(int i = 0; i < tamanho(listaRemovidos); i++){
+        Show item = pegar(listaRemovidos, i);
+        printf("(R) %s\n", item.title);
+    }
+    
+    for(int i = 0; i < tamanho(lista); i++){
+        imprimir(pegar(lista, i));
+    }
 
 	free(show);
 	return 0;
