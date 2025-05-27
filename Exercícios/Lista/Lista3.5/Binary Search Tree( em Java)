@@ -123,17 +123,53 @@ public class ArvoreBinaria {
 	        return getMenor(i.esq);
 	    }
 	}
+	
+	public void remover(int x){
+	    raiz = remover(x, raiz);
+	}
+	
+	public No remover(int x, No i){
+	    if(i == null){
+	        throw new RuntimeException("Erro!");
+	    }else if(x < i.elemento){
+	        i.esq = remover(x, i.esq);
+	    }else if(x > i.elemento){
+	        i.dir = remover(x, i.dir);
+	    }else if(i.dir == null){
+	        i = i.esq;
+	    }else if(i.esq == null){
+	        i = i.dir;
+	    }else{
+	       i.esq = maiorEsq(i, i.esq);
+	    }   
+	    return i;
+	}
+	
+	No maiorEsq(No i, No j){
+	    if(j.dir == null){
+	        i.elemento = j.elemento;
+	        j = j.esq;
+	    }else{
+	        j.dir = maiorEsq(i, j.dir);
+	    }
+	    return j;
+	}
 
 	public static void main(String[] args) {
 		ArvoreBinaria arvore = new ArvoreBinaria();
-		arvore.inserir(3);
+		arvore.inserir(6);
 		arvore.inserir(4);
 		arvore.inserir(2);
-		arvore.inserir(5);
-		arvore.inserirPai(1);
+		arvore.inserir(3);
+		arvore.inserir(1);
+		arvore.inserir(10);
+		arvore.inserir(7);
+		arvore.inserir(8);
         System.out.println(arvore.pesquisar(2));
         arvore.caminharCentral();
         System.out.println("Maior elemento: " + arvore.getMaior());
         System.out.println("Menor elemento: " + arvore.getMenor());
+        arvore.remover(2);
+        arvore.caminharCentral();
 	}
 }
