@@ -294,7 +294,6 @@ public class Show {
     public static Show procurar(ArrayList<Show> listaShow, String id){
         for (int i = 0; i < listaShow.size(); i++) {
             if (listaShow.get(i).getShowId().equals(id)) {
-                
                 return listaShow.get(i);
             }
         }
@@ -306,7 +305,7 @@ public class Show {
         Scanner input = new Scanner(System.in);
         ArrayList<Show> listaShow = ler();
         String id = "";
-        ListaFlexivel lista = new ListaFlexivel();
+        ListaLinear lista = new ListaLinear(1000);
         id = input.nextLine();
         while (!id.equals("FIM")) {
             for (int i = 0; i < listaShow.size(); i++) {
@@ -317,7 +316,7 @@ public class Show {
             }
             id = input.nextLine();
         }
-        ListaFlexivel listaRemovidos = new ListaFlexivel();
+        ListaLinear listaRemovidos = new ListaLinear(1000);
         int n = input.nextInt();
         input.nextLine();
         for(int i = 0; i < n; i++){
@@ -348,142 +347,87 @@ public class Show {
                 input.nextLine();
             }
         }
-        for(int i = 0; i < listaRemovidos.tamanho(); i++){
-            System.out.println("(R) " + listaRemovidos.achar(i).getTitle());
+        for(int i = 0; i < listaRemovidos.tamanho; i++){
+            System.out.println("(R) " + listaRemovidos.pegar(i).getTitle());
         }
-        for(int i = 0; i < lista.tamanho(); i++){
-            lista.achar(i).imprimir();
+        for(int i = 0; i < lista.tamanho; i++){
+            lista.pegar(i).imprimir();
         }
         input.close();
     }
 }
 
-class ListaFlexivel{
-    public Celula primeiro;
-    public Celula ultimo;
-    
-    public ListaFlexivel(){
-        primeiro = new Celula();
-        ultimo = primeiro;
+class ListaLinear{
+	public Show[] array;
+	public int tamanho;
+	
+    ListaLinear(int max){
+        array = new Show[max];
+        tamanho = 0;
     }
     
-    public void inserirFim(Show x){
-        ultimo.prox = new Celula(x);
-        ultimo = ultimo.prox;
-    }
-    
-    public void inserirInicio(Show x){
-        Celula temp = new Celula(x);
-        temp.prox = primeiro.prox;
-        primeiro.prox = temp;
-        if(primeiro == ultimo){
-            ultimo = temp;
+    public void inserirInicio(Show elem){
+        if(tamanho >= array.length){
+            throw new RuntimeException("Erro!"); 
         }
-        temp = null;
-    }
-    
-    public int tamanho(){
-        int tam = 0;
-        for(Celula i = primeiro.prox; i != null; i = i.prox){
-            tam++;
+        for(int i = tamanho; i > 0; i--){
+            array[i] = array[i-1];  
         }
-        return tam;
+        tamanho++;
+        array[0] = elem;
+        
     }
     
-    public void inserir(Show x, int pos){
-        int tam = tamanho();
-        if(pos < 0 || tam < pos){
+    public void inserirFim(Show elem){
+        if(tamanho >= array.length){
             throw new RuntimeException("Erro!");
-        }else if(pos == 0){
-            inserirInicio(x);
-        }else if(pos == tam){
-            inserirFim(x);
-        }else{
-            Celula i = primeiro;
-            for(int j = 0; j < pos; j++, i = i.prox);
-            Celula temp = new Celula(x);
-            temp.prox = i.prox;
-            i.prox = temp;
-            temp = i = null;
         }
+        array[tamanho++] = elem;
     }
     
-    public Show remover(int pos){
-        Show x;
-        int tam = tamanho();
-        if(pos < 0 || tam < pos){
+    public void inserir(Show elem, int pos){
+        if(tamanho >= array.length || pos < 0 || pos > tamanho){
             throw new RuntimeException("Erro!");
-        }else if(pos == 0){
-            x = removerInicio();
-        }else if(pos == tam-1){
-            x = removerFim();
-        }else{
-            Celula i = primeiro;
-            for(int j = 0; j < pos; j++, i = i.prox);
-            Celula temp = i.prox;
-            x = temp.elemento;
-            i.prox = temp.prox;
-            temp.prox = null;
-            temp = i = null;
-            return x;
         }
-        return x;
+        for(int i = tamanho ; i > pos; i--){
+            array[i] = array[i-1];
+        }
+        array[pos] = elem;
+        tamanho++;
     }
     
     public Show removerInicio(){
-        if(primeiro == ultimo)
+        if(tamanho == 0){
             throw new RuntimeException("Erro!");
-        Celula temp = primeiro.prox;
-        Show x = temp.elemento;
-        primeiro.prox = temp.prox;
-        if(temp == ultimo){
-            ultimo = primeiro;
         }
-        temp.prox = null;
-        temp = null;
+        Show x = array[0];
+        for(int i = 0; i < tamanho-1; i++){
+            array[i] = array[i+1];
+        }
+        tamanho--;
         return x;
     }
     
     public Show removerFim(){
-        if(primeiro == ultimo)
+        if(tamanho == 0){
             throw new RuntimeException("Erro!");
-        Celula i;
-        for(i = primeiro; i.prox != ultimo; i = i.prox);
-        Show x = ultimo.elemento;
-        ultimo = i;
-        ultimo.prox = null;
+        }
+        return array[--tamanho];
+    }
+    
+    public Show remover(int pos){
+        if(tamanho == 0 || tamanho <= pos || pos < 0){
+            throw new RuntimeException("Erro!");
+        }
+        Show x = array[pos];
+        for(int i = pos; i < tamanho-1; i++){
+            array[i] = array[i+1];
+        }
+        tamanho--;
         return x;
     }
     
-    public void mostrar(){
-        System.out.print("[");
-        for(Celula i = primeiro.prox; i != ultimo.prox; i = i.prox){
-            System.out.print(i.elemento);
-            if(i.prox != ultimo.prox){
-                System.out.print(", ");
-            }
-        }
-        System.out.println("]");
-    }
-    
-    public Show achar(int pos){
-        Celula i = primeiro.prox;
-        for(int j = 0; j < pos; j++, i = i.prox);
-        return i.elemento;
-    }
-}
-
-class Celula{
-    public Show elemento;
-    public Celula prox;
-    
-    public Celula(){
-        this.elemento = null;
-        this.prox = null;
-    }
-    
-    public Celula(Show elemento){
-        this.elemento = elemento;
-        this.prox = null;
+    public Show pegar(int pos){
+        return array[pos];
     }
 }
