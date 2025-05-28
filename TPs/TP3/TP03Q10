@@ -138,6 +138,12 @@ class ListaDupla {
         for(int j = 0; j < pos; j++, i = i.prox);
         return i.elemento;
     }
+    
+    public void set(int pos, Show x){
+        Celula i = primeiro.prox;
+        for(int j = 0; j < pos; j++, i = i.prox);
+        i.elemento = x;
+    }
 }
 
 public class Show {
@@ -295,7 +301,7 @@ public class Show {
 
     public static ArrayList<Show> ler() {
         ArrayList<Show> listaShow = new ArrayList<>();
-        try (BufferedReader r = new BufferedReader(new FileReader("disneyplus.txt"))) {
+        try (BufferedReader r = new BufferedReader(new FileReader("/tmp/disneyplus.csv"))) {
             String linha = "";
             r.readLine();
             while ((linha = r.readLine()) != null) {
@@ -430,13 +436,13 @@ public class Show {
     }
     
     public static void swap(ListaDupla lista, int a, int b){
-        Show temp = lista.pegar(b);
-        lista.pegar(b) = lista.pegar(a);
-        lista.pegar(a) = temp;
+        Show temp = lista.pegar(a);
+        lista.set(a, lista.pegar(b));
+        lista.set(b, temp);
     }
     
-    public static int comparaMenor(ListaDupla array, int i, Show pivo){
-        Date dataArray = array[i].getDateAdded();
+    public static int comparaMenor(ListaDupla lista, int i, Show pivo){
+        Date dataArray = lista.pegar(i).getDateAdded();
         Date dataPivo = pivo.getDateAdded();
         
         Calendar cal = Calendar.getInstance();
@@ -459,14 +465,14 @@ public class Show {
             return 1;
         }else if(anoArray == anoPivo && mesArray == mesPivo && diaArray < diaPivo){
             return 1;
-        }else if(anoArray == anoPivo && mesArray == mesPivo && diaArray == diaPivo && array[i].getTitle().compareToIgnoreCase(pivo.getTitle()) < 0){
+        }else if(anoArray == anoPivo && mesArray == mesPivo && diaArray == diaPivo && lista.pegar(i).getTitle().compareToIgnoreCase(pivo.getTitle()) < 0){
             return 1;
         }
         return 0;
     }
     
-    public static int comparaMaior(ListaDupla array, int i, Show pivo){
-        Date dataArray = array[i].getDateAdded();
+    public static int comparaMaior(ListaDupla lista, int i, Show pivo){
+        Date dataArray = lista.pegar(i).getDateAdded();
         Date dataPivo = pivo.getDateAdded();
         
         Calendar cal = Calendar.getInstance();
@@ -489,39 +495,39 @@ public class Show {
             return 1;
         }else if(anoArray == anoPivo && mesArray == mesPivo && diaArray > diaPivo){
             return 1;
-        }else if(anoArray == anoPivo && mesArray == mesPivo && diaArray == diaPivo && array[i].getTitle().compareToIgnoreCase(pivo.getTitle()) > 0){
+        }else if(anoArray == anoPivo && mesArray == mesPivo && diaArray == diaPivo && lista.pegar(i).getTitle().compareToIgnoreCase(pivo.getTitle()) > 0){
             return 1;
         }
         return 0;
     }
     
-    public static void quicksort(ListaDupla array, int esq, int dir, int[] comparacoes, int[] movimentacoes){
+    public static void quicksort(ListaDupla lista, int esq, int dir, int[] comparacoes, int[] movimentacoes){
         int i = esq, j = dir, resp;
-        Show pivo = array[(dir+esq)/2];
+        Show pivo = lista.pegar((dir+esq)/2);
         
         while(i <= j){
-            while((resp = comparaMenor(array, i, pivo)) != 0){
+            while((resp = comparaMenor(lista, i, pivo)) != 0){
                 i++;
                 comparacoes[0]++;
             }
             comparacoes[0]++;
-            while((resp = comparaMaior(array, j, pivo)) != 0){
+            while((resp = comparaMaior(lista, j, pivo)) != 0){
                 j--;
                 comparacoes[0]++;
             }
             comparacoes[0]++;
             if(i <= j){
-                swap(array, i, j);
+                swap(lista, i, j);
                 movimentacoes[0] += 3;
                 i++;
                 j--;
             }
         }
         if(esq < j){
-            quicksort(array, esq, j, comparacoes, movimentacoes);
+            quicksort(lista, esq, j, comparacoes, movimentacoes);
         }
         if(i < dir){
-            quicksort(array, i, dir, comparacoes, movimentacoes);
+            quicksort(lista, i, dir, comparacoes, movimentacoes);
         }
     }
     
@@ -557,8 +563,8 @@ public class Show {
         }
         long inicioTempo = System.nanoTime();
         quicksort(lista, 0, j-1, comparacoes, movimentacoes);
-        for(int i = 0; i < 10; i++){
-            lista[i].imprimir();
+        for(int i = 0; i < j; i++){
+            lista.pegar(i).imprimir();
         }
         
         long fimTempo = System.nanoTime();
