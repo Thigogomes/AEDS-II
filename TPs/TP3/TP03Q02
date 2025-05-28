@@ -32,20 +32,22 @@ int quantidade();
 int PesquisaBinaria(Show vet[], int tam, char titulo[], int comparacoes[]);
 void ordenaVetorDeShow(Show vetor[], int tam);
 
-typedef struct Celula {
-	Show elemento;
-	struct Celula* prox;
-} Celula;
+typedef struct ListaLinear{
+    int max;
+    Show *array;
+    int n;
+}ListaLinear;
 
-Celula* newCelula();
-int tamanho(Celula* lista);
-void inserirInicio(Celula* lista, Show x);
-void inserirFim(Celula* lista, Show x);
-void inserir(Celula* lista, Show x, int pos);
-void mostrar(Celula* lista);
-Show remover(Celula* lista, int pos);
-Show removerInicio(Celula* lista);
-Show removerFim(Celula* lista);
+Show pegar(ListaLinear* lista, int pos);
+Show procurar(Show* show, int tam, char id[]);
+Show remover(ListaLinear* lista, int pos);
+void inserir(ListaLinear* lista, Show elem, int pos);
+Show removerFim(ListaLinear* lista);
+Show removerInicio(ListaLinear* lista);
+void inserirFim(ListaLinear* lista, Show elem);
+void inserirInicio(ListaLinear* lista, Show elem);
+ListaLinear* newListaLinear(int max);
+void delListaLinear(ListaLinear* lista);
 
 Show newShow() {
 	Show show;
@@ -301,96 +303,89 @@ char **separarLinha(char *linha) {
 	return str;
 }
 
-Celula* newCelula() {
-	Celula* cel = (Celula*)malloc(sizeof(Celula));
-	cel->prox = NULL;
-	return cel;
+//*****//
+
+ListaLinear* newListaLinear(int max){
+    ListaLinear *lista = (ListaLinear*) malloc(sizeof(ListaLinear));
+    lista->max = max;
+    lista->n = 0;
+    lista->array = (Show*)malloc(max*sizeof(Show));
+    return lista;
 }
 
-int tamanho(Celula* lista) {
-	int tam = 0;
-	Celula* i;
-	for(i = lista->prox; i != NULL; i = i->prox) {
-		tam++;
-	}
-	return tam;
+void delListaLinear(ListaLinear* lista){
+    if(lista != NULL){
+        free(lista->array);
+        free(lista);
+    }
+}
+    
+void inserirInicio(ListaLinear* lista, Show elem){
+    if(lista->n >= lista->max){
+        printf("Erro!");
+        return; 
+    }
+    for(int i = lista->n; i > 0; i--){
+        lista->array[i] = lista->array[i-1];
+    }
+    lista->array[0] = elem;
+    lista->n++;
+}    
+
+void inserirFim(ListaLinear* lista, Show elem){
+    if(lista->n >= lista->max){
+        printf("Erro!");
+        return; 
+    }
+    lista->array[lista->n++] = elem;
 }
 
-void inserirInicio(Celula* lista, Show x) {
-	Celula* novo = (Celula*)malloc(sizeof(Celula));
-	novo->elemento = x;
-	novo->prox = lista->prox;
-	lista->prox = novo;
+Show removerInicio(ListaLinear* lista){
+    if(lista->n == 0){
+        printf("Erro!");
+        return newShow();
+    }
+    Show x = lista->array[0];
+    for(int i = 0; i < lista->n; i++){
+        lista->array[i] = lista->array[i+1];
+    }
+    lista->n--;
+    return x;
 }
 
-void inserirFim(Celula* lista, Show x) {
-	Celula* nova = (Celula*)malloc(sizeof(Celula));
-	Celula* i;
-	for(i = lista; i->prox != NULL; i = i->prox);
-	nova->prox = NULL;
-	nova->elemento = x;
-	i->prox = nova;
+Show removerFim(ListaLinear* lista){
+    if(lista->n == 0){
+        printf("Erro!");
+        return newShow();
+    }
+    lista->n--;
+    Show x = lista->array[lista->n];
+    return x;
 }
 
-void inserir(Celula* lista, Show x, int pos) {
-	int tam = tamanho(lista);
-	if(pos < 0 || pos > tam) {
-		printf("Erro!\n");
-		return;
-	} else if(pos == 0) {
-		inserirInicio(lista, x);
-	} else if(pos == tam) {
-		inserirFim(lista, x);
-	} else {
-		Celula* nova = (Celula*)malloc(sizeof(Celula));
-		Celula* i = lista;
-		nova->elemento = x;
-		for(int j = 0; j < pos; j++, i = i->prox);
-		nova->prox = i->prox;
-		i->prox = nova;
-	}
+void inserir(ListaLinear* lista, Show elem, int pos){
+    if(lista->n >= lista->max || pos < 0 || pos > lista->n){
+        printf("Erro!");
+        return;
+    }
+    for(int i = lista->n; i > pos; i--){
+        lista->array[i] = lista->array[i-1];
+    }
+    lista->array[pos] = elem;
+    lista->n++;
 }
 
-Show remover(Celula* lista, int pos) {
-	Show x;
-	int tam = tamanho(lista);
-	if(pos < 0 || pos > tam) {
-		printf("Erro!\n");
-		return newShow();
-	} else if(pos == 0) {
-		x = removerInicio(lista);
-	} else if(pos == tam-1) {
-		x = removerFim(lista);
-	} else {
-		Celula* i = lista;
-		for(int j = 0; j < pos; j++, i = i->prox);
-		x = i->prox->elemento;
-		i->prox = i->prox->prox;
-		return x;
-	}
-	return x;
-}
-
-Show removerInicio(Celula* lista) {
-	if(lista->prox == NULL) {
-		printf("Erro!\n");
-		return newShow();
-	}
-	Show x = lista->prox->elemento;
-	lista->prox = lista->prox->prox;
-	return x;
-}
-
-Show removerFim(Celula* lista) {
-	if(lista->prox == NULL) {
-		printf("Erro!\n");
-		return newShow();
-	}
-	Celula* i;
-	for(i = lista; i->prox->prox != NULL; i = i->prox);
-	Show x = i->prox->elemento;
-	i->prox = NULL;
-	return x;
+Show remover(ListaLinear* lista, int pos){
+    if(lista->n >= lista->max || pos < 0 || pos >= lista->n){
+        printf("Erro!");
+        return newShow();
+    }
+    Show x = lista->array[pos];
+    for(int i = pos; i < lista->n-1; i++){
+        lista->array[i] = lista->array[i+1];
+    }
+    lista->n--;
+    return x;
 }
 
 Show procurar(Show* show, int tam, char id[]){
@@ -403,10 +398,8 @@ Show procurar(Show* show, int tam, char id[]){
     return newShow();
 }
 
-Show pegar(Celula* lista, int pos){
-    Celula* i = lista->prox;
-    for(int j = 0; j < pos; j++, i = i->prox);
-    return i->elemento;
+Show pegar(ListaLinear* lista, int pos){
+    return lista->array[pos];
 }
 
 int main() {
@@ -415,7 +408,7 @@ int main() {
 	int quant = quantidade();
 	char id[MAX_LIST];
 	char titulo[MAX];
-	Celula* lista = newCelula();
+	ListaLinear* lista = newListaLinear(1000);
 
 	scanf("%[^\n]", id);
 	getchar();
@@ -429,7 +422,7 @@ int main() {
 		getchar();
 	}
 
-	Celula* listaRemovidos = newCelula();
+	ListaLinear* listaRemovidos = newListaLinear(1000);
 	int n;
 	scanf("%d", &n);
 	for(int i = 0; i < n; i++) {
@@ -459,15 +452,16 @@ int main() {
 		}
 	}
 	
-    for(int i = 0; i < tamanho(listaRemovidos); i++){
+    for(int i = 0; i < listaRemovidos->n; i++){
         Show item = pegar(listaRemovidos, i);
         printf("(R) %s\n", item.title);
     }
     
-    for(int i = 0; i < tamanho(lista); i++){
+    for(int i = 0; i < lista->n; i++){
         imprimir(pegar(lista, i));
     }
-
 	free(show);
+	delListaLinear(lista);
+	delListaLinear(listaRemovidos);
 	return 0;
 }
