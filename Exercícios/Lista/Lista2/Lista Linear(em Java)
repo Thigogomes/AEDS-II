@@ -62,9 +62,9 @@ public class ListaLinear{
         if(n == 0 || n < pos || pos < 0){
             throw new RuntimeException("Erro!");
         }
-        int x = array[pos-1];
-        for(int i = pos; i < n; i++){
-            array[i] = array[i-1];
+        int x = array[pos];
+        for(int i = pos; i < n-1; i++){
+            array[i] = array[i+1];
         }
         n--;
         return x;
