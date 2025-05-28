@@ -94,10 +94,10 @@ int remover(ListaLinear* lista, int pos){
         printf("Erro!");
         return -1;
     }
-    for(int i = pos; i < lista->n; i++){
+    int x = lista->array[pos];
+    for(int i = pos; i < lista->n-1; i++){
         lista->array[i] = lista->array[i+1];
     }
-    int x = lista->array[pos];
     lista->n--;
     return x;
 }
