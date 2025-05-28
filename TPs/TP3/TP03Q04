@@ -32,13 +32,15 @@ int quantidade();
 int PesquisaBinaria(Show vet[], int tam, char titulo[], int comparacoes[]);
 void ordenaVetorDeShow(Show vetor[], int tam);
 
-typedef struct FilaLinear{
+typedef struct FilaCircular{
     int max;
-    int n;
+    int primeiro;
+    int ultimo;
     Show *array;
-}FilaLinear;
+    int n;
+}FilaCircular;
 
-Show pegar(FilaLinear* lista, int pos);
+Show pegar(FilaCircular* lista, int pos);
 Show procurar(Show* show, int tam, char id[]);
 
 Show newShow() {
@@ -297,39 +299,40 @@ char **separarLinha(char *linha) {
 
 //*****//
 
-FilaLinear *newFilaLinear(int max){
-    FilaLinear *fila = (FilaLinear*)malloc(sizeof(FilaLinear));
+FilaCircular *newFilaCircular(int max){
+    FilaCircular *fila = (FilaCircular*)malloc(sizeof(FilaCircular));
+    fila->primeiro = 0;
+    fila->ultimo = 0;
     fila->max = max;
     fila->n = 0;
     fila->array = (Show*)malloc(max*sizeof(Show));
     return fila;
 }
 
-void delFilaLinear(FilaLinear* fila){
+void delFilaCircular(FilaCircular* fila){
     if(fila != NULL){
         free(fila->array);
         free(fila);
     }
 }
 
-void enfileirar(FilaLinear* fila, Show elem){
-    if(fila->n >= fila->max){
-        printf("Erro!");
+void enfileirar(FilaCircular* fila, Show elem){
+    if(fila->ultimo >= fila->max){
+        
         return;
     }
-    fila->array[fila->n++] = elem;
+    fila->array[fila->ultimo] = elem;
+    fila->ultimo = (fila->ultimo+1) % fila->max;
+    fila->n++;
 }
 
-Show desenfileirar(FilaLinear* fila){
-    if(fila->n == 0){
-        printf("Erro!");
+Show desenfileirar(FilaCircular* fila){
+    if(fila->primeiro == fila->ultimo){
         return newShow();
     }
-    Show x = fila->array[0];
+    Show x = fila->array[fila->primeiro];
+    fila->primeiro = (fila->primeiro+1) % fila->max;
     fila->n--;
-    for(int i = 0; i < fila->n; i++){
-        fila->array[i] = fila->array[i+1];
-    }
     return x;
 }
 
@@ -343,9 +346,9 @@ Show procurar(Show* show, int tam, char id[]){
     return newShow();
 }
 
-Show pegar(FilaLinear* lista, int pos){
+/*Show pegar(FilaCircular* lista, int pos){
     return lista->array[pos];
-}
+}*/
 
 int main() {
 	int contIds = 0;
@@ -353,21 +356,22 @@ int main() {
 	int quant = quantidade();
 	char id[MAX_LIST];
 	char titulo[MAX];
-	PilhaLinear* lista = newPilhaLinear(1000);
+	FilaCircular* fila = newFilaCircular(5);
 
 	scanf("%[^\n]", id);
 	getchar();
 	while (strcmp(id, "FIM") != 0) {
 		for (int i = 0; i < quant; i++) {
 			if (strcmp(id, show[i].showId) == 0) {
-				empilhar(lista, show[i]);
+				enfileirar(fila, show[i]);
+				printf("[Media] %d", inserido.releaseYear);
 			}
 		}
 		scanf("%[^\n]", id);
 		getchar();
 	}
 
-	PilhaLinear* listaRemovidos = newPilhaLinear(1000);
+	FilaCircular* filaRemovidos = newFilaCircular(1000);
 	int n;
 	scanf("%d", &n);
 	for(int i = 0; i < n; i++) {
@@ -377,24 +381,27 @@ int main() {
         
 		if(strcmp(comando, "I") == 0) {
             scanf(" %s", id);
-            empilhar(lista, procurar(show, quant, id));
+            enfileirar(fila, procurar(show, quant, id));
+            Show inserido = pegar(fila, 4);
+            printf("[Media] %d", inserido.releaseYear);
 		}else if(strcmp(comando, "R") == 0) {
-		    Show removido = desempilhar(lista);
-            empilhar(listaRemovidos, removido);
+		    Show removido = desenfileirar(fila);
+		    printf("(R) %d\n", removido.releaseYear);
+            //enfileirar(filaRemovidos, removido);
 		}
 	}
 	
-    for(int i = 0; i < listaRemovidos->n; i++){
+    /*for(int i = 0; i < listaRemovidos->n; i++){
         Show item = pegar(listaRemovidos, i);
         printf("(R) %s\n", item.title);
-    }
+    }*/
     
-    for(int i = lista->n; i > 0; i--){
+    for(int i = fila->n; i > 0; i--){
         printf("[%d] ", i-1);
-        imprimir(pegar(lista, i-1));
+        imprimir(pegar(fila, i-1));
     }
 	free(show);
-	delPilhaLinear(lista);
-	delPilhaLinear(listaRemovidos);
+	delFilaCircular(fila);
+	//delPilhaLinear(listaRemovidos);
 	return 0;
 }
