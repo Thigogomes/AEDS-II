@@ -291,9 +291,6 @@ char **separarLinha(char *linha) {
 
 //*****//
 
-#include <stdio.h>
-#include <stdlib.h>
-
 typedef struct Celula{
     Show elemento;
     struct Celula* prox;
@@ -304,9 +301,11 @@ typedef struct FilaCircular{
     Celula* ultimo;
 }FilaCircular;
 
-void newFilaCircular(FilaCircular* fila){
+FilaCircular* newFilaCircular(){
+    FilaCircular* fila = (Celula*)malloc(sizeof(Celula));
     fila->primeiro = NULL;
     fila->ultimo = NULL;
+    return fila;
 }
 
 int tamanho(FilaCircular* fila){
@@ -377,12 +376,12 @@ int main() {
 	int quant = quantidade();
 	char id[MAX_LIST];
 	char titulo[MAX];
-	FilaCircular* fila;
-	newFilaCircular(fila);
+	
+	FilaCircular* fila = newFilaCircular();
 	
 	int numeroDeInseridos = 0;
 	int soma = 0;
-
+    
 	scanf("%[^\n]", id);
 	getchar();
 	while (strcmp(id, "FIM") != 0) {
@@ -402,7 +401,6 @@ int main() {
 		scanf("%[^\n]", id);
 		getchar();
 	}
-	
 	int n;
 	scanf("%d", &n);
 	for(int i = 0; i < n; i++) {
@@ -426,9 +424,10 @@ int main() {
 			    Show removido = desenfilerar(fila);
                 numeroDeInseridos--;
                 soma -= removido.releaseYear;
-                printf("(R) %d\n", removido.releaseYear);
+                printf("(R) %d\n", removido.title);
             }
 		}
+		printf("%d", numeroDeInseridos);
 	}
 	
     printf("nn: %d\n", tamanho(fila));
@@ -438,5 +437,6 @@ int main() {
 	}
 	
 	free(show);
+	free(fila);
 	return 0;
 }
