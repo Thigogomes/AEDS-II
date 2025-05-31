@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Celula{
+    int elemento;
+    struct Celula* prox;
+}Celula;
+
+typedef struct FilaCircular{
+    Celula* primeiro;
+    Celula* ultimo;
+    int max;
+    int n;
+}FilaCircular;
+
+Celula* newCelula(int max){
+    Celula* cel = (Celula*)malloc(sizeof(Celula));
+    cel->prox = NULL;
+    cel->elemento = 0;
+    return cel;
+}
+
+FilaCircular* newFilaCircular(){
+    
+}
+
+int tamanho(Celula* lista){
+    int tam = 0;
+    Celula* i;
+    for(i = lista->prox; i != NULL; i = i->prox){
+        tam++;
+    }
+    return tam;
+}
+
+void enfilerar(Celula* fila, int x){
+    if(fila->n >= fila->max){
+        desenfilerar(fila);
+    }
+    Celula* novo = (Celula*)malloc(sizeof(Celula));
+    novo->elemento = x;
+    novo->prox = fila->prox;
+    fila->prox = novo;
+    fila->n++;
+    fila->ultimo = (fila->ultimo+1) % fila->max;
+}
+
+int desenfilerar(Celula* fila){
+    if(fila->primeiro == fila->ultimo){
+        printf("Erro!\n");
+        return -1;
+    }
+    int x = fila->prox->elemento;
+    fila->prox = fila->prox->prox;
+    fila->primeiro = (fila->primeiro+1) % fila->max;
+    fila->n--;
+    return x;
+}
+
+void mostrar(Celula* lista){
+    Celula* i;
+    printf("[");
+    for(i = lista->prox; i != NULL; i = i->prox){
+        printf("%d", i->elemento);
+        if(i->prox != NULL){
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+    
+int main(){
+    Celula* fila = newCelula(5);
+    enfilerar(fila, 1);
+    enfilerar(fila, 2);
+    enfilerar(fila, 3);
+    enfilerar(fila, 4);
+    enfilerar(fila, 5);
+    mostrar(fila);
+    return 0;
+}
