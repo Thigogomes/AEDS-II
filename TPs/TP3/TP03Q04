@@ -317,7 +317,7 @@ void delFilaCircular(FilaCircular* fila) {
 	}
 }
 
-Show desenfileirar(FilaCircular* fila) {
+Show desenfilerar(FilaCircular* fila) {
 	if(fila->primeiro == fila->ultimo) {
 		return newShow();
 	}
@@ -327,10 +327,9 @@ Show desenfileirar(FilaCircular* fila) {
 	return x;
 }
 
-void enfileirar(FilaCircular* fila, Show elem, int soma[], int numeroDeInseridos[]) {
+void enfilerar(FilaCircular* fila, Show elem) {
 	if((fila->ultimo+1) % fila->max == fila->primeiro) {
-		numeroDeInseridos[0]--;
-		soma[0] -= desenfileirar(fila).releaseYear;
+		return;
 	}
 	fila->array[fila->ultimo] = elem;
 	fila->ultimo = (fila->ultimo+1) % fila->max;
@@ -351,49 +350,37 @@ Show pegarUltimo(FilaCircular* fila) {
     return fila->array[pos];
 }
 
-
-int isVazia(FilaCircular* fila){
-    if(fila->primeiro == fila->ultimo){
-        return 1;
-    }
-    return 0;
-}
-
-
-int somaAnos(FilaCircular *fila){
-    int soma = 0;
-    
-    return soma;
-}
-
 int main() {
 	int contIds = 0;
 	Show *show = ler();
 	int quant = quantidade();
 	char id[MAX_LIST];
 	char titulo[MAX];
-	FilaCircular* fila = newFilaCircular(5);
 	
-	int numeroDeInseridos[1] = {0};
-	int soma[1] = {0};
+	FilaCircular* fila = newFilaCircular(5);
+	int numeroDeInseridos = 0;
+	int soma = 0;
 
 	scanf("%[^\n]", id);
 	getchar();
 	while (strcmp(id, "FIM") != 0) {
 		for (int i = 0; i < quant; i++) {
 			if (strcmp(id, show[i].showId) == 0) {
-				enfileirar(fila, show[i], soma, numeroDeInseridos);
-				Show inserido = pegarUltimo(fila);
-				soma[0] += inserido.releaseYear;
-				numeroDeInseridos[0]++;
-				printf("[Media] %d\n", (soma[0]/numeroDeInseridos[0]));
+			    if(fila->n >= 5){
+			        Show removido = desenfilerar(fila);
+			        soma -= removido.releaseYear;
+			    }else{
+			        numeroDeInseridos++;
+			    }
+				soma += show[i].releaseYear;
+				enfilerar(fila, show[i]);
+				printf("[Media] %d\n", (soma/numeroDeInseridos));
 			}
 		}
 		scanf("%[^\n]", id);
 		getchar();
 	}
 
-	FilaCircular* filaRemovidos = newFilaCircular(1000);
 	int n;
 	scanf("%d", &n);
 	for(int i = 0; i < n; i++) {
@@ -403,26 +390,27 @@ int main() {
 
 		if(strcmp(comando, "I") == 0) {
 			scanf(" %s", id);
-			enfileirar(fila, procurar(show, quant, id), soma, numeroDeInseridos);
-			Show inserido = pegarUltimo(fila);
-			soma[0] += inserido.releaseYear;
-			numeroDeInseridos[0]++;
-			printf("[Media] %d\n", (soma[0]/numeroDeInseridos[0]));
-		} else if(strcmp(comando, "R") == 0) {
-			Show removido = desenfileirar(fila);
-			if(!isVazia(fila)) {
-                numeroDeInseridos[0]--;
-                soma[0] -= desenfileirar(fila).releaseYear;
-                //printf("(R) %d\n", removido.releaseYear);
+			if (fila->n >= 5) {
+                Show removido = desenfilerar(fila);
+                soma -= removido.releaseYear;
+            } else {
+                numeroDeInseridos++;
             }
+            enfilerar(fila, procurar(show, quant, id));
+            soma += procurar(show, quant, id).releaseYear;
+            printf("[Media] %d\n", (soma / numeroDeInseridos));
+		} else if(strcmp(comando, "R") == 0) {
+			Show removido = desenfilerar(fila);
+            numeroDeInseridos--;
+            soma -= removido.releaseYear;
+            printf("(R) %s\n", removido.title);
 		}
-		printf("n: %d\n", numeroDeInseridos[0]);
 	}
 	
     printf("nn: %d\n", fila->n);
 	for(int i = 0; i < fila->n; i++) {
 		printf("[%d] ", i);
-		imprimir(desenfileirar(fila));
+		imprimir(desenfilerar(fila));
 	}
 	
 	free(show);
