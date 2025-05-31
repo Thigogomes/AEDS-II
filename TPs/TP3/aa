@@ -9,43 +9,42 @@ typedef struct Celula{
 typedef struct FilaCircular{
     Celula* primeiro;
     Celula* ultimo;
-    int max;
-    int n;
 }FilaCircular;
 
-Celula* newCelula(int max){
-    Celula* cel = (Celula*)malloc(sizeof(Celula));
-    cel->prox = NULL;
-    cel->elemento = 0;
-    return cel;
+void newFilaCircular(FilaCircular* fila){
+    fila->primeiro = NULL;
+    fila->ultimo = NULL;
 }
 
-FilaCircular* newFilaCircular(){
-    
-}
-
-int tamanho(Celula* lista){
+int tamanho(FilaCircular* fila){
     int tam = 0;
-    Celula* i;
-    for(i = lista->prox; i != NULL; i = i->prox){
+    Celula* i = fila->primeiro;
+    do{
         tam++;
-    }
+        i = i->prox;
+    }while(i != fila->primeiro);
     return tam;
 }
 
-void enfilerar(Celula* fila, int x){
-    if(fila->n >= fila->max){
-        desenfilerar(fila);
-    }
+void enfilerar(FilaCircular* fila, int x){
+    /*if(tamanho(fila) >= 5){
+        //desenfilerar(fila);
+        printf("erro");
+    }*/
     Celula* novo = (Celula*)malloc(sizeof(Celula));
     novo->elemento = x;
-    novo->prox = fila->prox;
-    fila->prox = novo;
-    fila->n++;
-    fila->ultimo = (fila->ultimo+1) % fila->max;
+    
+    if(fila->ultimo == NULL){
+        fila->primeiro = novo;
+        novo->prox = novo;
+    }else{
+        novo->prox = fila->primeiro;
+        fila->ultimo->prox = novo;
+    }
+    fila->ultimo = novo;
 }
 
-int desenfilerar(Celula* fila){
+/*int desenfilerar(Celula* fila){
     if(fila->primeiro == fila->ultimo){
         printf("Erro!\n");
         return -1;
@@ -55,22 +54,25 @@ int desenfilerar(Celula* fila){
     fila->primeiro = (fila->primeiro+1) % fila->max;
     fila->n--;
     return x;
-}
+}*/
 
-void mostrar(Celula* lista){
-    Celula* i;
+void mostrar(FilaCircular* fila){
+    Celula* i = fila->primeiro;
     printf("[");
-    for(i = lista->prox; i != NULL; i = i->prox){
+    do{
         printf("%d", i->elemento);
-        if(i->prox != NULL){
+        if(i->prox != fila->primeiro){
             printf(", ");
         }
-    }
+        i = i->prox;
+    }while(i != fila->primeiro);
+    
     printf("]\n");
 }
     
 int main(){
-    Celula* fila = newCelula(5);
+    FilaCircular* fila;
+    
     enfilerar(fila, 1);
     enfilerar(fila, 2);
     enfilerar(fila, 3);
