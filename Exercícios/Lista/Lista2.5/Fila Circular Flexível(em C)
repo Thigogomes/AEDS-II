@@ -11,9 +11,11 @@ typedef struct FilaCircular{
     Celula* ultimo;
 }FilaCircular;
 
-void newFilaCircular(FilaCircular* fila){
+FilaCircular* newFilaCircular() {
+    FilaCircular* fila = (Celula*)malloc(sizeof(Celula));
     fila->primeiro = NULL;
     fila->ultimo = NULL;
+    return fila;
 }
 
 int tamanho(FilaCircular* fila){
@@ -30,40 +32,34 @@ int tamanho(FilaCircular* fila){
     return tam;
 }
 
-void enfilerar(FilaCircular* fila, int x){
-    int tam = tamanho(fila);
-    if(tam >= 5){
-        //desenfilerar(fila);
-        printf("Erro!\n");
-    }
+void enfilerar(FilaCircular* fila, int x) {
     Celula* novo = (Celula*)malloc(sizeof(Celula));
     novo->elemento = x;
-    
-    if(fila->ultimo == NULL){
+
+    if (fila->primeiro == NULL) {
         fila->primeiro = novo;
         novo->prox = novo;
-    }else{
+    } else {
         novo->prox = fila->primeiro;
         fila->ultimo->prox = novo;
     }
     fila->ultimo = novo;
 }
 
-int desenfilerar(FilaCircular* fila){
-    if(fila->primeiro == fila->ultimo){
-        printf("Erro!\n");
+int desenfilerar(FilaCircular* fila) {
+    if (tamanho(fila) == 0) {
+        printf("Erro! Fila Vazia!\n");
         return -1;
     }
     Celula* temp = fila->primeiro;
     int x = temp->elemento;
-    
-    if(temp->prox == temp){
+
+    if (temp->prox == temp) {
         fila->primeiro = NULL;
-    }else{
+    } else {
         fila->primeiro = fila->primeiro->prox;
         fila->ultimo->prox = fila->primeiro;
     }
-    
     free(temp);
     return x;
 }
@@ -83,8 +79,7 @@ void mostrar(FilaCircular* fila){
 }
     
 int main(){
-    FilaCircular* fila;
-    newFilaCircular(fila);
+    FilaCircular* fila = newFilaCircular();
     enfilerar(fila, 1);
     enfilerar(fila, 2);
     enfilerar(fila, 3);
