@@ -1,0 +1,97 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Celula{
+    int elemento;
+    struct Celula* prox;
+}Celula;
+
+typedef struct FilaCircular{
+    Celula* primeiro;
+    Celula* ultimo;
+}FilaCircular;
+
+void newFilaCircular(FilaCircular* fila){
+    fila->primeiro = NULL;
+    fila->ultimo = NULL;
+}
+
+int tamanho(FilaCircular* fila){
+    if (fila->primeiro == NULL) {
+        return 0;
+    }
+    int tam = 0;
+    Celula* i = fila->primeiro;
+    do{
+        tam++;
+        i = i->prox;
+    }while(i != fila->primeiro);
+    
+    return tam;
+}
+
+void enfilerar(FilaCircular* fila, int x){
+    int tam = tamanho(fila);
+    if(tam >= 5){
+        //desenfilerar(fila);
+        printf("Erro!\n");
+    }
+    Celula* novo = (Celula*)malloc(sizeof(Celula));
+    novo->elemento = x;
+    
+    if(fila->ultimo == NULL){
+        fila->primeiro = novo;
+        novo->prox = novo;
+    }else{
+        novo->prox = fila->primeiro;
+        fila->ultimo->prox = novo;
+    }
+    fila->ultimo = novo;
+}
+
+int desenfilerar(FilaCircular* fila){
+    if(fila->primeiro == fila->ultimo){
+        printf("Erro!\n");
+        return -1;
+    }
+    Celula* temp = fila->primeiro;
+    int x = temp->elemento;
+    
+    if(temp->prox == temp){
+        fila->primeiro = NULL;
+    }else{
+        fila->primeiro = fila->primeiro->prox;
+        fila->ultimo->prox = fila->primeiro;
+    }
+    
+    free(temp);
+    return x;
+}
+
+void mostrar(FilaCircular* fila){
+    Celula* i = fila->primeiro;
+    printf("[");
+    do{
+        printf("%d", i->elemento);
+        if(i->prox != fila->primeiro){
+            printf(", ");
+        }
+        i = i->prox;
+    }while(i != fila->primeiro);
+    
+    printf("]\n");
+}
+    
+int main(){
+    FilaCircular* fila;
+    newFilaCircular(fila);
+    enfilerar(fila, 1);
+    enfilerar(fila, 2);
+    enfilerar(fila, 3);
+    enfilerar(fila, 4);
+    enfilerar(fila, 5);
+    enfilerar(fila, 6);
+    desenfilerar(fila);
+    mostrar(fila);
+    return 0;
+}
