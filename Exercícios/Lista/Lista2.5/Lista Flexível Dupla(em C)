@@ -1,0 +1,76 @@
+#include <stdlib.h>
+#include <stdio.h>
+
+typedef struct CelulaDupla{
+    int elemento;
+    struct CelulaDupla* prox;
+    struct CelulaDupla* ant;
+}CelulaDupla;
+
+typedef struct ListaDupla{
+    CelulaDupla* primeiro;
+    CelulaDupla* ultimo;
+}ListaDupla;
+
+ListaDupla* newListaDupla(){
+    ListaDupla* lista = (CelulaDupla*)malloc(sizeof(CelulaDupla));
+    lista->primeiro = NULL;
+    lista->ultimo = NULL;
+    return lista;
+}
+
+int tamanho(ListaDupla* lista){
+    int tam = 0;
+    for(CelulaDupla* i = lista->primeiro; i != NULL; i = i->prox){
+        tam++;
+    }
+    return tam;
+}
+
+void mostrar(ListaDupla* lista){
+    CelulaDupla* i;
+    printf("[");
+    for(i = lista->primeiro; i != NULL; i = i->prox){
+        printf("%d", i->elemento);
+        if(i->prox != NULL){
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+void inserirInicio(ListaDupla* lista, int x){
+    CelulaDupla* temp = (CelulaDupla*)malloc(sizeof(CelulaDupla));
+    temp->elemento = x;
+    temp->ant = NULL;
+    temp->prox = lista->primeiro;
+    
+    if(lista->primeiro == NULL){
+        lista->ultimo = temp;
+    }else{
+        lista->primeiro->ant = temp;
+    }
+    lista->primeiro = temp;
+    temp = NULL;
+    free(temp);
+}
+
+void inserirFim(ListaDupla* lista, int x){
+    lista->ultimo->prox = (CelulaDupla*)malloc(sizeof(CelulaDupla));
+    lista->ultimo->prox->ant = lista->ultimo->prox;
+    lista->ultimo = lista->ultimo->prox;
+    lista->ultimo->elemento = x;
+}
+
+void inserir(ListaDupla* lista, int x, int pos){
+    
+}
+
+int main(){
+    ListaDupla* lista = newListaDupla();
+    inserirInicio(lista, 1);
+    inserirFim(lista, 2);
+    
+    mostrar(lista);
+    return 0;
+}
