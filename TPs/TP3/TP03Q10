@@ -1,576 +1,608 @@
-import java.util.*;
-import java.io.*;
-import java.text.*;
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+#include<time.h>
 
-class Celula{
-    public Show elemento;
-    public Celula prox;
-    public Celula ant;
-    
-    public Celula(){
-        this.elemento = null;
-        this.prox = null;
-        this.ant = null;
+#define MAX 200
+#define MAX_LIST 11
+//#define PATH "/tmp/disneyplus.csv"
+#define PATH "disneyplus.txt"
+
+typedef struct Show {
+    char showId[MAX];
+    char type[MAX];
+    char title[MAX];
+    char director[MAX];
+    char cast[MAX_LIST][MAX];
+    char country[MAX];
+    char dateAdded[MAX];
+    int releaseYear;
+    char rating[MAX];
+    char duration[MAX];
+    char listedIn[MAX_LIST][MAX];
+} Show;
+
+typedef struct Date{
+    int day;
+    int month;
+    int year;
+}Date;
+
+Show newShow();
+Show *ler();
+void atribuir(Show *show, char *linha, int index);
+char **separarLinha(char *linha);
+char **separarLista(char *lista);
+void ordenarLista(char **lista);
+void imprimir(Show show);
+int quantidade();
+int PesquisaBinaria(Show vet[], int tam, char titulo[], int comparacoes[]);
+void ordenaVetorDeShow(Show vetor[], int tam);
+Show procurar(Show* show, int tam, char id[]);
+
+Show newShow() {
+    Show show;
+    strcpy(show.showId, "NaN");
+    strcpy(show.type, "NaN");
+    strcpy(show.title, "NaN");
+    strcpy(show.director, "NaN");
+    strcpy(show.cast[0], "NaN");
+    for (int i = 1; i < MAX_LIST; i++) {
+        show.cast[i][0] = '\0';
     }
-    
-    public Celula(Show elemento){
-        this.elemento = elemento;
-        this.prox = null;
-        this.ant = null;
+    strcpy(show.country, "NaN");
+    strcpy(show.dateAdded, "NaN");
+    show.releaseYear = -1;
+    strcpy(show.rating, "NaN");
+    strcpy(show.duration, "NaN");
+    strcpy(show.listedIn[0], "NaN");
+    for (int i = 1; i < MAX_LIST; i++) {
+        show.listedIn[i][0] = '\0';
     }
+    return show;
 }
 
-class ListaDupla {
-    public Celula primeiro;
-    public Celula ultimo;
-
-    public ListaDupla() {
-        primeiro = new Celula();
-        ultimo = primeiro;
-    }
-
-    public int tamanho() {
-        int tam = 0;
-        for (Celula i = primeiro.prox; i != ultimo.prox; i = i.prox) {
-            tam++;
+int quantidade() {
+    int cont = 0;
+    FILE *arq = fopen(PATH, "r");
+    char linha[1500];
+    if (arq) {
+        fgets(linha, sizeof(linha), arq);
+        while (fgets(linha, sizeof(linha), arq)) {
+            cont++;
         }
-        return tam;
+    } else {
+        printf("Erro ao abrir o arquivo!");
     }
-
-    public void inserirFim(Show x) {
-        ultimo.prox = new Celula(x);
-        ultimo.prox.ant = ultimo;
-        ultimo = ultimo.prox;
-    }
-
-    public void inserirInicio(Show x) {
-        Celula temp = new Celula(x);
-        temp.prox = primeiro.prox;
-        temp.ant = primeiro;
-        primeiro.prox = temp;
-
-        if (ultimo == primeiro) {
-            ultimo = temp;
-        } else {
-            primeiro.prox.ant = temp;
-        }
-
-        temp = null;
-    }
-
-    public void inserir(Show x, int pos) {
-        int tam = tamanho();
-
-        if (pos < 0 || pos > tam) {
-            throw new RuntimeException("Erro!");
-        } else if (pos == 0) {
-            inserirInicio(x);
-        } else if (pos == tam) {
-            inserirFim(x);
-        } else {
-            Celula i = primeiro;
-            for (int j = 0; j < pos; j++, i = i.prox);
-            Celula temp = new Celula(x);
-            temp.prox = i.prox;
-            temp.ant = i;
-            i.prox.ant = temp;
-            i.prox = temp;
-            i = temp = null;
-        }
-    }
-
-    public Show removerFim() {
-        if (ultimo == primeiro)
-            throw new RuntimeException("Erro!");
-
-        Show x = ultimo.elemento;
-        ultimo = ultimo.ant;
-        ultimo.prox.ant = null;
-        ultimo.prox = null;
-        return x;
-    }
-
-    public Show removerInicio() {
-        if (ultimo == primeiro)
-            throw new RuntimeException("Erro!");
-
-        Celula temp = primeiro.prox;
-        Show x = temp.elemento;
-        primeiro.prox = temp.prox;
-
-        if (temp == ultimo) {
-            ultimo = primeiro;
-        } else {
-            temp.prox.ant = temp.ant;
-        }
-
-        temp.prox = temp.ant = null;
-        temp = null;
-        return x;
-    }
-
-    public Show remover(int pos) {
-        Show x;
-        int tam = tamanho();
-
-        if (pos < 0 || pos >= tam) {
-            throw new RuntimeException("Erro!");
-        } else if (pos == 0) {
-            x = removerInicio();
-        } else if (pos == tam - 1) {
-            x = removerFim();
-        } else {
-            Celula i = primeiro;
-            for (int j = 0; j < pos; j++, i = i.prox);
-            Celula temp = i.prox;
-            x = temp.elemento;
-            i.prox = temp.prox;
-            temp.prox.ant = temp.ant;
-            temp.ant = temp.prox = null;
-            temp = null;
-        }
-
-        return x;
-    }
-    
-    public Show pegar(int pos){
-        Celula i = primeiro.prox;
-        for(int j = 0; j < pos; j++, i = i.prox);
-        return i.elemento;
-    }
-    
-    public void set(int pos, Show x){
-        Celula i = primeiro.prox;
-        for(int j = 0; j < pos; j++, i = i.prox);
-        i.elemento = x;
-    }
+    fclose(arq);
+    return cont;
 }
 
-public class Show {
-    private String showId;
-    private String type;
-    private String title;
-    private String director;
-    private String[] cast;
-    private String country;
-    private Date dateAdded;
-    private int releaseYear;
-    private String rating;
-    private String duration;
-    private String[] listedIn;
-
-    public String getShowId() {
-        return showId;
-    }
-
-    public void setShowId(String showId) {
-        this.showId = showId;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDirector() {
-        return director;
-    }
-
-    public void setDirector(String director) {
-        this.director = director;
-    }
-
-    public String[] getCast() {
-        return cast;
-    }
-
-    public void setCast(String[] cast) {
-        this.cast = cast;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public Date getDateAdded() {
-        return dateAdded;
-    }
-
-    public void setDateAdded(Date dateAdded) {
-        this.dateAdded = dateAdded;
-    }
-
-    public int getReleaseYear() {
-        return releaseYear;
-    }
-
-    public void setReleaseYear(int releaseYear) {
-        this.releaseYear = releaseYear;
-    }
-
-    public String getRating() {
-        return rating;
-    }
-
-    public void setRating(String rating) {
-        this.rating = rating;
-    }
-
-    public String getDuration() {
-        return duration;
-    }
-
-    public void setDuration(String duration) {
-        this.duration = duration;
-    }
-
-    public String[] getListedIn() {
-        return listedIn;
-    }
-
-    public void setListedIn(String[] listedIn) {
-        this.listedIn = listedIn;
-    }
-
-    public Show() {
-        this.showId = "NaN";
-        this.type = "NaN";
-        this.title = "NaN";
-        this.director = "NaN";
-        this.cast = new String[]{"NaN"};
-        this.country = "NaN";
-        this.dateAdded = null;
-        this.releaseYear = -1;
-        this.rating = "NaN";
-        this.duration = "NaN";
-        this.listedIn = new String[]{"NaN"};
-    }
-
-    public Show(String showId, String type, String title, String director, String[] cast, String country, String dateAdded, int releaseYear, String rating, String duration, String[] listedIn) {
-        this.showId = (showId != null && !showId.isEmpty()) ? showId : "NaN";
-        this.type = (type != null && !type.isEmpty()) ? type : "NaN";
-        this.title = (title != null && !title.isEmpty()) ? title : "NaN";
-        this.director = (director != null && !director.isEmpty()) ? director : "NaN";
-        this.cast = (cast != null && cast.length >= 0) ? cast : new String[]{"NaN"};
-        this.country = (country != null && country.isEmpty()) ? country : "NaN";
-        SimpleDateFormat data = new SimpleDateFormat("MMMM dd, yyyy");
-        if (dateAdded != null && !dateAdded.isEmpty()) {
-            try {
-                this.dateAdded = data.parse(dateAdded);
-            } catch (ParseException e) {
-                System.out.println("Erro ao adicionar a data");
-                this.dateAdded = null;
-            }
-        } else {
-            this.dateAdded = null;
-        }
-        this.releaseYear = (releaseYear > 0) ? releaseYear : -1;
-        this.duration = (duration != null && !duration.isEmpty()) ? duration : "NaN";
-        this.listedIn = (listedIn != null && listedIn.length >= 0) ? listedIn : new String[]{"NaN"};
-    }
-
-    public void imprimir() {
-        SimpleDateFormat data = new SimpleDateFormat("MMMM d, yyyy");
-        System.out.print("=> " + getShowId());
-        System.out.print(" ## " + getTitle());
-        System.out.print(" ## " + getType());
-        System.out.print(" ## " + getDirector());
-        System.out.print(" ## " + Arrays.toString(getCast()));
-        System.out.print(" ## " + getCountry());
-        System.out.print(" ## " + (getDateAdded() != null ? data.format(getDateAdded()) : "NaN"));
-        System.out.print(" ## " + (getReleaseYear() != -1 ? getReleaseYear() : "NaN"));
-        System.out.print(" ## " + getRating());
-        System.out.print(" ## " + getDuration());
-        System.out.println(" ## " + Arrays.toString(getListedIn()) + " ##");
-    }
-
-    public static ArrayList<Show> ler() {
-        ArrayList<Show> listaShow = new ArrayList<>();
-        try (BufferedReader r = new BufferedReader(new FileReader("/tmp/disneyplus.csv"))) {
-            String linha = "";
-            r.readLine();
-            while ((linha = r.readLine()) != null) {
-                Show show = new Show();
-                show.atribuir(linha);
-                listaShow.add(show);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return listaShow;
-    }
-
-    public void atribuir(String linha) {
-        String[] str = new String[11];
-        Arrays.fill(str, "");
-        str = separarLinha(linha);
-        SimpleDateFormat formato = new SimpleDateFormat("MMMM dd, yyyy", Locale.ENGLISH);
-
-        setShowId((str[0] != null) ? str[0] : "NaN");
-        setType((str[1] != null) ? str[1] : "NaN");
-        setTitle((str[2] != null) ? str[2] : "NaN");
-        setDirector((str[3] != null) ? str[3] : "NaN");
-        if (str[4] != null) {
-            setCast(ordenaArray(str[4]));
-        } else {
-            setCast(new String[]{"NaN"});
-        }
-        setCountry((str[5] != null) ? str[5] : "NaN");
-        try {
-            if (str[6] != null && !str[6].isEmpty()) {
-                Date data = formato.parse(str[6]);
-                setDateAdded(data);
-            } else if (str[6] == null) {
-                Date data = formato.parse("March 1, 1900");
-                setDateAdded(data);
-            }
-        } catch (Exception e) {
-            System.out.println("Erro ao adicionar a data: " + str[6]);
-            this.dateAdded = null;
-        }
-        setReleaseYear((str[7] != null) ? Integer.parseInt(str[7]) : -1);
-        setRating((str[8] != null) ? str[8] : "NaN");
-        setDuration((str[9] != null) ? str[9] : "NaN");
-        if (str[10] != null) {
-            setListedIn(ordenaArray(str[10]));
-        } else {
-            setListedIn(new String[]{"NaN"});
-        }
-    }
-
-    public static String[] ordenaArray(String str) {
-        int temp = 0, tam = 0;
-        for (int i = 0; i < str.length(); i++) {
-            if (str.charAt(i) == ',') {
-                tam++;
-            }
-        }
-
-        String[] array = new String[tam + 1];
-        Arrays.fill(array, "");
-
-        for (int i = 0; i < str.length(); i++) {
-            if (str.charAt(i) != ',') {
-                array[temp] += str.charAt(i);
-            } else if (str.charAt(i) == ',') {
-                i++; // para retirar o espaço extra
-                temp++;
-            }
-
-        }
-
-        for (int i = array.length - 1; i > 0; i--) {
-            for (int j = 0; j < i; j++) {
-                if (array[j].compareTo(array[j + 1]) > 0) {
-                    String aux = array[j];
-                    array[j] = array[j + 1];
-                    array[j + 1] = aux;
-                }
-            }
-        }
-        return array;
-    }
-
-    public static String[] separarLinha(String linha) {
-        String[] str = new String[11];
-        Arrays.fill(str, "");
-        int aux = 0, i = 0;
-        while (i < linha.length() && aux != 11) {
-            char letra = linha.charAt(i);
-            char letra2 = 'c';
-            if (i + 1 < linha.length()) {
-                letra2 = linha.charAt(i + 1);
-            }
-            if (letra == ',' && letra2 != ' ') {
-                if (str[aux] == "") {
-                    str[aux] = null;
-                }
-                aux++;
-            } else {
-                if (letra != '"') {
-                    str[aux] += letra;
-                } else {
-                    i++;
-                    letra = linha.charAt(i);
-                    while (i < linha.length() && linha.charAt(i) != '"') {
-                        str[aux] += letra;
-                        i++;
-                        letra = linha.charAt(i);
-                    }
-                }
-            }
+Show *ler() {
+    int i = 0;
+    int quant = quantidade();
+    Show *show = (Show*)malloc(quant * sizeof(Show));
+    FILE *arq = fopen(PATH, "r");
+    char linha[1500];
+    if (arq) {
+        fgets(linha, sizeof(linha), arq);
+        while (fgets(linha, sizeof(linha), arq)) {
+            atribuir(show, linha, i);
             i++;
         }
-        return str;
+    } else {
+        printf("Erro ao abrir o arquivo!");
+    }
+    fclose(arq);
+    return show;
+}
+
+void atribuir(Show *show, char *linha, int index) {
+    show[index] = newShow();
+    char **str = separarLinha(linha);
+    strcpy(show[index].showId, str[0]);
+
+    if (strlen(str[1]) > 0) {
+        strcpy(show[index].type, str[1]);
+    } else {
+        strcpy(show[index].type, "NaN");
     }
 
-    public Show clone() {
-        Show copia = new Show();
-        copia.setShowId(this.showId);
-        copia.setType(this.type);
-        copia.setTitle(this.title);
-        copia.setDirector(this.director);
-        copia.setCast(Arrays.copyOf(this.cast, this.cast.length));
-        copia.setCountry(this.country);
-        copia.setDateAdded(this.dateAdded != null ? new Date(this.dateAdded.getTime()) : null);
-        copia.setReleaseYear(this.releaseYear);
-        copia.setRating(this.rating);
-        copia.setDuration(this.duration);
-        copia.setListedIn(Arrays.copyOf(this.listedIn, this.listedIn.length));
-        return copia;
+    if (strlen(str[2]) > 0) {
+        strcpy(show[index].title, str[2]);
+    } else {
+        strcpy(show[index].title, "NaN");
     }
-    
-    public static void swap(ListaDupla lista, int a, int b){
-        Show temp = lista.pegar(a);
-        lista.set(a, lista.pegar(b));
-        lista.set(b, temp);
+
+    if (strlen(str[3]) > 0) {
+        strcpy(show[index].director, str[3]);
+    } else {
+        strcpy(show[index].director, "NaN");
     }
-    
-    public static int comparaMenor(ListaDupla lista, int i, Show pivo){
-        Date dataArray = lista.pegar(i).getDateAdded();
-        Date dataPivo = pivo.getDateAdded();
-        
-        Calendar cal = Calendar.getInstance();
-        Calendar cal2 = Calendar.getInstance();
-        
-        cal.setTime(dataArray);
-        cal2.setTime(dataPivo);
-        
-        int diaArray = cal.get(Calendar.DAY_OF_MONTH);
-        int mesArray = cal.get(Calendar.MONTH) + 1;
-        int anoArray = cal.get(Calendar.YEAR);
-        
-        int diaPivo = cal2.get(Calendar.DAY_OF_MONTH);
-        int mesPivo = cal2.get(Calendar.MONTH) + 1;
-        int anoPivo = cal2.get(Calendar.YEAR);
-        
-        if(anoArray < anoPivo){
-            return 1;
-        }else if(anoArray == anoPivo && mesArray < mesPivo){
-            return 1;
-        }else if(anoArray == anoPivo && mesArray == mesPivo && diaArray < diaPivo){
-            return 1;
-        }else if(anoArray == anoPivo && mesArray == mesPivo && diaArray == diaPivo && lista.pegar(i).getTitle().compareToIgnoreCase(pivo.getTitle()) < 0){
-            return 1;
+
+    if (strlen(str[4]) > 0) {
+        char **lista = separarLista(str[4]);
+        for (int i = 0; i < MAX_LIST && lista[i][0] != '\0'; i++) {
+            strcpy(show[index].cast[i], lista[i]);
         }
-        return 0;
-    }
-    
-    public static int comparaMaior(ListaDupla lista, int i, Show pivo){
-        Date dataArray = lista.pegar(i).getDateAdded();
-        Date dataPivo = pivo.getDateAdded();
-        
-        Calendar cal = Calendar.getInstance();
-        Calendar cal2 = Calendar.getInstance();
-        
-        cal.setTime(dataArray);
-        cal2.setTime(dataPivo);
-        
-        int diaArray = cal.get(Calendar.DAY_OF_MONTH);
-        int mesArray = cal.get(Calendar.MONTH) + 1;
-        int anoArray = cal.get(Calendar.YEAR);
-        
-        int diaPivo = cal2.get(Calendar.DAY_OF_MONTH);
-        int mesPivo = cal2.get(Calendar.MONTH) + 1;
-        int anoPivo = cal2.get(Calendar.YEAR);
-        
-        if(anoArray > anoPivo){
-            return 1;
-        }else if(anoArray == anoPivo && mesArray > mesPivo){
-            return 1;
-        }else if(anoArray == anoPivo && mesArray == mesPivo && diaArray > diaPivo){
-            return 1;
-        }else if(anoArray == anoPivo && mesArray == mesPivo && diaArray == diaPivo && lista.pegar(i).getTitle().compareToIgnoreCase(pivo.getTitle()) > 0){
-            return 1;
+        for (int i = 0; i < MAX_LIST; i++) {
+            free(lista[i]);
         }
-        return 0;
+        free(lista);
+    } else {
+        strcpy(show[index].cast[0], "NaN");
+        for (int i = 1; i < MAX_LIST; i++) {
+            show[index].cast[i][0] = '\0';
+        }
     }
-    
-    public static void quicksort(ListaDupla lista, int esq, int dir, int[] comparacoes, int[] movimentacoes){
-        int i = esq, j = dir, resp;
-        Show pivo = lista.pegar((dir+esq)/2);
-        
-        while(i <= j){
-            while((resp = comparaMenor(lista, i, pivo)) != 0){
+
+    if (strlen(str[5]) > 0) {
+        strcpy(show[index].country, str[5]);
+    } else {
+        strcpy(show[index].country, "NaN");
+    }
+
+    if (strlen(str[6]) > 0) {
+        strcpy(show[index].dateAdded, str[6]);
+    } else {
+        strcpy(show[index].dateAdded, "March 1, 1900");
+    }
+
+    show[index].releaseYear = atoi(str[7]);
+
+    if (strlen(str[8]) > 0) {
+        strcpy(show[index].rating, str[8]);
+    } else {
+        strcpy(show[index].rating, "NaN");
+    }
+
+    if (strlen(str[9]) > 0) {
+        strcpy(show[index].duration, str[9]);
+    } else {
+        strcpy(show[index].duration, "NaN");
+    }
+
+    if (strlen(str[10]) > 0) {
+        char **lista = separarLista(str[10]);
+        for (int i = 0; i < MAX_LIST && lista[i][0] != '\0'; i++) {
+            strcpy(show[index].listedIn[i], lista[i]);
+        }
+        for (int i = 0; i < MAX_LIST; i++) {
+            free(lista[i]);
+        }
+        free(lista);
+    } else {
+        strcpy(show[index].listedIn[0], "NaN");
+        for (int i = 1; i < MAX_LIST; i++) {
+            show[index].listedIn[i][0] = '\0';
+        }
+    }
+
+    for (int i = 0; i < MAX_LIST; i++) {
+        free(str[i]);
+    }
+    free(str);
+}
+
+char **separarLista(char *lista) {
+    char **str = (char**)malloc(MAX_LIST * sizeof(char*));
+    for (int k = 0; k < MAX_LIST; k++) {
+        str[k] = (char*)malloc((MAX + 1) * sizeof(char));
+        str[k][0] = '\0';
+    }
+
+    int i = 0, j = 0, pos = 0;
+    while (lista[i] != '\0') {
+        if (lista[i] != ',') {
+            str[pos][j] = lista[i];
+            j++;
+        } else {
+            str[pos][j] = '\0';
+            pos++;
+            j = 0;
+            if (lista[i + 1] == ' ') {
                 i++;
-                comparacoes[0]++;
             }
-            comparacoes[0]++;
-            while((resp = comparaMaior(lista, j, pivo)) != 0){
-                j--;
-                comparacoes[0]++;
+        }
+        i++;
+    }
+    str[pos][j] = '\0';
+    ordenarLista(str);
+    return str;
+}
+
+void imprimir(Show show) {
+    int i = 0;
+    printf("=> %s ## ", show.showId);
+    printf("%s ## ", show.title);
+    printf("%s ## ", show.type);
+    printf("%s ## ", show.director);
+    printf("[");
+    while (show.cast[i][0] != '\0') {
+        printf("%s", show.cast[i]);
+        if (show.cast[i + 1][0] != '\0') {
+            printf(", ");
+        }
+        i++;
+    }
+    printf("] ## ");
+    printf("%s ## ", show.country);
+    printf("%s ## ", show.dateAdded);
+    printf("%d ## ", show.releaseYear);
+    printf("%s ## ", show.rating);
+    printf("%s ## ", show.duration);
+    printf("[");
+    i = 0;
+    while (show.listedIn[i][0] != '\0') {
+        printf("%s", show.listedIn[i]);
+        if (show.listedIn[i + 1][0] != '\0') {
+            printf(", ");
+        }
+        i++;
+    }
+    printf("] ##\n");
+}
+
+void ordenarLista(char **lista) {
+    char temp[MAX];
+    int tam = 0;
+    while (lista[tam][0] != '\0') {
+        tam++;
+    }
+    tam--;
+    for (int i = tam; i > 0; i--) {
+        for (int j = 0; j < i; j++) {
+            if (strcmp(lista[j], lista[j + 1]) > 0) {
+                strcpy(temp, lista[j]);
+                strcpy(lista[j], lista[j + 1]);
+                strcpy(lista[j + 1], temp);
             }
-            comparacoes[0]++;
-            if(i <= j){
-                swap(lista, i, j);
-                movimentacoes[0] += 3;
+        }
+    }
+}
+
+char **separarLinha(char *linha) {
+    char **str = (char**)malloc(MAX_LIST * sizeof(char*));
+    for (int k = 0; k < MAX_LIST; k++) {
+        str[k] = (char*)malloc((MAX + 1) * sizeof(char));
+        str[k][0] = '\0';
+    }
+
+    int aux = 0, i = 0, j = 0;
+    while (i < strlen(linha) && aux < 11) {
+        char letra = linha[i];
+        char letra2;
+        if (i + 1 < strlen(linha)) {
+            letra2 = linha[i + 1];
+        }
+        if (letra == ',' && letra2 != ' ') {
+            str[aux][j] = '\0';
+            aux++;
+            j = 0;
+        } else {
+            if (letra != '"') {
+                str[aux][j] = letra;
+                j++;
+            } else {
                 i++;
-                j--;
-            }
-        }
-        if(esq < j){
-            quicksort(lista, esq, j, comparacoes, movimentacoes);
-        }
-        if(i < dir){
-            quicksort(lista, i, dir, comparacoes, movimentacoes);
-        }
-    }
-    
-    public static void arquivoLog(double duracao, int[] comparacoes, int[] movimentacoes){
-        String matricula = "1543790";
-        try {
-            PrintWriter w = new PrintWriter(matricula + "_quicksort3.txt");
-            w.printf("%s\t%d\t%d\t%fms", matricula, comparacoes[0], movimentacoes[0], duracao);
-            w.close();
-        } catch (IOException e) {
-            System.err.println("Erro para escrever no arquivo de log: " + e.getMessage());
-        }
-    }
- 
-    public static void main(String[] args) {
-        int[] comparacoes = new int[1];
-        int[] movimentacoes = new int[1];
-        int j = 0;
-        Scanner input = new Scanner(System.in);
-        ArrayList<Show> listaShow = ler();
-        String id = "";
-        ListaDupla lista = new ListaDupla();
-        
-        id = input.nextLine();
-        while (!id.equals("FIM")) {
-            for (int i = 0; i < listaShow.size(); i++) {
-                if (listaShow.get(i).getShowId().equals(id)) {
-                    lista.inserirFim(listaShow.get(i));
+                letra = linha[i];
+                while (i < strlen(linha) && linha[i] != '"') {
+                    str[aux][j] = letra;
                     j++;
+                    i++;
+                    letra = linha[i];
                 }
             }
-            id = input.nextLine();
         }
-        long inicioTempo = System.nanoTime();
-        quicksort(lista, 0, j-1, comparacoes, movimentacoes);
-        for(int i = 0; i < j; i++){
-            lista.pegar(i).imprimir();
-        }
-        
-        long fimTempo = System.nanoTime();
-        double duracao = (fimTempo - inicioTempo) / 1_000_000.0; // em milisegundos
-        //Escrever no arquivo de log
-        arquivoLog(duracao, comparacoes, movimentacoes);
-        input.close();
+        i++;
     }
+    if (j > 0 && aux < MAX_LIST) {
+        str[aux][j] = '\0';
+    }
+    return str;
+}
+
+int mesParaNumero(char mes[]){
+    if(strcmp(mes, "January") == 0){
+        return 1;
+    }else if(strcmp(mes, "February") == 0){
+        return 2;
+    }else if(strcmp(mes, "March") == 0){
+        return 3;
+    }else if(strcmp(mes, "April") == 0){
+        return 4;
+    }else if(strcmp(mes, "May") == 0){
+        return 5;
+    }else if(strcmp(mes, "June") == 0){
+        return 6;
+    }else if(strcmp(mes, "July") == 0){
+        return 7;
+    }else if(strcmp(mes, "August") == 0){
+        return 8;
+    }else if(strcmp(mes, "September") == 0){
+        return 9;
+    }else if(strcmp(mes, "October") == 0){
+        return 10;
+    }else if(strcmp(mes, "November") == 0){
+        return 11;
+    }else if(strcmp(mes, "December") == 0){
+        return 12;
+    }else{
+        printf("Erro!");
+        return -1;
+    }
+}
+
+Date dateToInt(char data[]){
+    Date d;
+    char mes[15], dia[3], ano[5];
+    int j = 0, k = 0;
+    while(data[j] != ' '){
+        mes[k++] = data[j++];
+    }
+    mes[k] = '\0';
+    j++;
+    k = 0;
+    while(data[j] != ','){
+        dia[k++] = data[j++];
+    }
+    dia[k] = '\0';
+    j += 2;
+    k = 0;
+    while(data[j] != '\0'){
+        ano[k++] = data[j++];
+    }
+    ano[k] = '\0';
+        
+    d.day = atoi(dia);
+    d.month = mesParaNumero(mes);
+    d.year = atoi(ano);
+    return d;
+}
+
+//***********//
+
+typedef struct CelulaDupla{
+    Show elemento;
+    struct CelulaDupla* prox;
+    struct CelulaDupla* ant;
+}CelulaDupla;
+
+typedef struct ListaDupla{
+    CelulaDupla* primeiro;
+    CelulaDupla* ultimo;
+}ListaDupla;
+
+ListaDupla* newListaDupla(){
+    ListaDupla* lista = (ListaDupla*)malloc(sizeof(ListaDupla));
+    lista->primeiro = NULL;
+    lista->ultimo = NULL;
+    return lista;
+}
+
+int tamanho(ListaDupla* lista){
+    int tam = 0;
+    for(CelulaDupla* i = lista->primeiro; i != NULL; i = i->prox){
+        tam++;
+    }
+    return tam;
+}
+
+void inserirInicio(ListaDupla* lista, Show x){
+    CelulaDupla* temp = (CelulaDupla*)malloc(sizeof(CelulaDupla));
+    temp->elemento = x;
+    temp->ant = NULL;
+    temp->prox = lista->primeiro;
+    
+    if(lista->primeiro == NULL){
+        lista->ultimo = temp;
+    }else{
+        lista->primeiro->ant = temp;
+    }
+    lista->primeiro = temp;
+    temp = NULL;
+    free(temp);
+}
+
+void inserirFim(ListaDupla* lista, Show x){
+    CelulaDupla* temp = (CelulaDupla*)malloc(sizeof(CelulaDupla));
+    temp->elemento = x;
+    temp->prox = NULL;
+    temp->ant = lista->ultimo;
+    
+    if(lista->primeiro == NULL){
+        lista->primeiro = temp;
+        lista->ultimo = temp;
+    }else{
+        lista->ultimo->prox = temp;
+    }
+    lista->ultimo = temp;
+    
+    temp = NULL;
+    free(temp);
+}
+
+void inserir(ListaDupla* lista, Show x, int pos){
+    int tam = tamanho(lista);
+    if(pos < 0 || pos > tam){
+        printf("Erro! Possicao invalida!");
+        return;
+    }else if(pos == 0){
+        inserirInicio(lista, x);
+    }else if(pos == tam){
+        inserirFim(lista, x);
+    }else{
+        CelulaDupla*  i = lista->primeiro;
+        CelulaDupla* temp = (CelulaDupla*)malloc(sizeof(CelulaDupla));
+        temp->elemento = x;
+        
+        for(int j = 0; j < pos-1; i = i->prox, j++);
+        temp->prox = i->prox;
+        temp->ant = i;
+        i->prox->ant = temp;
+        i->prox = temp;
+        
+        i = temp = NULL;
+        free(temp);
+    }
+}
+
+Show removerFim(ListaDupla* lista){
+    Show x;
+    int tam = tamanho(lista);
+    if(tam == 0){
+        printf("Erro! Lista vazia!");
+        return newShow();
+    }
+    x = lista->ultimo->elemento;
+    lista->ultimo = lista->ultimo->ant;
+    
+    if(lista->ultimo == NULL){
+        lista->primeiro = NULL;
+    } else {
+        lista->ultimo->prox->ant = NULL;
+        lista->ultimo->prox = NULL;
+    }
+    
+    return x;
+}
+
+Show removerInicio(ListaDupla* lista){
+    Show x;
+    int tam = tamanho(lista);
+    if(tam == 0){
+        printf("Erro! Lista vazia!");
+        return newShow();
+    }
+    x = lista->primeiro->elemento;
+    lista->primeiro = lista->primeiro->prox;
+    
+    if(lista->primeiro == NULL){
+        lista->ultimo = NULL;
+    }else{
+        lista->primeiro->ant->prox = NULL;
+        lista->primeiro->ant = NULL;
+    }
+    
+    return x;
+}
+
+Show remover(ListaDupla* lista, int pos){
+    Show x;
+    int tam = tamanho(lista);
+    if(pos < 0 || tam < pos){
+        printf("Erro! Possicao Invalida!");
+        return newShow();
+    }else if(tam == 0){
+        printf("Erro! Lista vazia!");
+        return newShow();
+    }else if(pos == 0){
+        x = removerInicio(lista);
+    }else if(pos == tam-1){
+        x = removerFim(lista);
+    }else{
+        CelulaDupla* i = lista->primeiro;
+        x = i->elemento;
+        
+        for(int j = 0; j < pos; i = i->prox, j++);
+        i->ant->prox = i->prox;
+        i->prox->ant = i->ant;
+        free(i);
+    }
+    return x;
+}
+
+Show procurar(Show* show, int tam, char id[]) {
+    for (int i = 0; i < tam; i++) {
+        if (strcmp(show[i].showId, id) == 0) {
+            return show[i];
+        }
+    }
+    return newShow();
+}
+
+//***********//
+
+void swap(Show array[], int a, int b){
+    Show temp = array[b];
+    array[b] = array[a];
+    array[a] = temp;
+}
+
+int comparaMenor(Show array[], int i, Show pivo){
+    if(array[i].date.year < pivo.date.year){
+        return 1;
+    }else if(array[i].date.year == pivo.date.year && array[i].date.month < pivo.date.month){
+        return 1;
+    }else if(array[i].date.year == pivo.date.year && array[i].date.month == pivo.date.month && array[i].date.day < pivo.date.day){
+        return 1;
+    }else if (array[i].date.year == pivo.date.year && array[i].date.month == pivo.date.month && array[i].date.day == pivo.date.day && strcasecmp(array[i].title, pivo.title) < 0){
+        return 1;
+    }
+    return 0;
+}
+
+int comparaMaior(Show array[], int i, Show pivo){
+    if(array[i].date.year > pivo.date.year){
+        return 1;
+    }else if(array[i].date.year == pivo.date.year && array[i].date.month > pivo.date.month){
+        return 1;
+    }else if(array[i].date.year == pivo.date.year && array[i].date.month == pivo.date.month && array[i].date.day > pivo.date.day){
+        return 1;
+    }else if (array[i].date.year == pivo.date.year && array[i].date.month == pivo.date.month && array[i].date.day == pivo.date.day && strcasecmp(array[i].title, pivo.title) > 0){
+        return 1;
+    }
+    return 0;
+}
+
+void quicksort(Show array[], int esq, int dir, int comparacoes[], int movimentacoes[]){
+    int i = esq, j = dir, resp;
+    Show pivo = array[(dir+esq)/2];
+    
+    while(i <= j){
+        while((resp = comparaMenor(array, i, pivo)) != 0){
+            i++;
+            comparacoes[0]++;
+        }
+        comparacoes[0]++;
+        while((resp = comparaMaior(array, j, pivo)) != 0){
+            j--;
+            comparacoes[0]++;
+        }
+        comparacoes[0]++;
+        if(i <= j){
+            swap(array, i, j);
+            movimentacoes[0] += 3;
+            i++;
+            j--;
+        }
+    }
+    if(esq < j){
+        quicksort(array, esq, j, comparacoes, movimentacoes);
+    }
+    if(i < dir){
+        quicksort(array, i, dir, comparacoes, movimentacoes);
+    }
+}
+
+void arquivoLog(int matricula, double duracao, int comparacoes[], int movimentacoes[]) {
+	FILE *arq = fopen("1543790_quicksort2.txt", "w");
+	if(arq) {
+		fprintf(arq, "%d\t%d\t%d\t%fs", matricula, comparacoes[0], movimentacoes[0], duracao);
+	}
+	fclose(arq);
+}
+
+int main() {
+    int contIds = 0;
+    Show *show = ler();
+    int quant = quantidade();
+    char id[MAX_LIST];
+    char titulo[MAX];
+    
+    
+
+    free(show);
+    free(fila);
+    return 0;
 }
