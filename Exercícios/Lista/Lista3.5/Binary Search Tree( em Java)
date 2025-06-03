@@ -100,6 +100,53 @@ public class ArvoreBinaria {
 	    }
 	}
 	
+	public int altura(){
+	    return altura(raiz);
+	}
+	
+	public int altura(No i){
+	    if(i == null){
+	        return -1;
+	    }
+	    int esq = altura(i.esq);
+	    int dir = altura(i.dir);
+	    
+	    if(dir < esq){
+	        return esq+1;
+	    }else{
+	        return dir+1;
+	    }
+	}
+	
+	public int somar(){
+	    return somar(raiz);
+	}
+	
+	public int somar(No i){
+	    if(i == null){
+	        return 0;
+	    }
+	    
+	    return i.elemento + somar(i.esq) + somar(i.dir);
+	}
+	
+	public boolean compare(ArvoreBinaria arv2){
+	    return compare(raiz, arv2.raiz);
+	}
+	
+	public boolean compare(No i, No j){
+	    if(i == null && j == null)
+	        return true;
+	        
+	    if(i == null || j == null)
+            return false;
+            
+	    if(i.elemento!= j.elemento)
+	         return false;
+	    
+	    return compare(i.esq, j.esq) && compare(i.dir, j.dir);
+	}
+	
 	public int getMaior(){
 	    return getMaior(raiz);
 	}
@@ -157,6 +204,7 @@ public class ArvoreBinaria {
 
 	public static void main(String[] args) {
 		ArvoreBinaria arvore = new ArvoreBinaria();
+		ArvoreBinaria arvore2 = new ArvoreBinaria();
 		arvore.inserir(6);
 		arvore.inserir(4);
 		arvore.inserir(2);
@@ -165,11 +213,24 @@ public class ArvoreBinaria {
 		arvore.inserir(10);
 		arvore.inserir(7);
 		arvore.inserir(8);
+		
+		arvore2.inserir(6);
+		arvore2.inserir(4);
+		arvore2.inserir(2);
+		arvore2.inserir(3);
+		arvore2.inserir(1);
+		arvore2.inserir(10);
+		arvore2.inserir(7);
+		arvore2.inserir(8);
+		arvore2.remover(2);
         System.out.println(arvore.pesquisar(2));
         arvore.caminharCentral();
         System.out.println("Maior elemento: " + arvore.getMaior());
         System.out.println("Menor elemento: " + arvore.getMenor());
         arvore.remover(2);
         arvore.caminharCentral();
+        System.out.println("Altura: " + arvore.altura());
+        System.out.println("Soma: " + arvore.somar());
+        System.out.println("São iguais: " + arvore.compare(arvore2));
 	}
 }
