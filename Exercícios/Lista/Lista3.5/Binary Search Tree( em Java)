@@ -39,6 +39,8 @@ public class ArvoreBinaria {
 		} else {
 			throw new RuntimeException("Erro!");
 		}
+		
+		//return balanciar(i);
 		return i;
 	}
 
@@ -189,10 +191,10 @@ public class ArvoreBinaria {
 	    }else{
 	       i.esq = maiorEsq(i, i.esq);
 	    }   
-	    return i;
+	    return balanciar(i);
 	}
 	
-	No maiorEsq(No i, No j){
+	public No maiorEsq(No i, No j){
 	    if(j.dir == null){
 	        i.elemento = j.elemento;
 	        j = j.esq;
@@ -200,6 +202,60 @@ public class ArvoreBinaria {
 	        j.dir = maiorEsq(i, j.dir);
 	    }
 	    return j;
+	}
+	
+	public No rotacionarEsq(No i){
+	    No noDir = i.dir;
+	    No noDirEsq = noDir.esq;
+	    
+	    noDir.esq = i;
+	    i.dir = noDirEsq;
+	    
+	    return noDir;
+	}
+	
+	public No rotacionarDir(No i){
+	    No noEsq = i.esq;
+	    No noEsqDir = noEsq.dir;
+	    
+	    noEsq.dir = i;
+	    i.esq = noEsqDir;
+	    
+	    return noEsq;
+	}
+	
+	public No rotacionarDirEsq(No i){
+	    i.dir = rotacionarDir(i.dir);
+	    return rotacionarEsq(i);
+	}
+	
+	public No rotacionarEsqDir(No i){
+	    i.esq = rotacionarEsq(i.esq);
+	    return rotacionarDir(i);
+	}
+	
+	public No balanciar(No i){
+	    if(i == null){
+	        return null;
+	    }
+	    
+	    if (i.esq == null && i.dir != null) {
+            if (i.dir.dir != null) {
+                return rotacionarEsq(i);
+            } else if (i.dir.esq != null) {
+                return rotacionarDirEsq(i);
+            }
+        }
+
+        if (i.dir == null && i.esq != null) {
+            if (i.esq.dir != null) {
+                return rotacionarEsqDir(i);
+            } else if (i.esq.esq != null) {
+                return rotacionarDir(i);
+            }
+        }
+	    
+	    return i;
 	}
 
 	public static void main(String[] args) {
