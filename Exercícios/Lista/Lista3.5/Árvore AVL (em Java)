@@ -53,6 +53,9 @@ public class ArvoreAvl {
 	    noDir.esq = i;
 	    i.dir = noDirEsq;
 	    
+	    atualizarAltura(i);
+	    atualizarAltura(noDir);
+	    
 	    return noDir;
 	}
 	
@@ -62,6 +65,9 @@ public class ArvoreAvl {
 	    
 	    noEsq.dir = i;
 	    i.esq = noEsqDir;
+	    
+	    atualizarAltura(i);
+	    atualizarAltura(noEsq);
 	    
 	    return noEsq;
 	}
@@ -136,10 +142,50 @@ public class ArvoreAvl {
 	        caminharCentral(i.dir);
 	    }
 	}
+	
+	public void remover(int x){
+	    raiz = remover(x, raiz);
+	}
+	
+	public NoAvl remover(int x, NoAvl i){
+	    if(i == null){
+	        throw new RuntimeException("Erro!");
+	    }else if(x < i.elemento){
+	        i.esq = remover(x, i.esq);
+	    }else if(x > i.elemento){
+	        i.dir = remover(x, i.dir);
+	    }else if(i.dir == null){
+	        i = i.esq;
+	    }else if(i.esq == null){
+	        i = i.dir;
+	    }else{
+	       i.esq = maiorEsq(i, i.esq);
+	    }   
+	    
+	    if(i != null){
+	        atualizarAltura(i);
+	        i = balanciar(i);
+	    }
+	    
+	    return i;
+	}
+	
+	public NoAvl maiorEsq(NoAvl i, NoAvl j){
+	    if(j.dir == null){
+	        i.elemento = j.elemento;
+	        j = j.esq;
+	    }else{
+	        j.dir = maiorEsq(i, j.dir);
+	    }
+	    return j;
+	}
 
 	public static void main(String[] args) {
 	    ArvoreAvl arvore = new ArvoreAvl();
 	    arvore.inserir(4);
+	    arvore.inserir(2);
+	    arvore.inserir(6);
 	    
+	    arvore.caminharCentral();
 	}
 }
