@@ -114,15 +114,15 @@ public class ArvoreAvl {
 	    
 	    if(fator > 1){
 	        if(fatorBalanciamento(i.dir) < 0){
-	            rotacionarDirEsq(i);
+	            i = rotacionarDirEsq(i);
 	        }else{
-	            rotacionarEsq(i);
+	            i = rotacionarEsq(i);
 	        }
 	    }else if(fator < -1){
 	        if(fatorBalanciamento(i.esq) > 0){
-	            rotacionarEsqDir(i);
+	            i = rotacionarEsqDir(i);
 	        }else{
-	            rotacionarDir(i);
+	            i  = rotacionarDir(i);
 	        }
 	    }
 	    
@@ -185,7 +185,9 @@ public class ArvoreAvl {
 	    arvore.inserir(4);
 	    arvore.inserir(2);
 	    arvore.inserir(6);
-	    
+	    arvore.inserir(1);
+	    arvore.inserir(0);
+	    arvore.inserir(3);
 	    arvore.caminharCentral();
 	}
 }
