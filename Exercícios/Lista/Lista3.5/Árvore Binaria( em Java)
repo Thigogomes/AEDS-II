@@ -40,7 +40,6 @@ public class ArvoreBinaria {
 			throw new RuntimeException("Erro!");
 		}
 		
-		//return balanciar(i);
 		return i;
 	}
 
@@ -191,7 +190,7 @@ public class ArvoreBinaria {
 	    }else{
 	       i.esq = maiorEsq(i, i.esq);
 	    }   
-	    return balanciar(i);
+	    return i;
 	}
 	
 	public No maiorEsq(No i, No j){
