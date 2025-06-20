@@ -208,12 +208,29 @@ No* balanciar(No* i){
     return balanciar(i);
 }
 
+int pesquisarRescursivo(No *i, int x){
+    if(i == NULL){
+        return -1;
+    }else if(i->elemento == x){
+        return 1;
+    }else if(i->elemento < x){
+        return pesquisarRescursivo(i->dir, x);
+    }else{
+        return pesquisarRescursivo(i->esq, x);
+    }
+}
+
+int pesquisar(ArvoreAvl *arvore, int x){
+    return pesquisarRescursivo(arvore->raiz, x);
+}
+
 int main(){
     ArvoreAvl* arvore = newArvoreAvl();
     inserir(arvore, 5);
     inserir(arvore, 7);
     inserir(arvore, 3);
     //remover(arvore, 7);
+    printf("%d\n", pesquisar(arvore, 5));
     caminharCentral(arvore);
     return 0;
 }
