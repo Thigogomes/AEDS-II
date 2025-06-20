@@ -2,175 +2,179 @@ import java.util.*;
 import java.io.*;
 import java.text.*;
 
-class NoAN {
+class No {
     public Show elemento;
     public boolean cor;
-    public NoAN esq, dir;
+    public No esq;
+    public No dir;
 
-    public NoAN(Show elemento) {
-        this(elemento, false);
+    public No(Show elemento) {
+        this.elemento = elemento;
+        this.cor = false;
+        this.esq = null;
+        this.dir = null;
     }
 
-    public NoAN(Show elemento, boolean cor) {
+    public No(Show elemento, boolean cor) {
         this.elemento = elemento;
         this.cor = cor;
-        this.esq = this.dir = null;
+        this.esq = null;
+        this.dir = null;
     }
 }
 
 class ArvoreRB {
-    private NoAN raiz;
+    No raiz;
 
     public ArvoreRB() {
-        raiz = null;
+        this.raiz = null;
     }
 
-    public boolean pesquisar(String titulo, int[] comparacoes) {
-        System.out.print("=>raiz  ");
-        boolean resp = pesquisar(titulo, raiz, comparacoes);
-        System.out.println(resp ? "SIM" : "NAO");
-        return resp;
+    public No rotacionarDir(No i) {
+        No noEsq = i.esq;
+        No noEsqDir = noEsq.dir;
+
+        noEsq.dir = i;
+        no.esq = noEsqDir;
+
+        return noEsq;
     }
 
-    public boolean pesquisar(String titulo, NoAN i, int[] comparacoes) {
-        if (i == null){
-            return false;
-        }
+    public No rotacionarEsq(No i) {
+        No noDir = i.dir;
+        No noDirEsq = noDir.esq;
+
+        noDir.esq = i;
+        i.dir = noDirEsq;
         
-        comparacoes[0]++;
-        if (titulo.compareToIgnoreCase(i.elemento.getTitle()) == 0){
-            return true;
-        }else if (titulo.compareToIgnoreCase(i.elemento.getTitle()) < 0){
-            System.out.print("esq ");
-            return pesquisar(titulo, i.esq, comparacoes);
-        }else{
-            System.out.print("dir ");
-            return pesquisar(titulo, i.dir, comparacoes);
-        }
+        return noDir;
     }
 
-    public void inserir(Show elemento){
-        if (raiz == null) {
-            raiz = new NoAN(elemento, false);
-
-        } else if (raiz.esq == null && raiz.dir == null) {
-            if (elemento.getTitle().compareToIgnoreCase(raiz.elemento.getTitle()) < 0)
-                raiz.esq = new NoAN(elemento, true);
-            else
-                raiz.dir = new NoAN(elemento, true);
-
-        } else if (raiz.esq == null) {
-            if (elemento.getTitle().compareToIgnoreCase(raiz.elemento.getTitle()) < 0) {
-                raiz.esq = new NoAN(elemento, true);
-            } else if (elemento.getTitle().compareToIgnoreCase(raiz.dir.elemento.getTitle()) < 0) {
-                raiz.esq = new NoAN(raiz.elemento, true);
-                raiz.elemento = elemento;
-            } else {
-                raiz.esq = new NoAN(raiz.elemento, true);
-                raiz.elemento = raiz.dir.elemento;
-                raiz.dir.elemento = elemento;
-            }
-            raiz.esq.cor = raiz.dir.cor = false;
-
-        } else if (raiz.dir == null) {
-            if (elemento.getTitle().compareToIgnoreCase(raiz.elemento.getTitle()) > 0) {
-                raiz.dir = new NoAN(elemento, true);
-            } else if (elemento.getTitle().compareToIgnoreCase(raiz.esq.elemento.getTitle()) > 0) {
-                raiz.dir = new NoAN(raiz.elemento, true);
-                raiz.elemento = elemento;
-            } else {
-                raiz.dir = new NoAN(raiz.elemento, true);
-                raiz.elemento = raiz.esq.elemento;
-                raiz.esq.elemento = elemento;
-            }
-            raiz.esq.cor = raiz.dir.cor = false;
-
-        } else {
-            inserir(elemento, null, null, null, raiz);
-        }
-        raiz.cor = false;
+    public No rotacionarDirEsq(No i) {
+        i.dir = rotacaoDir(i.dir);
+        return rotacionarEsq(i);
     }
 
-    public void inserir(Show elemento, NoAN bisavo, NoAN avo, NoAN pai, NoAN i){
-        if (i == null) {
-            int cmp = elemento.getTitle().compareToIgnoreCase(pai.elemento.getTitle());
-            if (cmp < 0) {
-                i = pai.esq = new NoAN(elemento, true);
-            } else {
-                i = pai.dir = new NoAN(elemento, true);
-            }
-            if (pai.cor) {
-                balancear(bisavo, avo, pai, i);
-            }
-        } else {
-            if (i.esq != null && i.dir != null && i.esq.cor && i.dir.cor) {
-                i.cor = true;
-                i.esq.cor = i.dir.cor = false;
-                if (i == raiz) i.cor = false;
-                else if (pai.cor) balancear(bisavo, avo, pai, i);
-            }
-
-            int cmp = elemento.getTitle().compareToIgnoreCase(i.elemento.getTitle());
-            if (cmp < 0) {
-                inserir(elemento, avo, pai, i, i.esq);
-            } else if (cmp > 0) {
-                inserir(elemento, avo, pai, i, i.dir);
-            } else {
-                throw new RuntimeException("Erro!");
-            }
-        }
+    public No rotacionarEsqDir(No i) {
+        i.esq = rotacaoEsq(i.esq);
+        return rotacionarDir(no);
     }
 
-    public void balancear(NoAN bisavo, NoAN avo, NoAN pai, NoAN i) {
+    public void balanciar(No bisavo, No avo, No pai, No i) {
         if (pai.cor) {
-            if (pai == avo.dir) {
-                if (i == pai.dir) {
+            if (Show.compare(pai.value, avo.value) > 0) {
+                if (Show.compare(i.value, pai.value) > 0) {
                     avo = rotacaoEsq(avo);
                 } else {
                     avo = rotacaoDirEsq(avo);
                 }
             } else {
-                if (i == pai.esq) {
+                if (Show.compare(i.value, pai.value) < 0) {
                     avo = rotacaoDir(avo);
                 } else {
                     avo = rotacaoEsqDir(avo);
                 }
             }
-
-            if (bisavo == null) raiz = avo;
-            else if (avo.elemento.getTitle().compareToIgnoreCase(bisavo.elemento.getTitle()) < 0)
-                bisavo.esq = avo;
-            else
-                bisavo.dir = avo;
-
+            if (bisavo == null) {
+                root = avo;
+            } else if (Show.compare(avo.value, bisavo.value) < 0) {
+                bisavo.left = avo;
+            } else {
+                bisavo.right = avo;
+            }
             avo.cor = false;
-            if (avo.esq != null) avo.esq.cor = true;
-            if (avo.dir != null) avo.dir.cor = true;
+            avo.esq.cor = avo.dir.cor = true;
+        }
+
+    }
+
+    public void inserir(String value, No bisavo, No avo, No pai, No i){
+        if (i == null) {
+            if (Show.compare(value, pai.value) < 0) {
+                i = pai.left = new RBTreeNode(value, true);
+            } else {
+                i = pai.right = new RBTreeNode(value, true);
+            }
+            if (pai.color == true) {
+                balance(bisavo, avo, pai, i);
+            }
+        } else {
+            if (i.left != null && i.right != null && i.left.color == true && i.right.color == true) {
+                i.color = true;
+                i.left.color = i.right.color = false;
+                if (i == root) {
+                    i.color = false;
+                } else if (pai.color == true) {
+                    balance(bisavo, avo, pai, i);
+                }
+            }
+            if (Show.compare(value, i.value) < 0) {
+                insert(value, avo, pai, i, i.left);
+            } else if (Show.compare(value, i.value) > 0) {
+                insert(value, avo, pai, i, i.right);
+            }
         }
     }
 
-    public NoAN rotacaoDir(NoAN no) {
-        NoAN noEsq = no.esq;
-        no.esq = noEsq.dir;
-        noEsq.dir = no;
-        return noEsq;
+    public void inserir(String value){
+        if (root == null) {
+            root = new RBTreeNode(value);
+        } else if (root.left == null && root.right == null) {
+            if (Show.compare(value, root.value) < 0) {
+                root.left = new RBTreeNode(value);
+            } else {
+                root.right = new RBTreeNode(value);
+            }
+        } else if (root.left == null) {
+            if (Show.compare(value, root.value) < 0) {
+                root.left = new RBTreeNode(value);
+            } else if (Show.compare(value, root.right.value) < 0) {
+                root.left = new RBTreeNode(root.value);
+                root.value = value;
+            } else {
+                root.left = new RBTreeNode(root.value);
+                root.value = root.right.value;
+                root.right.value = value;
+            }
+            root.left.color = root.right.color = false;
+        } else if (root.right == null) {
+            if (Show.compare(value, root.value) > 0) {
+                root.right = new RBTreeNode(value);
+            } else if (Show.compare(value, root.left.value) > 0) {
+                root.right = new RBTreeNode(root.value);
+                root.value = value;
+            } else {
+                root.right = new RBTreeNode(root.value);
+                root.value = root.left.value;
+                root.left.value = value;
+            }
+            root.left.color = root.right.color = false;
+
+        } else {
+            inserir(value, null, null, null, root);
+        }
+        raiz.cor = false;
     }
 
-    public NoAN rotacaoEsq(NoAN no) {
-        NoAN noDir = no.dir;
-        no.dir = noDir.esq;
-        noDir.esq = no;
-        return noDir;
+    public boolean pesquisar(String x, No i) {
+        if (i == null) {
+            return false;
+        }else if(x.compareToIgnoreCase(i->elemento->getTitle()) == 0){
+            return true;
+        }else if (x.compareToIgnoreCase(i->elemento->getTitle()) > 0) {
+            System.out.print("dir ");
+            return pesquisar(x, i.dir);
+        } else if (x.compareToIgnoreCase(i->elemento->getTitle())  < 0) {
+            System.out.print("esq ");
+            return pesquisar(x, i.esq);
+        }
     }
 
-    public NoAN rotacaoDirEsq(NoAN no) {
-        no.dir = rotacaoDir(no.dir);
-        return rotacaoEsq(no);
-    }
-
-    public NoAN rotacaoEsqDir(NoAN no) {
-        no.esq = rotacaoEsq(no.esq);
-        return rotacaoDir(no);
+    public boolean pesquisar(String x) {
+        System.out.print("=>raiz  ");
+        boolean resp = pesquisar(x, raiz);
+        System.out.println(resp ? "SIM" : "NAO");
+        return resp;
     }
 }
 
