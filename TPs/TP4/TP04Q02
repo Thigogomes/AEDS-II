@@ -7,7 +7,7 @@ class No2{
     public No2 dir;
     public No2 esq;
     
-    public No2(Show elemento2){
+    public No2(Show elemento){
         this.elemento = elemento;
         this.dir = null;
         this.esq = null;
@@ -63,13 +63,14 @@ class ArvoreDeArvore{
 	}
 	
 	public No inserirNaArvore(Show x, No i, int mod){
-	    if(i == null) {
-		    throw new RuntimeException("Erro!");
-		} else if(mod < i.elemento) {
+	    if (i == null) {
+            return new No(mod); 
+        }
+	    if(mod < i.elemento) {
 			i.esq = inserirNaArvore(x, i.esq, mod);
 		} else if(mod > i.elemento) {
 			i.dir = inserirNaArvore(x, i.dir, mod);
-		} else{
+		} else if(mod == i.elemento){
 		    i.raiz = inserir2(x, i.raiz);
 		}
 		
@@ -98,14 +99,17 @@ class ArvoreDeArvore{
 	}
 	
 	public boolean pesquisar(String x, No i, int[] comparacoes){
+	    if (i == null) {
+            return false;
+        }
         if (pesquisar2(x, i.raiz, comparacoes)){
             return true;
         }
-
+        System.out.print("ESQ ");
         if (pesquisar(x, i.esq, comparacoes)){
             return true;
         }
-        
+        System.out.print("DIR ");
         return pesquisar(x, i.dir, comparacoes);
 	}
 	
@@ -283,7 +287,7 @@ public class Show {
 
     public static ArrayList<Show> ler() {
         ArrayList<Show> listaShow = new ArrayList<>();
-        try (BufferedReader r = new BufferedReader(new FileReader("disneyplus.txt"))) {
+        try (BufferedReader r = new BufferedReader(new FileReader("/tmp/disneyplus.csv"))) {
             String linha = "";
             r.readLine();
             while ((linha = r.readLine()) != null) {
