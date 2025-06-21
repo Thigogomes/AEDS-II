@@ -90,7 +90,7 @@ class ArvoreDeArvore{
 		return i;
 	}
 	
-	/*public boolean pesquisar(String x, int[] comparacoes){
+	public boolean pesquisar(String x, int[] comparacoes){
 	    System.out.print("raiz ");
 	    boolean resp = pesquisar(x, raiz, comparacoes);
 	    System.out.println(resp ? "SIM" : "NAO");
@@ -98,21 +98,34 @@ class ArvoreDeArvore{
 	}
 	
 	public boolean pesquisar(String x, No i, int[] comparacoes){
+        if (pesquisar2(x, i.raiz, comparacoes)){
+            return true;
+        }
+
+        if (pesquisar(x, i.esq, comparacoes)){
+            return true;
+        }
+        
+        return pesquisar(x, i.dir, comparacoes);
+	}
+	
+	public boolean pesquisar2(String x, No2 i, int[] comparacoes){
         if(i == null){
             return false;
         }else{
             comparacoes[0]++;
+            
             if(x.compareTo(i.elemento.getTitle()) < 0){
                 System.out.print("esq ");
-                return pesquisar(x, i.esq, comparacoes);
+                return pesquisar2(x, i.esq, comparacoes);
             }else if(x.compareTo(i.elemento.getTitle()) > 0){
                 System.out.print("dir ");
-                return pesquisar(x, i.dir, comparacoes);
+                return pesquisar2(x, i.dir, comparacoes);
             }else{
                 return true;
             } 
         }
-	}*/
+	}
 }
 
 public class Show {
@@ -270,7 +283,7 @@ public class Show {
 
     public static ArrayList<Show> ler() {
         ArrayList<Show> listaShow = new ArrayList<>();
-        try (BufferedReader r = new BufferedReader(new FileReader("/tmp/disneyplus.csv"))) {
+        try (BufferedReader r = new BufferedReader(new FileReader("disneyplus.txt"))) {
             String linha = "";
             r.readLine();
             while ((linha = r.readLine()) != null) {
@@ -407,7 +420,7 @@ public class Show {
     public static void arquivoLog(double duracao, int[] comparacoes){
         String matricula = "1543790";
         try {
-            PrintWriter w = new PrintWriter(matricula + "_arvoreBinaria.txt");
+            PrintWriter w = new PrintWriter(matricula + "_arvoreArvore.txt");
             w.printf("%s\t%d\t%fms", matricula, comparacoes[0], duracao);
             w.close();
         } catch (IOException e) {
@@ -448,7 +461,7 @@ public class Show {
         
         long inicioTempo = System.nanoTime();
         for(int i = 0; i < j; i++){
-            ///arvore.pesquisar(listaPesquisa[i], comparacoes);
+            arvore.pesquisar(listaPesquisa[i], comparacoes);
         }
         long fimTempo = System.nanoTime();
         
