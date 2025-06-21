@@ -88,7 +88,7 @@ class ArvoreRB {
 
     }
 
-    public void inserir(String value, No bisavo, No avo, No pai, No i){
+    public void inserir(Show x, No bisavo, No avo, No pai, No i){
         if (i == null) {
             if (Show.compare(value, pai.value) < 0) {
                 i = pai.left = new RBTreeNode(value, true);
@@ -116,16 +116,16 @@ class ArvoreRB {
         }
     }
 
-    public void inserir(String value){
-        if (root == null) {
-            root = new RBTreeNode(value);
-        } else if (root.left == null && root.right == null) {
-            if (Show.compare(value, root.value) < 0) {
-                root.left = new RBTreeNode(value);
+    public void inserir(Show x){
+        if (raiz == null) {
+            raiz = new No(x);
+        } else if (raiz.esq == null && raiz.dir == null) {
+            if (Show.compare(, raiz.value) < 0) {
+                raiz.esq = new No(x);
             } else {
-                root.right = new RBTreeNode(value);
+                raiz.dir = new No(x);
             }
-        } else if (root.left == null) {
+        } else if (raiz.esq == null) {
             if (Show.compare(value, root.value) < 0) {
                 root.left = new RBTreeNode(value);
             } else if (Show.compare(value, root.right.value) < 0) {
@@ -148,10 +148,10 @@ class ArvoreRB {
                 root.value = root.left.value;
                 root.left.value = value;
             }
-            root.left.color = root.right.color = false;
+            raiz.esq.cor = raiz.dir.cor = false;
 
         } else {
-            inserir(value, null, null, null, root);
+            inserir(x, null, null, null, raiz);
         }
         raiz.cor = false;
     }
