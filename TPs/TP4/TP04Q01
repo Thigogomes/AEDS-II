@@ -34,12 +34,10 @@ class ArvoreBinaria {
 	public No inserir(Show x, No i) {
 		if(i == null) {
 		    return new No(x);
-		} else if(x.getTitle().compareToIgnoreCase(i.elemento.getTitle()) < 0) {
+		} else if(x.getTitle().compareTo(i.elemento.getTitle()) < 0) {
 			i.esq = inserir(x, i.esq);
-		} else if(x.getTitle().compareToIgnoreCase(i.elemento.getTitle()) > 0) {
+		} else if(x.getTitle().compareTo(i.elemento.getTitle()) > 0) {
 			i.dir = inserir(x, i.dir);
-		} else {
-			throw new RuntimeException("Erro!");
 		}
 		
 		return i;
@@ -57,23 +55,23 @@ class ArvoreBinaria {
 	}
 	
 	public boolean pesquisar(String x, No i, int[] comparacoes){
-	    if(i == null){
-	        return false;
-	    }else{
-	        comparacoes[0]++;
-	        if(x.compareToIgnoreCase(i.elemento.getTitle()) == 0){
-	            return true;
-	        }else if(x.compareToIgnoreCase(i.elemento.getTitle()) > 0){
-	            System.out.print("dir ");
-	            return pesquisar(x, i.dir, comparacoes);
-	        }else{
-	            System.out.print("esq ");
-	            return pesquisar(x, i.esq, comparacoes);
-	        } 
-	    }
-	}
-}
+        if(i == null){
+            return false;
+        }else{
+            comparacoes[0]++;
+            if(x.compareTo(i.elemento.getTitle()) < 0){
+                System.out.print("esq ");
+                return pesquisar(x, i.esq, comparacoes);
+            }else if(x.compareTo(i.elemento.getTitle()) > 0){
+                System.out.print("dir ");
+                return pesquisar(x, i.dir, comparacoes);
+            }else{
+                return true;
+            } 
+        }
+    }
 
+}
 
 public class Show {
     private String showId;
