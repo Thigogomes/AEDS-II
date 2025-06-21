@@ -4,12 +4,15 @@ import java.text.*;
 
 class No {
     public Show elemento;
-    public boolean cor; // true = vermelho, false = preto
+    public boolean cor;
     public No esq;
     public No dir;
 
     public No(Show elemento) {
-        this(elemento, false);
+        this.elemento = elemento;
+        this.cor = false;
+        this.esq = null;
+        this.dir = null;
     }
 
     public No(Show elemento, boolean cor) {
@@ -27,7 +30,6 @@ class ArvoreRB {
         this.raiz = null;
     }
 
-    // Rotação simples à direita
     public No rotacionarDir(No i) {
         No noEsq = i.esq;
         No noEsqDir = noEsq.dir;
@@ -38,143 +40,133 @@ class ArvoreRB {
         return noEsq;
     }
 
-    // Rotação simples à esquerda
     public No rotacionarEsq(No i) {
         No noDir = i.dir;
         No noDirEsq = noDir.esq;
 
         noDir.esq = i;
         i.dir = noDirEsq;
-
+        
         return noDir;
     }
 
-    // Rotação dupla direita-esquerda
     public No rotacionarDirEsq(No i) {
         i.dir = rotacionarDir(i.dir);
         return rotacionarEsq(i);
     }
 
-    // Rotação dupla esquerda-direita
     public No rotacionarEsqDir(No i) {
         i.esq = rotacionarEsq(i.esq);
         return rotacionarDir(i);
     }
 
-    // Método que balanceia a árvore após inserção
     public void balanciar(No bisavo, No avo, No pai, No i) {
-        if (pai == null || avo == null) return; // segurança
-
-        boolean paiEsq = (avo.esq == pai);
-        No tio = paiEsq ? avo.dir : avo.esq;
-
-        // Caso 1: tio é vermelho => recoloração
-        if (tio != null && tio.cor) {
-            avo.cor = true;
-            pai.cor = false;
-            tio.cor = false;
-
-            if (avo == raiz) {
-                avo.cor = false; // raiz sempre preta
-            } else {
-                // Continua o balanceamento para cima recursivamente se necessário
-                // (você pode implementar recursão aqui se quiser)
-            }
-        } else {
-            // Caso 2: tio é preto ou nulo => rotações
-
-            if (paiEsq) {
-                if (i == pai.esq) {
-                    // Rotação simples direita
-                    avo = rotacionarDir(avo);
-                } else {
-                    // Rotação dupla esquerda-direita
-                    avo = rotacionarEsqDir(avo);
-                }
-            } else {
-                if (i == pai.dir) {
-                    // Rotação simples esquerda
+        if (pai.cor) {
+            if (pai.elemento.getTitle().compareTo(avo.elemento.getTitle()) > 0) {
+                if (i.elemento.getTitle().compareTo(pai.elemento.getTitle()) > 0) {
                     avo = rotacionarEsq(avo);
                 } else {
-                    // Rotação dupla direita-esquerda
                     avo = rotacionarDirEsq(avo);
                 }
+            } else {
+                if (i.elemento.getTitle().compareTo(pai.elemento.getTitle()) < 0) {
+                    avo = rotacionarDir(avo);
+                } else {
+                    avo = rotacionarEsqDir(avo);
+                }
             }
-
-            // Ajuste das cores após rotação
-            avo.cor = false;
-            if (avo.esq != null) avo.esq.cor = true;
-            if (avo.dir != null) avo.dir.cor = true;
-
-            // Recoloca o avo na posição correta na árvore
             if (bisavo == null) {
                 raiz = avo;
-            } else if (avo.elemento.getTitle().compareToIgnoreCase(bisavo.elemento.getTitle()) < 0) {
+            } else if (avo.elemento.getTitle().compareTo(bisavo.elemento.getTitle()) < 0) {
                 bisavo.esq = avo;
             } else {
                 bisavo.dir = avo;
             }
+            avo.cor = false;
+            avo.esq.cor = avo.dir.cor = true;
         }
     }
 
-    // Método recursivo de inserção corrigido
-    private No inserirRec(No i, Show x, No bisavo, No avo, No pai) {
+    public void inserir(Show x, No bisavo, No avo, No pai, No i){
         if (i == null) {
-            i = new No(x, true); // novo nó vermelho
-
-            if (pai != null && pai.cor) {
+            if (x.getTitle().compareTo(pai.elemento.getTitle()) < 0) {
+                i = pai.esq = new No(x, true);
+            } else {
+                i = pai.dir = new No(x, true);
+            }
+            if (pai.cor == true) {
                 balanciar(bisavo, avo, pai, i);
             }
         } else {
-            // Caso 3: filho com dois filhos vermelhos => recoloração
-            if (i.esq != null && i.dir != null && i.esq.cor && i.dir.cor) {
+            if (i.esq != null && i.dir != null && i.esq.cor == true && i.dir.cor == true) {
                 i.cor = true;
-                i.esq.cor = false;
-                i.dir.cor = false;
-
+                i.esq.cor = i.dir.cor = false;
                 if (i == raiz) {
                     i.cor = false;
-                } else if (pai != null && pai.cor) {
+                } else if (pai.cor == true) {
                     balanciar(bisavo, avo, pai, i);
                 }
             }
-
-            int cmp = x.getTitle().compareToIgnoreCase(i.elemento.getTitle());
-
-            if (cmp < 0) {
-                i.esq = inserirRec(i.esq, x, avo, pai, i);
-            } else if (cmp > 0) {
-                i.dir = inserirRec(i.dir, x, avo, pai, i);
+            if (x.getTitle().compareTo(i.elemento.getTitle()) < 0) {
+                inserir(x, avo, pai, i, i.esq);
+            } else if (x.getTitle().compareTo(i.elemento.getTitle()) > 0) {
+                inserir(x, avo, pai, i, i.dir);
             }
-            // Se for igual, não insere duplicata (pode alterar se quiser tratar duplicatas)
-        }
-
-        return i;
-    }
-
-    // Inserção pública simplificada
-    public void inserir(Show x) {
-        raiz = inserirRec(raiz, x, null, null, null);
-        if (raiz != null) {
-            raiz.cor = false; // raiz sempre preta
         }
     }
 
-    // Pesquisa na árvore com contagem de comparações e impressão do caminho
+    public void inserir(Show x){
+        if (raiz == null) {
+            raiz = new No(x);
+        } else if (raiz.esq == null && raiz.dir == null) {
+            if (x.getTitle().compareTo(raiz.elemento.getTitle()) < 0) {
+                raiz.esq = new No(x);
+            } else {
+                raiz.dir = new No(x);
+            }
+        } else if (raiz.esq == null) {
+            if (x.getTitle().compareTo(raiz.elemento.getTitle()) < 0) {
+                raiz.esq = new No(x);
+            } else if (x.getTitle().compareTo(raiz.dir.elemento.getTitle()) < 0) {
+                raiz.esq = new No(raiz.elemento);
+                raiz.elemento = x;
+            } else {
+                raiz.esq = new No(raiz.elemento);
+                raiz.elemento = raiz.dir.elemento;
+                raiz.dir.elemento = x;
+            }
+            raiz.esq.cor = raiz.dir.cor = false;
+        } else if (raiz.dir == null) {
+            if (x.getTitle().compareTo(raiz.elemento.getTitle()) > 0) {
+                raiz.dir = new No(x);
+            } else if (x.getTitle().compareTo(raiz.esq.elemento.getTitle()) > 0) {
+                raiz.dir = new No(raiz.elemento);
+                raiz.elemento = x;
+            } else {
+                raiz.dir = new No(raiz.elemento);
+                raiz.elemento = raiz.esq.elemento;
+                raiz.esq.elemento = x;
+            }
+            raiz.esq.cor = raiz.dir.cor = false;
+
+        } else {
+            inserir(x, null, null, null, raiz);
+        }
+        raiz.cor = false;
+    }
+
     public boolean pesquisar(String x, No i, int[] comparacoes) {
         if (i == null) {
             return false;
         }
-
+        
         comparacoes[0]++;
-        int cmp = x.compareToIgnoreCase(i.elemento.getTitle());
-
-        if (cmp == 0) {
+        if(x.compareTo(i.elemento.getTitle()) == 0){
             return true;
-        } else if (cmp > 0) {
+        }else if (x.compareTo(i.elemento.getTitle()) > 0) {
             System.out.print("dir ");
             return pesquisar(x, i.dir, comparacoes);
-        } else {
+        }else{
             System.out.print("esq ");
             return pesquisar(x, i.esq, comparacoes);
         }
