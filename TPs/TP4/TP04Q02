@@ -106,10 +106,12 @@ class ArvoreDeArvore{
             return true;
         }
         System.out.print("ESQ ");
+        comparacoes[0]++;
         if (pesquisar(x, i.esq, comparacoes)){
             return true;
         }
         System.out.print("DIR ");
+        comparacoes[0]++;
         return pesquisar(x, i.dir, comparacoes);
 	}
 	
@@ -118,7 +120,6 @@ class ArvoreDeArvore{
             return false;
         }else{
             comparacoes[0]++;
-            
             if(x.compareTo(i.elemento.getTitle()) < 0){
                 System.out.print("esq ");
                 return pesquisar2(x, i.esq, comparacoes);
