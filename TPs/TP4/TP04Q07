@@ -85,7 +85,7 @@ class Hash{
         if(tabela[i] != null && tabela[i].pesquisar(x, comparacoes)){
             resp = true;
         }
-        System.out.print("(Posicao: " + i + ") "); 
+        System.out.print(" (Posicao: " + i + ") "); 
         System.out.println(resp ? "SIM" : "NAO");
         return resp;
     }
