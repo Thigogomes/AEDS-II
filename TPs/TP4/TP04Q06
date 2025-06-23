@@ -51,19 +51,19 @@ class Hash{
         
         comparacoes[0]++;
         if(tabela[i] != null && tabela[i].getTitle().equals(x)){
-            System.out.print("(Posicao: " + i + ") ");
+            System.out.print(" (Posicao: " + i + ") ");
             resp = true;
         }else{
             comparacoes[0]++;
             int j = rehash(x);
             if(tabela[j] != null && tabela[j].getTitle().equals(x)){
                 resp = true;
-                System.out.print("(Posicao: " + j + ") ");
+                System.out.print(" (Posicao: " + j + ") ");
             }
         }
         
         if(!resp){
-           System.out.print("(Posicao: " + i + ") "); 
+           System.out.print(" (Posicao: " + i + ") "); 
         }
         
         System.out.println(resp ? "SIM" : "NAO");
