@@ -12,7 +12,7 @@ class Hash{
         this.contReserva = 0;
         this.tamTabela = 21;
         this.tamReserva = 9;
-        this.tabela = new Show[tamReserva + tamTabela];
+        this.tabela = new Show[(tamReserva+tamTabela)];
     }
     
     public int parseToAscii(String x){
@@ -38,8 +38,8 @@ class Hash{
         if(tabela[i] == null){
             tabela[i] = x;
         }else{
-            if(tabela[i] == null){
-                tabela[tamTabela + contReserva] = x;
+            if(contReserva < tamReserva){
+                tabela[tamTabela+contReserva] = x;
                 contReserva++;
             }
         }
@@ -50,25 +50,21 @@ class Hash{
         boolean resp = false;
         
         comparacoes[0]++;
-        if(tabela[i] != null && tabela[i].getTitle().equals(x)){
-            System.out.print(" (Posicao: " + i + ") ");
+        if(tabela[i].getTitle().compareTo(x) == 0){
             resp = true;
-        }else if(tabela[i] != null){
-            for(int j = tamTabela; j < tamTabela + contReserva; j++){
+        }else{
+            for(int j = tamTabela; j < (tamTabela+contReserva); j++){
                 comparacoes[0]++;
-                if(tabela[j] != null && tabela[j].getTitle().equals(x)){
+                if(tabela[j].getTitle().compareTo(x) == 0){
                     resp = true;
                     j = tamReserva + tamTabela;
-                    System.out.print(" (Posicao: " + j + ") ");
                 }
             }
         }
         
-        if(!resp){
-           System.out.print(" (Posicao: " + i + ") "); 
-        }
         
-        System.out.println(resp ? "SIM" : "NAO");
+        
+        System.out.println(" (Posicao: " + i + ") " + (resp ? "SIM" : "NAO"));
         return resp;
     }
 }
